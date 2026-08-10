@@ -1,25 +1,36 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
-const http = require('http');
-const socketIo = require('socket.io');
+import "dotenv/config";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import http from "http";
+import { Server as SocketIOServer } from "socket.io";
+import { Resend } from "resend";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Email configuration
+// ==================== RESEND EMAIL SETUP ====================
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) {
+    console.error('❌ RESEND_API_KEY is not set in environment variables!');
+} else {
+    console.log('✅ Resend API Key found');
+}
+
+const resend = new Resend(RESEND_API_KEY);
 const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix Support <support@swiftlogix.biz>';
 
-// Create HTTP server with Socket.IO
+// ==================== CREATE HTTP SERVER ====================
 const server = http.createServer(app);
-const io = socketIo(server, {
+const io = new SocketIOServer(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -28,13 +39,16 @@ const io = socketIo(server, {
     transports: ['websocket', 'polling']
 });
 
+// ==================== MIDDLEWARE ====================
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-mongoose.connect(process.env.MONGODB_URI)
+// ==================== MONGODB CONNECTION ====================
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://mrdevvvvv_db_user:izQU53FKDab4pHVp@giftdata.bydbijx.mongodb.net/swiftlogix?retryWrites=true&w=majority';
+mongoose.connect(MONGODB_URI)
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => console.error('❌ MongoDB error:', err));
 
@@ -147,40 +161,31 @@ const EmailLog = mongoose.model('EmailLog', emailLogSchema);
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
-// ==================== EMAIL SERVICE (DIRECT RESEND API - NO REACT DEPENDENCY) ====================
+// ==================== EMAIL SERVICE ====================
 
 const sendEmail = async (to, subject, html) => {
     try {
-        if (!process.env.RESEND_API_KEY) {
+        if (!RESEND_API_KEY) {
             console.error('❌ RESEND_API_KEY not configured');
             return { success: false, error: 'API key not configured' };
         }
 
         console.log(`📧 Sending email to ${to}...`);
         
-        const response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from: EMAIL_FROM,
-                to: [to],
-                subject: subject,
-                html: html,
-            })
+        const { data, error } = await resend.emails.send({
+            from: EMAIL_FROM,
+            to: [to],
+            subject: subject,
+            html: html,
         });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            console.error('❌ Resend API error:', data);
-            return { success: false, error: data.message || 'Email failed' };
+
+        if (error) {
+            console.error('❌ Resend error:', error);
+            return { success: false, error: error.message };
         }
 
-        console.log(`✅ Email sent to ${to}:`, data.id);
-        return { success: true, resendId: data.id };
+        console.log(`✅ Email sent to ${to}:`, data?.id);
+        return { success: true, resendId: data?.id };
     } catch (error) {
         console.error('❌ Email error:', error.message);
         return { success: false, error: error.message };
@@ -198,7 +203,7 @@ io.on('connection', (socket) => {
     socket.on('admin-auth', (data) => {
         try {
             const { token } = data;
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'swiftlogix_secret');
             adminOnline = true;
             adminSocketId = socket.id;
             socket.join('admin-room');
@@ -312,12 +317,14 @@ io.on('connection', (socket) => {
 // ==================== CREATE ADMIN ====================
 const createDefaultAdmin = async () => {
     try {
-        const existing = await Admin.findOne({ username: process.env.ADMIN_USERNAME });
+        const adminUsername = process.env.ADMIN_USERNAME || 'igwe';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'dev';
+        const existing = await Admin.findOne({ username: adminUsername });
         if (!existing) {
-            const hashed = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
-            const admin = new Admin({ username: process.env.ADMIN_USERNAME, passwordHash: hashed });
+            const hashed = await bcrypt.hash(adminPassword, 10);
+            const admin = new Admin({ username: adminUsername, passwordHash: hashed });
             await admin.save();
-            console.log('✅ Admin created:', process.env.ADMIN_USERNAME);
+            console.log(`✅ Admin created: ${adminUsername}`);
         }
     } catch (error) {
         console.error('❌ Admin error:', error);
@@ -500,7 +507,7 @@ const authMiddleware = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) return res.status(401).json({ error: 'No token' });
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'swiftlogix_secret');
         const admin = await Admin.findOne({ username: decoded.username });
         if (!admin) return res.status(401).json({ error: 'Invalid token' });
         req.admin = admin;
@@ -520,7 +527,7 @@ app.post('/api/admin/login', async (req, res) => {
         if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
         admin.lastLogin = new Date();
         await admin.save();
-        const token = jwt.sign({ username: admin.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ username: admin.username }, process.env.JWT_SECRET || 'swiftlogix_secret', { expiresIn: '7d' });
         res.json({ success: true, token, admin: { username: admin.username } });
     } catch (error) {
         res.status(500).json({ error: 'Login failed' });
@@ -755,7 +762,30 @@ app.get('/api/admin/search/:query', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== PUBLIC TRACKING ====================
+// ==================== PUBLIC TRACKING ENDPOINTS ====================
+
+// ✅ PUBLIC - Get shipment by tracking code (NO AUTH REQUIRED)
+app.get('/api/track/:trackingCode', async (req, res) => {
+    try {
+        const trackingCode = req.params.trackingCode.toUpperCase();
+        console.log(`🔍 Looking for tracking code: ${trackingCode}`);
+        
+        const shipment = await Shipment.findOne({ trackingCode });
+        
+        if (!shipment) {
+            console.log(`❌ Tracking code not found: ${trackingCode}`);
+            return res.status(404).json({ error: 'Tracking number not found' });
+        }
+        
+        console.log(`✅ Found shipment: ${trackingCode}`);
+        res.json(shipment);
+    } catch (error) {
+        console.error('❌ Public track error:', error);
+        res.status(500).json({ error: 'Failed to get shipment' });
+    }
+});
+
+// ✅ PUBLIC - Track package and send emails
 app.post('/api/track', async (req, res) => {
     try {
         const { trackingCode, userEmail } = req.body;
@@ -763,12 +793,17 @@ app.post('/api/track', async (req, res) => {
             return res.status(400).json({ error: 'Tracking code and email are required' });
         }
 
+        console.log(`🔍 Tracking: ${trackingCode} for ${userEmail}`);
+
         const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
         if (!shipment) {
+            console.log(`❌ Tracking code not found: ${trackingCode}`);
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        const trackingLink = `${process.env.BASE_URL || 'http://localhost:3000'}/tracking-result.html?code=${shipment.trackingCode}`;
+        console.log(`✅ Found shipment: ${trackingCode}`);
+
+        const trackingLink = `${process.env.BASE_URL || 'https://swiftlogix.onrender.com'}/tracking-result.html?code=${shipment.trackingCode}`;
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
         const email1Result = await sendEmail(
             userEmail,
@@ -810,7 +845,7 @@ app.post('/api/track', async (req, res) => {
             message: '✅ Tracking details sent to your email. Full invoice sent to receiver.'
         });
     } catch (error) {
-        console.error('Track error:', error);
+        console.error('❌ Track error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -826,14 +861,12 @@ app.post('/api/chat/start', async (req, res) => {
             return res.status(400).json({ error: 'Email and message are required' });
         }
 
-        // Check if user already has an open conversation
         let existingConversation = await ChatConversation.findOne({ 
             userEmail: userEmail,
             status: { $in: ['open', 'in_progress'] }
         });
 
         if (existingConversation) {
-            // Add message to existing conversation
             const newMessage = new ChatMessage({
                 conversationId: existingConversation.conversationId,
                 messageId: uuidv4(),
@@ -849,7 +882,6 @@ app.post('/api/chat/start', async (req, res) => {
             existingConversation.lastMessageAt = new Date();
             await existingConversation.save();
 
-            // Notify admin via WebSocket if online
             if (adminOnline && adminSocketId) {
                 io.to('admin-room').emit('new-user-message', {
                     conversationId: existingConversation.conversationId,
@@ -867,7 +899,6 @@ app.post('/api/chat/start', async (req, res) => {
             });
         }
 
-        // Create new conversation
         const conversationId = uuidv4();
         const conversation = new ChatConversation({
             conversationId,
@@ -882,7 +913,6 @@ app.post('/api/chat/start', async (req, res) => {
         });
         await conversation.save();
 
-        // Create first message
         const messageId = uuidv4();
         const chatMessage = new ChatMessage({
             conversationId,
@@ -895,7 +925,6 @@ app.post('/api/chat/start', async (req, res) => {
         });
         await chatMessage.save();
 
-        // Notify admin via WebSocket if online
         if (adminOnline && adminSocketId) {
             io.to('admin-room').emit('new-user-message', {
                 conversationId,
@@ -929,7 +958,6 @@ app.get('/api/chat/:conversationId/messages', async (req, res) => {
 
         const messages = await ChatMessage.find({ conversationId }).sort({ timestamp: 1 });
         
-        // Mark messages as read for admin
         if (req.query.admin === 'true') {
             await ChatMessage.updateMany(
                 { conversationId, sender: 'user', read: false },
@@ -989,7 +1017,6 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         }
         await conversation.save();
 
-        // If admin sent message, notify via WebSocket
         if (sender === 'admin' && adminOnline && adminSocketId) {
             io.to('admin-room').emit('admin-message-sent', {
                 conversationId,
@@ -1024,7 +1051,6 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
                 read: false
             });
 
-            // Get message count
             const messageCount = await ChatMessage.countDocuments({
                 conversationId: conv.conversationId
             });
@@ -1074,7 +1100,6 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
         conversation.updatedAt = new Date();
         await conversation.save();
 
-        // Add system message
         const systemMessage = new ChatMessage({
             conversationId,
             messageId: uuidv4(),
@@ -1167,9 +1192,9 @@ createDefaultAdmin().then(() => {
         console.log('🚀 SwiftLogix Logistics Server');
         console.log('='.repeat(70));
         console.log(`📍 URL: http://localhost:${PORT}`);
-        console.log(`👑 Admin: ${process.env.ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD}`);
+        console.log(`👑 Admin: ${process.env.ADMIN_USERNAME || 'igwe'} / ${process.env.ADMIN_PASSWORD || 'dev'}`);
         console.log(`📊 Database: MongoDB Connected`);
-        console.log(`📧 Email: Resend API (support@swiftlogix.biz)`);
+        console.log(`📧 Email: Resend API (${EMAIL_FROM})`);
         console.log(`💬 Chat Support: Enabled with WebSocket`);
         console.log(`🔌 WebSocket: Active on /socket.io/`);
         console.log('='.repeat(70) + '\n');
