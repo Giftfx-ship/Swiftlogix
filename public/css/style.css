@@ -6,7 +6,6 @@
 }
 
 :root {
-    /* FedEx Inspired Colors */
     --primary: #6C1B8C;
     --primary-light: #8B3AB8;
     --primary-dark: #4A0F6B;
@@ -80,7 +79,7 @@ img {
     color: #fff;
 }
 
-/* ==================== LOADING ANIMATION - TRUCK CENTERED ==================== */
+/* ==================== LOADING ANIMATION - TRUCK ==================== */
 .loader-wrapper {
     position: fixed;
     top: 0;
@@ -102,7 +101,6 @@ img {
     pointer-events: none;
 }
 
-/* Road - Centered */
 .loader-road {
     position: absolute;
     bottom: 22%;
@@ -127,22 +125,17 @@ img {
     100% { transform: translateX(-40px); }
 }
 
-/* Truck Container - Centered */
 .loader-truck-container {
     position: relative;
     z-index: 2;
     margin-bottom: 40px;
 }
-
-/* Truck - Static in center */
 .loader-truck {
     position: relative;
     width: 320px;
     height: 150px;
     margin: 0 auto;
 }
-
-/* Cargo Area */
 .loader-truck .cargo {
     position: absolute;
     left: 0;
@@ -193,7 +186,6 @@ img {
     background: repeating-linear-gradient(90deg, transparent 0px, transparent 30px, rgba(108, 27, 140, 0.05) 30px, rgba(108, 27, 140, 0.05) 31px);
 }
 
-/* Cabin */
 .loader-truck .cabin {
     position: absolute;
     right: 0;
@@ -264,7 +256,6 @@ img {
 .loader-truck .cabin .headlight.left { left: -10px; }
 .loader-truck .cabin .headlight.right { left: 18px; }
 
-/* Wheels */
 .loader-truck .wheel {
     position: absolute;
     bottom: -12px;
@@ -296,7 +287,6 @@ img {
 .loader-truck .wheel.rear { left: 30px; }
 .loader-truck .wheel.rear2 { left: 55px; }
 
-/* Exhaust */
 .loader-truck .exhaust {
     position: absolute;
     bottom: 28px;
@@ -323,7 +313,6 @@ img {
     100% { transform: scale(2); opacity: 0; }
 }
 
-/* Loader Text */
 .loader-text-container {
     position: relative;
     text-align: center;
@@ -345,7 +334,6 @@ img {
     margin-top: 6px;
 }
 
-/* Progress Bar - Centered */
 .loader-progress-container {
     position: relative;
     width: 320px;
@@ -404,15 +392,15 @@ img {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 1.2rem 5%;
-    background: rgba(10, 14, 26, 0.92);
+    padding: 1rem 5%;
+    background: rgba(10, 14, 26, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     transition: all var(--transition);
 }
 
 .navbar.scrolled {
-    padding: 0.8rem 5%;
+    padding: 0.7rem 5%;
     background: rgba(10, 14, 26, 0.98);
 }
 
@@ -424,20 +412,15 @@ img {
     align-items: center;
 }
 
-.navbar .logo {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.navbar .logo img {
+    height: 50px;
+    width: auto;
+    display: block;
+    transition: all 0.3s ease;
 }
-
-.navbar .logo .purple {
-    -webkit-text-fill-color: #6C1B8C;
-}
-.navbar .logo .orange {
-    -webkit-text-fill-color: #FF6600;
+.navbar .logo img:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
 }
 
 .navbar .nav-links {
@@ -659,7 +642,7 @@ img {
 }
 
 .footer .footer-col .social-links a:hover {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     transform: translateY(-3px);
 }
 
@@ -701,7 +684,7 @@ img {
     color: var(--secondary);
 }
 
-/* ==================== CHAT WIDGET - FIXED ==================== */
+/* ==================== CHAT WIDGET ==================== */
 .chat-widget {
     position: fixed;
     bottom: 30px;
@@ -998,6 +981,9 @@ img {
     .loader-text-container .loader-sub {
         font-size: 10px;
     }
+    .navbar .logo img {
+        height: 40px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1069,5 +1055,9 @@ img {
     .chat-widget .chat-footer input {
         font-size: 13px;
         padding: 0.6rem 1rem;
+    }
+
+    .navbar .logo img {
+        height: 35px;
     }
 }
