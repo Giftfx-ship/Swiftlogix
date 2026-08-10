@@ -17,18 +17,16 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// ==================== 📝 LOGGING ====================
+// ==================== LOGGING ====================
 const log = {
     info: (msg) => console.log(`\x1b[36m[INFO]\x1b[0m ${msg}`),
     success: (msg) => console.log(`\x1b[32m[SUCCESS]\x1b[0m ${msg}`),
     error: (msg) => console.log(`\x1b[31m[ERROR]\x1b[0m ${msg}`),
-    debug: (msg) => console.log(`\x1b[35m[DEBUG]\x1b[0m ${msg}`),
     email: (msg) => console.log(`\x1b[36m[📧]\x1b[0m ${msg}`),
-    track: (msg) => console.log(`\x1b[34m[🔍]\x1b[0m ${msg}`),
     separator: () => console.log('\n' + '='.repeat(70) + '\n')
 };
 
-// ==================== ✅ RESEND SETUP ====================
+// ==================== RESEND SETUP ====================
 log.separator();
 log.info('🔑 Initializing Resend...');
 
@@ -37,7 +35,7 @@ const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix Support <support@swiftl
 const BASE_URL = process.env.BASE_URL || 'https://swift-logix-7t9y.onrender.com';
 
 if (!RESEND_API_KEY) {
-    log.error('❌ RESEND_API_KEY missing! Add to .env');
+    log.error('❌ RESEND_API_KEY missing!');
 } else {
     log.success(`✅ API Key found (${RESEND_API_KEY.length} chars)`);
 }
@@ -168,7 +166,7 @@ const EmailLog = mongoose.model('EmailLog', emailLogSchema);
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
-// ==================== ✅ EMAIL SERVICE ====================
+// ==================== EMAIL SERVICE ====================
 
 const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = '') => {
     try {
@@ -176,7 +174,7 @@ const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = ''
             return { success: false, error: 'API key missing' };
         }
 
-        log.email(`📧 Sending ${type} email to ${to}...`);
+        log.email(`📧 Sending to ${to}...`);
         
         const { data, error } = await resend.emails.send({
             from: EMAIL_FROM,
@@ -191,7 +189,7 @@ const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = ''
             return { success: false, error: error.message };
         }
 
-        log.success(`✅ ${type} email sent! ID: ${data?.id}`);
+        log.success(`✅ Sent! ID: ${data?.id}`);
         await logEmailToDB(trackingCode, type, to, subject, 'sent', null, data?.id);
         return { success: true, resendId: data?.id };
     } catch (error) {
@@ -209,58 +207,62 @@ const logEmailToDB = async (trackingCode, emailType, recipient, subject, status,
     }
 };
 
-// ==================== ✅ TEST EMAIL ON STARTUP ====================
+// ==================== TEST EMAIL ON STARTUP ====================
 
 const sendTestEmail = async () => {
     log.separator();
-    log.info('📧 Sending test email to devvgift@gmail.com...');
+    log.info('📧 Sending test email...');
     
     const testHTML = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #fff; padding: 40px; }
-                .container { max-width: 600px; margin: 0 auto; background: #12121f; border-radius: 24px; padding: 40px; border: 1px solid rgba(0,242,254,0.15); }
-                .logo { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-                .logo span { -webkit-text-fill-color: #00f2fe; }
-                .badge { display: inline-block; padding: 4px 16px; background: rgba(0,242,254,0.12); border: 1px solid rgba(0,242,254,0.2); border-radius: 50px; font-size: 11px; color: #00f2fe; letter-spacing: 2px; text-transform: uppercase; }
-                h1 { font-size: 24px; margin: 20px 0 10px; }
-                p { color: rgba(255,255,255,0.6); line-height: 1.6; }
-                .divider { height: 1px; background: rgba(255,255,255,0.05); margin: 20px 0; }
-                .status { display: inline-block; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 600; background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.3); color: #0f0; }
-                .footer { text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; margin-top: 20px; }
-                .log { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; font-family: monospace; font-size: 12px; color: rgba(255,255,255,0.5); }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="logo">Swift<span>Logix</span></div>
-                <div class="badge">✦ SYSTEM TEST ✦</div>
-                <h1>✅ Email Service Working!</h1>
-                <p>This test email confirms Resend is properly configured.</p>
-                <div class="divider"></div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;">
-                    <span class="status">✅ Resend Connected</span>
-                    <span class="status">✅ API Key Valid</span>
-                    <span class="status">✅ Domain Verified</span>
-                </div>
-                <div class="log">
-                    <div>📧 From: ${EMAIL_FROM}</div>
-                    <div>🔑 API Key: ${RESEND_API_KEY ? '✅ Configured' : '❌ Missing'}</div>
-                    <div>📤 Sent at: ${new Date().toLocaleString()}</div>
-                </div>
-                <div class="footer">
-                    <p>© 2026 SwiftLogix Logistics. All rights reserved.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-    `;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Email</title>
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f8fafc;padding:20px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:20px 0;">
+        <tr>
+            <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="padding:28px 30px 20px;text-align:center;border-bottom:1px solid #e2e8f0;">
+                            <div style="font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-0.5px;">
+                                Swift<span style="color:#06b6d4;">Logix</span>
+                            </div>
+                            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">System Test</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:30px;text-align:center;">
+                            <div style="display:inline-block;padding:6px 18px;border-radius:50px;font-size:13px;font-weight:600;background:#22c55e15;color:#22c55e;border:1px solid #22c55e30;">✅ Connected</div>
+                            <div style="font-size:20px;font-weight:600;color:#0f172a;margin-top:12px;">Email Service Working</div>
+                            <div style="font-size:14px;color:#475569;margin-top:4px;max-width:400px;margin-left:auto;margin-right:auto;">
+                                Resend is properly configured with your domain.
+                            </div>
+                            <div style="margin-top:16px;background:#f8fafc;border-radius:8px;padding:14px;text-align:left;font-size:13px;color:#475569;">
+                                <div><span style="color:#94a3b8;">From:</span> ${EMAIL_FROM}</div>
+                                <div style="margin-top:2px;"><span style="color:#94a3b8;">Status:</span> <span style="color:#22c55e;">✅ Verified</span></div>
+                                <div style="margin-top:2px;"><span style="color:#94a3b8;">Sent:</span> ${new Date().toLocaleString()}</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:16px 30px;text-align:center;border-top:1px solid #e2e8f0;">
+                            <div style="font-size:12px;color:#94a3b8;">© 2026 SwiftLogix Logistics</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
 
     const result = await sendEmail(
         'devvgift@gmail.com',
-        '✅ SwiftLogix Test Email - System Connected',
+        'SwiftLogix System Test',
         testHTML,
         'test',
         'TEST'
@@ -290,169 +292,147 @@ const createDefaultAdmin = async () => {
     }
 };
 
-// ==================== EMAIL TEMPLATES ====================
+// ==================== CLEAN EMAIL TEMPLATES ====================
 
 const getTrackingEmailHTML = (shipment, userEmail, trackingLink) => {
     const { trackingCode, statusText, statusDesc, sender, receiver, parcel } = shipment;
-    const statusColor = statusText === 'Delivered' ? '#4CAF50' :
-                       statusText === 'Custom Hold' ? '#ff4444' :
-                       statusText === 'On The Way' ? '#00f2fe' : '#ffa500';
+    const statusColor = statusText === 'Delivered' ? '#22c55e' :
+                       statusText === 'Custom Hold' ? '#ef4444' :
+                       statusText === 'On The Way' ? '#06b6d4' : '#f59e0b';
 
     return `<!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Tracking Update - SwiftLogix</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a12;padding:40px 20px}
-.wrapper{max-width:580px;margin:0 auto;background:#12121f;border-radius:24px;overflow:hidden;border:1px solid rgba(0,242,254,0.15);box-shadow:0 30px 80px rgba(0,0,0,0.6)}
-.glow{height:4px;background:linear-gradient(90deg,#00f2fe,#00d4ff,#00f2fe);background-size:200% 100%;animation:s 3s ease-in-out infinite}
-@keyframes s{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.header{padding:35px 40px 25px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05)}
-.logo{font-size:30px;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo span{-webkit-text-fill-color:#00f2fe}
-.badge{display:inline-block;margin-top:10px;padding:4px 18px;background:rgba(0,242,254,0.12);border:1px solid rgba(0,242,254,0.2);border-radius:50px;font-size:11px;color:#00f2fe;letter-spacing:2px;text-transform:uppercase;font-weight:600}
-.content{padding:35px 40px 30px}
-.greeting{font-size:24px;font-weight:700;color:#fff;margin-bottom:6px}
-.greeting-sub{color:#888;font-size:14px;margin-bottom:25px}
-.status-box{background:rgba(0,242,254,0.08);border:1px solid rgba(0,242,254,0.2);border-radius:16px;padding:20px;text-align:center;margin-bottom:25px}
-.status-box .status{font-size:20px;font-weight:700;color:${statusColor}}
-.status-box .desc{color:#aaa;font-size:14px;margin-top:4px}
-.info-grid{display:grid;gap:12px;margin-bottom:25px}
-.info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.info-row .label{color:#888;font-size:13px}
-.info-row .value{color:#fff;font-weight:500;font-size:13px}
-.btn{display:block;text-align:center;padding:14px;background:linear-gradient(135deg,#00f2fe,#00d4ff);border-radius:60px;color:#0a0a12;font-weight:700;text-decoration:none;font-size:15px}
-.footer{padding:25px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.05)}
-.footer p{color:#666;font-size:12px;margin:4px 0}
-.footer .brand{color:#00f2fe;font-weight:600;font-size:14px}
-</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Update</title>
 </head>
-<body>
-<div class="wrapper">
-<div class="glow"></div>
-<div class="header"><div class="logo">Swift<span>Logix</span></div><div class="badge">✦ Premium Logistics ✦</div></div>
-<div class="content">
-<div class="greeting">Tracking Update</div>
-<div class="greeting-sub">Your package is on its way</div>
-<div class="status-box"><div class="status">${statusText}</div><div class="desc">${statusDesc || 'Your shipment is being processed'}</div></div>
-<div class="info-grid">
-<div class="info-row"><span class="label">Tracking Number</span><span class="value">${trackingCode}</span></div>
-<div class="info-row"><span class="label">Sender</span><span class="value">${sender.name} (${sender.country})</span></div>
-<div class="info-row"><span class="label">Receiver</span><span class="value">${receiver.name} (${receiver.country})</span></div>
-<div class="info-row"><span class="label">Weight</span><span class="value">${parcel.weight}</span></div>
-<div class="info-row"><span class="label">Type</span><span class="value">${parcel.type}</span></div>
-<div class="info-row"><span class="label">Expected Delivery</span><span class="value" style="color:#00f2fe">${parcel.expectedDelivery}</span></div>
-</div>
-<a href="${trackingLink}" class="btn">🔍 Track Your Package Live</a>
-<p style="color:#666;font-size:13px;text-align:center;margin-top:20px">Sent to: <strong style="color:#aaa">${userEmail}</strong></p>
-</div>
-<div class="footer"><p class="brand">✦ SwiftLogix Logistics ✦</p><p>Global Logistics Intelligence</p><p>© 2026 SwiftLogix. All rights reserved.</p></div>
-</div>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f8fafc;padding:20px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:20px 0;">
+        <tr>
+            <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="padding:28px 30px 20px;text-align:center;border-bottom:1px solid #e2e8f0;">
+                            <div style="font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-0.5px;">
+                                Swift<span style="color:#06b6d4;">Logix</span>
+                            </div>
+                            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Premium Logistics</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:24px 30px 20px;text-align:center;">
+                            <div style="display:inline-block;padding:6px 18px;border-radius:50px;font-size:13px;font-weight:600;background:${statusColor}15;color:${statusColor};border:1px solid ${statusColor}30;">
+                                ${statusText || 'In Transit'}
+                            </div>
+                            <div style="font-size:20px;font-weight:600;color:#0f172a;margin-top:8px;letter-spacing:1px;">
+                                ${trackingCode}
+                            </div>
+                            <div style="font-size:14px;color:#475569;margin-top:4px;">
+                                ${statusDesc || 'Your shipment is being processed'}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:0 30px;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#94a3b8;font-size:13px;">Sender</span><span style="float:right;font-size:13px;color:#0f172a;font-weight:500;">${sender.name}</span></td></tr>
+                                <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#94a3b8;font-size:13px;">Receiver</span><span style="float:right;font-size:13px;color:#0f172a;font-weight:500;">${receiver.name}</span></td></tr>
+                                <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#94a3b8;font-size:13px;">Weight</span><span style="float:right;font-size:13px;color:#0f172a;font-weight:500;">${parcel.weight}</span></td></tr>
+                                <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#94a3b8;font-size:13px;">Type</span><span style="float:right;font-size:13px;color:#0f172a;font-weight:500;">${parcel.type}</span></td></tr>
+                                <tr><td style="padding:10px 0;"><span style="color:#94a3b8;font-size:13px;">Expected Delivery</span><span style="float:right;font-size:13px;color:#06b6d4;font-weight:600;">${parcel.expectedDelivery}</span></td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:24px 30px 20px;text-align:center;">
+                            <a href="${trackingLink}" style="display:inline-block;padding:12px 32px;background:#0f172a;color:#ffffff;font-size:14px;font-weight:600;border-radius:50px;text-decoration:none;">Track Package →</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:16px 30px;text-align:center;border-top:1px solid #e2e8f0;">
+                            <div style="font-size:12px;color:#94a3b8;">© 2026 SwiftLogix Logistics</div>
+                            <div style="font-size:11px;color:#cbd5e1;margin-top:2px;">Sent to ${userEmail}</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>`;
 };
 
 const getInvoiceEmailHTML = (shipment) => {
-    const { trackingCode, statusText, statusDesc, lastUpdated, sender, receiver, parcel, invoice, timeline, origin, destination } = shipment;
-    const statusColor = statusText === 'Delivered' ? '#4CAF50' :
-                       statusText === 'Custom Hold' ? '#ff4444' :
-                       statusText === 'On The Way' ? '#00f2fe' : '#ffa500';
-
-    let timelineHTML = timeline.map(item => {
-        const icon = item.completed ? '✅' : item.active ? '🔄' : '⏳';
-        return `<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);gap:12px">
-            <span style="font-size:18px">${icon}</span>
-            <div style="flex:1"><div style="color:#fff;font-weight:500;font-size:14px">${item.title}</div><div style="color:#888;font-size:12px">${item.desc}</div></div>
-            <div style="color:#666;font-size:12px">${item.date}</div>
-        </div>`;
-    }).join('');
-
+    const { trackingCode, statusText, sender, receiver, invoice } = shipment;
+    
     return `<!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Invoice - SwiftLogix</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a12;padding:40px 20px}
-.wrapper{max-width:680px;margin:0 auto;background:#12121f;border-radius:24px;overflow:hidden;border:1px solid rgba(0,242,254,0.15);box-shadow:0 30px 80px rgba(0,0,0,0.6)}
-.glow{height:4px;background:linear-gradient(90deg,#00f2fe,#00d4ff,#00f2fe);background-size:200% 100%;animation:s 3s ease-in-out infinite}
-@keyframes s{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.header{padding:35px 40px 25px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05)}
-.logo{font-size:30px;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo span{-webkit-text-fill-color:#00f2fe}
-.badge{display:inline-block;margin-top:10px;padding:4px 18px;background:rgba(0,242,254,0.12);border:1px solid rgba(0,242,254,0.2);border-radius:50px;font-size:11px;color:#00f2fe;letter-spacing:2px;text-transform:uppercase;font-weight:600}
-.content{padding:35px 40px 30px}
-.invoice-title{text-align:center;font-size:28px;font-weight:700;color:#fff;margin-bottom:4px}
-.invoice-sub{text-align:center;color:#888;font-size:14px;margin-bottom:25px}
-.status-badge{display:inline-block;padding:6px 20px;border-radius:50px;font-weight:600;font-size:14px;color:${statusColor};border:1px solid ${statusColor};background:rgba(${statusColor === '#4CAF50' ? '76,175,80' : statusColor === '#00f2fe' ? '0,242,254' : statusColor === '#ff4444' ? '255,68,68' : '255,165,0'},0.1)}
-.section{margin:25px 0}
-.section-title{font-size:14px;font-weight:700;color:#00f2fe;text-transform:uppercase;letter-spacing:1px;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid rgba(0,242,254,0.15)}
-.info-grid{display:grid;gap:10px}
-.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.info-row .label{color:#888;font-size:13px}
-.info-row .value{color:#fff;font-weight:500;font-size:13px}
-.info-row .value.gold{color:#ffd700}
-.stamp-box{text-align:center;padding:20px;background:rgba(255,215,0,0.08);border:2px solid #ffd700;border-radius:16px;margin:25px 0}
-.stamp-box .stamp{font-size:18px;font-weight:700;color:#ffd700}
-.stamp-box .sub{color:#aaa;font-size:13px;margin-top:4px}
-.footer{padding:25px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.05)}
-.footer p{color:#666;font-size:12px;margin:4px 0}
-.footer .brand{color:#00f2fe;font-weight:600;font-size:14px}
-</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Invoice</title>
 </head>
-<body>
-<div class="wrapper">
-<div class="glow"></div>
-<div class="header"><div class="logo">Swift<span>Logix</span></div><div class="badge">✦ OFFICIAL INVOICE ✦</div></div>
-<div class="content">
-<div class="invoice-title">📄 Package Invoice</div>
-<div class="invoice-sub"><span class="status-badge">${statusText}</span><span style="color:#666;margin-left:12px">${trackingCode}</span></div>
-<div class="section"><div class="section-title">📋 Tracking Information</div>
-<div class="info-grid">
-<div class="info-row"><span class="label">Tracking Number</span><span class="value">${trackingCode}</span></div>
-<div class="info-row"><span class="label">Status</span><span class="value" style="color:${statusColor}">${statusText}</span></div>
-<div class="info-row"><span class="label">Status Description</span><span class="value">${statusDesc || 'N/A'}</span></div>
-<div class="info-row"><span class="label">Last Updated</span><span class="value">${lastUpdated}</span></div>
-<div class="info-row"><span class="label">Origin</span><span class="value">${origin}</span></div>
-<div class="info-row"><span class="label">Destination</span><span class="value">${destination}</span></div>
-</div></div>
-<div class="section"><div class="section-title">👤 Sender Information</div>
-<div class="info-grid">
-<div class="info-row"><span class="label">Name</span><span class="value">${sender.name}</span></div>
-<div class="info-row"><span class="label">Country</span><span class="value">${sender.country}</span></div>
-<div class="info-row"><span class="label">Address</span><span class="value">${sender.address || sender.country}</span></div>
-<div class="info-row"><span class="label">Phone</span><span class="value">${sender.phone}</span></div>
-</div></div>
-<div class="section"><div class="section-title">👤 Receiver Information</div>
-<div class="info-grid">
-<div class="info-row"><span class="label">Name</span><span class="value">${receiver.name}</span></div>
-<div class="info-row"><span class="label">Country</span><span class="value">${receiver.country}</span></div>
-<div class="info-row"><span class="label">Address</span><span class="value">${receiver.address || receiver.country}</span></div>
-<div class="info-row"><span class="label">Phone</span><span class="value">${receiver.phone}</span></div>
-<div class="info-row"><span class="label">Email</span><span class="value" style="color:#00f2fe">${receiver.email}</span></div>
-</div></div>
-<div class="section"><div class="section-title">📦 Parcel Details</div>
-<div class="info-grid">
-<div class="info-row"><span class="label">Weight</span><span class="value">${parcel.weight}</span></div>
-<div class="info-row"><span class="label">Type</span><span class="value">${parcel.type}</span></div>
-<div class="info-row"><span class="label">Duty Fees</span><span class="value" style="color:${parcel.dutyFeesStatus === 'Paid' ? '#4CAF50' : '#ffa500'}">${parcel.dutyFeesStatus} (${parcel.dutyFeesAmount})</span></div>
-<div class="info-row"><span class="label">Pickup Date</span><span class="value">${parcel.pickupDate || 'N/A'}</span></div>
-<div class="info-row"><span class="label">Expected Delivery</span><span class="value" style="color:#00f2fe">${parcel.expectedDelivery}</span></div>
-</div></div>
-<div class="section"><div class="section-title">💰 Invoice Details</div>
-<div class="info-grid">
-<div class="info-row"><span class="label">Order ID</span><span class="value">${invoice.orderId || 'N/A'}</span></div>
-<div class="info-row"><span class="label">Booking Mode</span><span class="value">${invoice.bookingMode}</span></div>
-<div class="info-row"><span class="label">Shipping Cost</span><span class="value">${invoice.shipmentCost}</span></div>
-<div class="info-row"><span class="label">Clearance Cost</span><span class="value">${invoice.clearanceCost}</span></div>
-<div class="info-row" style="border-bottom:2px solid rgba(255,215,0,0.3);padding-bottom:12px"><span class="label" style="font-weight:700;color:#ffd700">Total Amount</span><span class="value gold" style="font-weight:700;font-size:18px">${invoice.totalAmount}</span></div>
-<div class="info-row"><span class="label">Payment Status</span><span class="value" style="color:${invoice.paymentStatus === 'Paid' ? '#4CAF50' : '#ffa500'}">${invoice.paymentStatus}</span></div>
-</div></div>
-<div class="section"><div class="section-title">📊 Tracking Timeline</div>${timelineHTML}</div>
-<div class="stamp-box"><div class="stamp">✅ OFFICIAL STAMP</div><div class="sub">Verified & Approved • Digitally Signed</div></div>
-<div style="text-align:center;padding:10px;background:rgba(0,242,254,0.05);border-radius:12px"><p style="color:#666;font-size:12px">Payment Methods: 💳 Credit Card • 🏦 Bank Transfer • ₿ Bitcoin • 🎁 Gift Cards</p></div>
-</div>
-<div class="footer"><p class="brand">✦ SwiftLogix Logistics ✦</p><p>Global Logistics Intelligence</p><p>© 2026 SwiftLogix. All rights reserved.</p></div>
-</div>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f8fafc;padding:20px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:20px 0;">
+        <tr>
+            <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="padding:28px 30px 20px;text-align:center;border-bottom:1px solid #e2e8f0;">
+                            <div style="font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-0.5px;">
+                                Swift<span style="color:#06b6d4;">Logix</span>
+                            </div>
+                            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Package Invoice</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:20px 30px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border-radius:8px;padding:12px 16px;">
+                                <tr><td style="font-size:12px;color:#94a3b8;">Tracking Code</td><td style="text-align:right;font-size:14px;font-weight:600;color:#0f172a;letter-spacing:1px;">${trackingCode}</td></tr>
+                                <tr><td style="font-size:12px;color:#94a3b8;padding-top:4px;">Status</td><td style="text-align:right;font-size:13px;font-weight:500;color:#06b6d4;padding-top:4px;">${statusText}</td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:0 30px;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="50%" style="vertical-align:top;padding-bottom:16px;">
+                                        <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Sender</div>
+                                        <div style="font-size:14px;color:#0f172a;font-weight:500;">${sender.name}</div>
+                                        <div style="font-size:13px;color:#475569;">${sender.country}</div>
+                                    </td>
+                                    <td width="50%" style="vertical-align:top;padding-bottom:16px;">
+                                        <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Receiver</div>
+                                        <div style="font-size:14px;color:#0f172a;font-weight:500;">${receiver.name}</div>
+                                        <div style="font-size:13px;color:#475569;">${receiver.country}</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:0 30px 16px;">
+                            <div style="border-top:1px solid #e2e8f0;padding-top:16px;">
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr><td style="font-size:13px;color:#475569;">Shipping</td><td style="text-align:right;font-size:13px;color:#0f172a;">${invoice.shipmentCost}</td></tr>
+                                    <tr><td style="font-size:13px;color:#475569;padding-top:4px;">Clearance</td><td style="text-align:right;font-size:13px;color:#0f172a;padding-top:4px;">${invoice.clearanceCost}</td></tr>
+                                    <tr><td style="font-size:16px;font-weight:700;color:#0f172a;padding-top:8px;border-top:1px solid #e2e8f0;">Total</td><td style="text-align:right;font-size:18px;font-weight:700;color:#0f172a;padding-top:8px;border-top:1px solid #e2e8f0;">${invoice.totalAmount}</td></tr>
+                                    <tr><td style="font-size:12px;color:#94a3b8;padding-top:6px;">Payment</td><td style="text-align:right;font-size:12px;font-weight:500;color:#22c55e;padding-top:6px;">${invoice.paymentStatus}</td></tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:16px 30px;text-align:center;border-top:1px solid #e2e8f0;">
+                            <div style="font-size:12px;color:#94a3b8;">© 2026 SwiftLogix Logistics</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>`;
 };
@@ -678,7 +658,7 @@ app.post('/api/admin/shipments/:code/send-invoice', authMiddleware, async (req, 
         const html = getInvoiceEmailHTML(shipment);
         const result = await sendEmail(
             shipment.receiver.email,
-            `📄 SwiftLogix Package Invoice - ${trackingCode}`,
+            `SwiftLogix Invoice - ${trackingCode}`,
             html,
             'invoice',
             trackingCode
@@ -713,92 +693,68 @@ app.get('/api/admin/search/:query', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== ✅ PUBLIC TRACKING ENDPOINTS ====================
+// ==================== PUBLIC TRACKING ENDPOINTS ====================
 
-// ✅ GET shipment by tracking code (PUBLIC)
 app.get('/api/track/:trackingCode', async (req, res) => {
     try {
         const trackingCode = req.params.trackingCode.toUpperCase();
-        log.track(`🔍 GET /api/track/${trackingCode}`);
-        
         const shipment = await Shipment.findOne({ trackingCode });
-        if (!shipment) {
-            log.error(`❌ Not found: ${trackingCode}`);
-            return res.status(404).json({ error: 'Tracking number not found' });
-        }
-        
-        log.success(`✅ Found: ${trackingCode}`);
+        if (!shipment) return res.status(404).json({ error: 'Tracking number not found' });
         res.json(shipment);
     } catch (error) {
-        log.error(`❌ Error:`, error.message);
         res.status(500).json({ error: 'Failed to get shipment' });
     }
 });
 
-// ✅ POST - Find shipment only (NO EMAILS)
 app.post('/api/track', async (req, res) => {
     try {
         const { trackingCode } = req.body;
-        log.track(`🔍 POST /api/track - ${trackingCode}`);
-        
-        if (!trackingCode) {
-            return res.status(400).json({ error: 'Tracking code is required' });
-        }
+        if (!trackingCode) return res.status(400).json({ error: 'Tracking code is required' });
 
         const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
-        if (!shipment) {
-            log.error(`❌ Not found: ${trackingCode}`);
-            return res.status(404).json({ error: 'Tracking number not found' });
-        }
+        if (!shipment) return res.status(404).json({ error: 'Tracking number not found' });
 
-        log.success(`✅ Found: ${trackingCode}`);
         res.json({ success: true, shipment: shipment.toObject() });
     } catch (error) {
-        log.error(`❌ Error:`, error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// ✅ POST - Send BOTH emails to the user (AUTO-SEND on page load)
+// ✅ SEND EMAILS - Clean subject lines, no spammy words
 app.post('/api/send-email', async (req, res) => {
-    const startTime = Date.now();
-    const { trackingCode, userEmail } = req.body;
-    log.email(`📧 POST /api/send-email - ${trackingCode} -> ${userEmail}`);
-    
     try {
+        const { trackingCode, userEmail } = req.body;
         if (!trackingCode || !userEmail) {
             return res.status(400).json({ error: 'Tracking code and email are required' });
         }
 
         const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
         if (!shipment) {
-            log.error(`❌ Shipment not found: ${trackingCode}`);
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        // ✅ Email 1: Tracking Update
+        // ✅ Clean subject - no emojis, no "URGENT", no spam words
         const trackingLink = `${BASE_URL}/tracking-result.html?code=${shipment.trackingCode}`;
+        
+        // Email 1: Tracking Update
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
         const email1Result = await sendEmail(
             userEmail,
-            `📦 SwiftLogix Tracking Update - ${shipment.trackingCode}`,
+            `SwiftLogix Tracking - ${shipment.trackingCode}`,
             email1HTML,
             'tracking',
             shipment.trackingCode
         );
 
-        // ✅ Email 2: Invoice (to SAME user)
+        // Email 2: Invoice
         const email2HTML = getInvoiceEmailHTML(shipment);
         const email2Result = await sendEmail(
             userEmail,
-            `📄 SwiftLogix Package Invoice - ${shipment.trackingCode}`,
+            `SwiftLogix Invoice - ${shipment.trackingCode}`,
             email2HTML,
             'invoice',
             shipment.trackingCode
         );
-
-        const duration = Date.now() - startTime;
-        log.success(`✅ Both emails sent in ${duration}ms`);
 
         res.json({
             success: true,
@@ -806,11 +762,10 @@ app.post('/api/send-email', async (req, res) => {
             emails: {
                 tracking: { success: email1Result.success, recipient: userEmail },
                 invoice: { success: email2Result.success, recipient: userEmail }
-            },
-            message: '✅ Check your email!'
+            }
         });
     } catch (error) {
-        log.error(`❌ Error:`, error.message);
+        console.error('Email error:', error);
         res.status(500).json({ error: 'Failed to send emails' });
     }
 });
@@ -819,33 +774,28 @@ app.post('/api/send-email', async (req, res) => {
 app.post('/api/chat/start', async (req, res) => {
     try {
         const { userEmail, userName, subject, message } = req.body;
-        if (!userEmail || !message) {
-            return res.status(400).json({ error: 'Email and message are required' });
-        }
+        if (!userEmail || !message) return res.status(400).json({ error: 'Email and message are required' });
 
-        let existingConversation = await ChatConversation.findOne({ 
-            userEmail, status: { $in: ['open', 'in_progress'] }
-        });
-
-        if (existingConversation) {
-            const newMessage = new ChatMessage({
-                conversationId: existingConversation.conversationId,
+        let existing = await ChatConversation.findOne({ userEmail, status: { $in: ['open', 'in_progress'] } });
+        if (existing) {
+            const msg = new ChatMessage({
+                conversationId: existing.conversationId,
                 messageId: uuidv4(),
                 sender: 'user',
                 senderName: userName || 'Guest',
                 message,
                 timestamp: new Date()
             });
-            await newMessage.save();
-            existingConversation.updatedAt = new Date();
-            existingConversation.unreadAdmin = true;
-            existingConversation.lastMessageAt = new Date();
-            await existingConversation.save();
-            return res.json({ success: true, conversationId: existingConversation.conversationId });
+            await msg.save();
+            existing.updatedAt = new Date();
+            existing.unreadAdmin = true;
+            existing.lastMessageAt = new Date();
+            await existing.save();
+            return res.json({ success: true, conversationId: existing.conversationId });
         }
 
         const conversationId = uuidv4();
-        const conversation = new ChatConversation({
+        const conv = new ChatConversation({
             conversationId,
             userEmail,
             userName: userName || 'Guest',
@@ -856,9 +806,9 @@ app.post('/api/chat/start', async (req, res) => {
             unreadAdmin: true,
             lastMessageAt: new Date()
         });
-        await conversation.save();
+        await conv.save();
 
-        const chatMessage = new ChatMessage({
+        const msg = new ChatMessage({
             conversationId,
             messageId: uuidv4(),
             sender: 'user',
@@ -866,7 +816,7 @@ app.post('/api/chat/start', async (req, res) => {
             message,
             timestamp: new Date()
         });
-        await chatMessage.save();
+        await msg.save();
 
         res.json({ success: true, conversationId, isNew: true });
     } catch (error) {
@@ -896,7 +846,7 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         const conversation = await ChatConversation.findOne({ conversationId });
         if (!conversation) return res.status(404).json({ error: 'Conversation not found' });
 
-        const chatMessage = new ChatMessage({
+        const msg = new ChatMessage({
             conversationId,
             messageId: uuidv4(),
             sender: sender || 'user',
@@ -904,7 +854,7 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
             message,
             timestamp: new Date()
         });
-        await chatMessage.save();
+        await msg.save();
 
         conversation.updatedAt = new Date();
         conversation.lastMessageAt = new Date();
@@ -916,7 +866,7 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         }
         await conversation.save();
 
-        res.json({ success: true, message: chatMessage });
+        res.json({ success: true, message: msg });
     } catch (error) {
         res.status(500).json({ error: 'Failed to send message' });
     }
@@ -926,9 +876,9 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
     try {
         const conversations = await ChatConversation.find().sort({ updatedAt: -1 });
         const result = await Promise.all(conversations.map(async (conv) => {
-            const lastMessage = await ChatMessage.findOne({ conversationId: conv.conversationId }).sort({ timestamp: -1 });
-            const unreadCount = await ChatMessage.countDocuments({ conversationId: conv.conversationId, sender: 'user', read: false });
-            return { ...conv.toObject(), lastMessage: lastMessage?.message || 'No messages', unreadCount };
+            const last = await ChatMessage.findOne({ conversationId: conv.conversationId }).sort({ timestamp: -1 });
+            const unread = await ChatMessage.countDocuments({ conversationId: conv.conversationId, sender: 'user', read: false });
+            return { ...conv.toObject(), lastMessage: last?.message || 'No messages', unreadCount: unread };
         }));
         res.json({ success: true, conversations: result });
     } catch (error) {
@@ -983,11 +933,10 @@ const startServer = async () => {
         console.log(`📍 URL: ${BASE_URL}`);
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME || 'igwe'} / ${process.env.ADMIN_PASSWORD || 'dev'}`);
         console.log(`📊 Database: MongoDB Connected`);
-        console.log(`📧 Email: Resend API (${EMAIL_FROM})`);
-        console.log(`🔑 API Key: ${RESEND_API_KEY ? '✅ Configured' : '❌ Missing'}`);
+        console.log(`📧 Email: ${EMAIL_FROM}`);
+        console.log(`🔑 API Key: ${RESEND_API_KEY ? '✅' : '❌'}`);
         console.log('='.repeat(70) + '\n');
         
-        // ✅ Send test email on startup (like your working one)
         await sendTestEmail();
         console.log('\n✅ Server ready!');
     });
