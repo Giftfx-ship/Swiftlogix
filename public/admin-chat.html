@@ -6,322 +6,21 @@
     <title>Admin Chat - SwiftLogix</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#fff;min-height:100vh}
-
-        /* ==================== TRUCK LOADER ==================== */
-        .loader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0e1a;
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-            overflow: hidden;
-        }
-        .loader-wrapper.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .loader-road {
-            position: absolute;
-            bottom: 22%;
-            left: 5%;
-            width: 90%;
-            height: 4px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 2px;
-        }
-        .loader-road::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 100%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(108,27,140,0.3) 15px, rgba(108,27,140,0.3) 20px);
-            animation: roadMove 2s linear infinite;
-        }
-        @keyframes roadMove {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-40px); }
-        }
-        .loader-truck-container {
-            position: relative;
-            z-index: 2;
-            margin-bottom: 40px;
-        }
-        .loader-truck {
-            position: relative;
-            width: 320px;
-            height: 150px;
-            margin: 0 auto;
-        }
-        .loader-truck .cargo {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 230px;
-            height: 115px;
-            background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
-            border-radius: 8px 12px 8px 8px;
-            border: 2px solid rgba(108,27,140,0.3);
-            z-index: 2;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .loader-truck .cargo .brand {
-            font-size: 30px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            z-index: 3;
-        }
-        .loader-truck .cargo .brand .purple {
-            -webkit-text-fill-color: #6C1B8C;
-        }
-        .loader-truck .cargo .brand .orange {
-            -webkit-text-fill-color: #FF6600;
-        }
-        .loader-truck .cargo .door-line {
-            position: absolute;
-            top: 10%;
-            width: 2px;
-            height: 80%;
-            background: rgba(108,27,140,0.1);
-        }
-        .loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
-        .loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
-        .loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
-        .loader-truck .cargo::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 30px, rgba(108,27,140,0.05) 30px, rgba(108,27,140,0.05) 31px);
-        }
-        .loader-truck .cabin {
-            position: absolute;
-            right: 0;
-            top: 12px;
-            width: 95px;
-            height: 85px;
-            background: linear-gradient(180deg, #1a2a4a, #0a1628);
-            border-radius: 12px 20px 8px 8px;
-            border: 2px solid rgba(108,27,140,0.3);
-            z-index: 3;
-        }
-        .loader-truck .cabin .window {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            width: 40px;
-            height: 32px;
-            background: rgba(108,27,140,0.15);
-            border-radius: 8px 8px 0 0;
-            border: 1px solid rgba(108,27,140,0.2);
-            overflow: hidden;
-        }
-        .loader-truck .cabin .window::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(108,27,140,0.3), transparent);
-            animation: windowGlow 2s ease-in-out infinite;
-        }
-        @keyframes windowGlow {
-            0% { left: -100%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
-        }
-        .loader-truck .cabin .door {
-            position: absolute;
-            bottom: 10px;
-            right: 14px;
-            width: 24px;
-            height: 32px;
-            background: rgba(108,27,140,0.08);
-            border-radius: 4px 4px 0 0;
-            border: 1px solid rgba(108,27,140,0.12);
-        }
-        .loader-truck .cabin .door::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 4px;
-            height: 4px;
-            background: rgba(108,27,140,0.3);
-            border-radius: 50%;
-        }
-        .loader-truck .cabin .headlight {
-            position: absolute;
-            bottom: 8px;
-            width: 12px;
-            height: 6px;
-            background: rgba(255,102,0,0.6);
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 15px rgba(255,102,0,0.3);
-        }
-        .loader-truck .cabin .headlight.left { left: -10px; }
-        .loader-truck .cabin .headlight.right { left: 18px; }
-        .loader-truck .wheel {
-            position: absolute;
-            bottom: -12px;
-            width: 30px;
-            height: 30px;
-            background: radial-gradient(circle at 40% 35%, #2a2a3a, #0a0a12);
-            border-radius: 50%;
-            border: 3px solid #1a1a2a;
-            z-index: 4;
-            animation: wheelSpin 1s linear infinite;
-        }
-        @keyframes wheelSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .loader-truck .wheel::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background: rgba(108,27,140,0.2);
-            border-radius: 50%;
-            border: 1px solid rgba(108,27,140,0.1);
-        }
-        .loader-truck .wheel.front { right: 15px; }
-        .loader-truck .wheel.rear { left: 30px; }
-        .loader-truck .wheel.rear2 { left: 55px; }
-        .loader-truck .exhaust {
-            position: absolute;
-            bottom: 28px;
-            right: -6px;
-            width: 6px;
-            height: 14px;
-            background: #2a2a3a;
-            border-radius: 0 0 4px 4px;
-            z-index: 1;
-        }
-        .loader-truck .exhaust::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: -4px;
-            width: 14px;
-            height: 8px;
-            background: radial-gradient(ellipse, rgba(255,102,0,0.2), transparent);
-            border-radius: 50%;
-            animation: exhaustPuff 1s ease-out infinite;
-        }
-        @keyframes exhaustPuff {
-            0% { transform: scale(0.5); opacity: 0.8; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-        .loader-text-container {
-            position: relative;
-            text-align: center;
-            z-index: 5;
-            margin-top: 20px;
-        }
-        .loader-text-container .loader-title {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 5px;
-            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .loader-text-container .loader-sub {
-            color: #9aa8c9;
-            font-size: 12px;
-            letter-spacing: 3px;
-            margin-top: 6px;
-        }
-        .loader-progress-container {
-            position: relative;
-            width: 320px;
-            z-index: 5;
-            margin-top: 25px;
-        }
-        .loader-progress-container .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .loader-progress-container .progress-bar .fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #6C1B8C, #FF6600, #6C1B8C);
-            background-size: 200% 100%;
-            border-radius: 4px;
-            animation: progressFill 2s ease-in-out forwards, progressShine 1.5s ease-in-out infinite;
-        }
-        @keyframes progressFill {
-            0% { width: 0%; }
-            10% { width: 8%; }
-            25% { width: 22%; }
-            40% { width: 38%; }
-            55% { width: 52%; }
-            70% { width: 68%; }
-            85% { width: 85%; }
-            100% { width: 100%; }
-        }
-        @keyframes progressShine {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .loader-progress-container .progress-text {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 11px;
-            color: #667799;
-            letter-spacing: 1px;
-        }
-        .loader-progress-container .progress-text .percentage {
-            font-weight: 700;
-            font-size: 14px;
-            background: linear-gradient(135deg, #6C1B8C, #FF6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* ==================== NAVBAR ==================== */
+        
         .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,14,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,27,140,0.2)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-        .logo .purple{color:#6C1B8C}
-        .logo .orange{color:#FF6600}
-        .navbar .admin-info{display:flex;align-items:center;gap:1rem}
-        .navbar .admin-info span{color:#9aa8c9;font-size:0.8rem}
-        .navbar .admin-info .logout-btn{background:rgba(255,68,68,0.1);padding:0.5rem 1.5rem;border-radius:50px;color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all 0.3s;font-weight:600}
-        .navbar .admin-info .logout-btn:hover{background:rgba(255,68,68,0.2)}
+        .logo img{height:50px;width:auto;display:block;transition:all 0.3s ease}
+        .logo img:hover{transform:scale(1.05);filter:brightness(1.1)}
+        .admin-info{display:flex;align-items:center;gap:1rem}
+        .admin-info span{color:#9aa8c9;font-size:0.8rem}
+        .admin-info .logout-btn{background:rgba(255,68,68,0.1);padding:0.5rem 1.5rem;border-radius:50px;color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all 0.3s;font-weight:600}
+        .admin-info .logout-btn:hover{background:rgba(255,68,68,0.2)}
 
-        /* ==================== CHAT ADMIN PAGE ==================== */
-        .chat-admin-page{padding:2rem 5% 4rem;max-width:1400px;margin:0 auto}
+        .chat-admin-page{padding:8rem 5% 4rem;max-width:1400px;margin:0 auto}
         .chat-admin-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:2rem}
         .chat-admin-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
         .chat-admin-header .back-btn{padding:0.5rem 1.5rem;border-radius:50px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:all 0.3s}
@@ -329,12 +28,10 @@
 
         .chat-admin-grid{display:grid;grid-template-columns:350px 1fr;gap:2rem;min-height:500px}
 
-        /* Conversations List */
         .conversations-list{background:rgba(255,255,255,0.03);border-radius:24px;border:1px solid rgba(255,255,255,0.05);overflow:hidden;max-height:600px;display:flex;flex-direction:column}
         .conversations-list .list-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center}
         .conversations-list .list-header h3{font-size:1rem;font-weight:700;color:#8B3AB8}
         .conversations-list .list-header .unread-badge{background:#ff4444;color:#fff;font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:50px}
-
         .conversations-list .list-body{flex:1;overflow-y:auto}
         .conversation-item{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all 0.3s}
         .conversation-item:hover{background:rgba(255,255,255,0.05)}
@@ -351,12 +48,10 @@
         .conv-status.closed{background:rgba(255,255,255,0.1);color:#667799}
         .conv-unread{background:#ff4444;color:#fff;font-size:0.6rem;padding:0.1rem 0.5rem;border-radius:50px}
 
-        /* Chat Area */
         .chat-area{background:rgba(255,255,255,0.03);border-radius:24px;border:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;max-height:600px}
         .chat-area .chat-area-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center}
         .chat-area .chat-area-header .user-info h4{font-size:1rem;font-weight:700}
         .chat-area .chat-area-header .user-info .user-email{font-size:0.8rem;color:#667799}
-        .chat-area .chat-area-header .actions{display:flex;gap:0.5rem;align-items:center}
         .chat-area .chat-area-header .resolve-btn{padding:0.4rem 1.2rem;border-radius:50px;background:rgba(0,255,0,0.1);color:#0f0;border:1px solid rgba(0,255,0,0.2);cursor:pointer;transition:all 0.3s;font-size:0.8rem}
         .chat-area .chat-area-header .resolve-btn:hover{background:rgba(0,255,0,0.2)}
         .chat-area .chat-area-header .delete-all-btn{padding:0.4rem 1.2rem;border-radius:50px;background:rgba(255,68,68,0.1);color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all 0.3s;font-size:0.8rem}
@@ -386,91 +81,25 @@
         .no-conversations{text-align:center;padding:2rem;color:#667799}
         .no-conversations i{font-size:2rem;margin-bottom:1rem;opacity:0.3}
 
-        /* Footer */
-        .footer{background:#060a16;padding:2rem 5%;text-align:center;color:#667799;margin-top:4rem;border-top:1px solid rgba(108,27,140,0.2)}
-        .footer .footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-        .footer .footer-bottom p{color:#667799;font-size:13px}
-        .footer .footer-bottom .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
-        .footer .footer-bottom .footer-links a{color:#667799;font-size:13px;transition:color 0.3s;text-decoration:none}
-        .footer .footer-bottom .footer-links a:hover{color:#FF6600}
+        .footer{background:#060a16;padding:2rem 5%;text-align:center;border-top:1px solid rgba(108,27,140,0.2);margin-top:4rem}
+        .footer p{color:#667799;font-size:13px}
 
-        /* ==================== RESPONSIVE ==================== */
         @media(max-width:768px){
-            .menu-toggle{display:block}
-            .nav-links{position:fixed;top:70px;left:-100%;width:100%;background:rgba(10,14,26,0.98);flex-direction:column;padding:2rem;transition:left 0.3s;gap:1.5rem}
-            .nav-links.active{left:0}
             .chat-admin-grid{grid-template-columns:1fr}
             .conversations-list{max-height:300px}
             .chat-area{max-height:500px}
-            .loader-truck{width:260px;height:130px}
-            .loader-truck .cargo{width:190px;height:95px}
-            .loader-truck .cargo .brand{font-size:22px}
-            .loader-truck .cabin{width:80px;height:70px}
-            .loader-progress-container{width:260px}
-            .footer .footer-bottom{flex-direction:column;text-align:center}
-            .footer .footer-bottom .footer-links{justify-content:center}
+            .logo img{height:40px}
         }
-        @media(max-width:480px){
-            .loader-truck{width:200px;height:100px}
-            .loader-truck .cargo{width:140px;height:75px}
-            .loader-truck .cargo .brand{font-size:16px;letter-spacing:1px}
-            .loader-truck .cabin{width:60px;height:55px}
-            .loader-truck .cabin .window{width:22px;height:18px}
-            .loader-truck .wheel{width:20px;height:20px}
-            .loader-truck .wheel.front{right:10px}
-            .loader-truck .wheel.rear{left:18px}
-            .loader-truck .wheel.rear2{left:32px}
-            .loader-progress-container{width:200px}
-            .loader-text-container .loader-title{font-size:16px}
-            .loader-progress-container .progress-text{font-size:9px}
-            .loader-progress-container .progress-text .percentage{font-size:12px}
-            .chat-area .chat-messages .message{max-width:95%}
-            .chat-area .chat-area-header{flex-wrap:wrap;gap:0.5rem}
-        }
+        @media(max-width:480px){.logo img{height:35px}}
     </style>
 </head>
 <body>
 
-    <!-- ==================== TRUCK LOADER ==================== -->
-    <div class="loader-wrapper" id="loader">
-        <div class="loader-road"></div>
-        <div class="loader-truck-container">
-            <div class="loader-truck">
-                <div class="cargo">
-                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
-                    <div class="door-line"></div>
-                    <div class="door-line"></div>
-                    <div class="door-line"></div>
-                </div>
-                <div class="cabin">
-                    <div class="window"></div>
-                    <div class="door"></div>
-                    <div class="headlight left"></div>
-                    <div class="headlight right"></div>
-                </div>
-                <div class="exhaust"></div>
-                <div class="wheel rear"></div>
-                <div class="wheel rear2"></div>
-                <div class="wheel front"></div>
-            </div>
-        </div>
-        <div class="loader-text-container">
-            <div class="loader-title">SWIFTLOGIX</div>
-            <div class="loader-sub">Loading Chat Support...</div>
-        </div>
-        <div class="loader-progress-container">
-            <div class="progress-bar"><div class="fill"></div></div>
-            <div class="progress-text">
-                <span>Loading</span>
-                <span class="percentage" id="progressPercent">0%</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">Swift<span class="purple">Log</span><span class="orange">ix</span></a>
+            <a href="index.html" class="logo">
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="admin-info">
                 <span><i class="fas fa-user-shield"></i> <span id="adminName">Admin</span></span>
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -478,7 +107,6 @@
         </div>
     </nav>
 
-    <!-- ==================== CHAT ADMIN PAGE ==================== -->
     <div class="chat-admin-page">
         <div class="chat-admin-header">
             <h1><i class="fas fa-comment-dots"></i> Chat Support</h1>
@@ -486,7 +114,6 @@
         </div>
 
         <div class="chat-admin-grid">
-            <!-- Conversations List -->
             <div class="conversations-list">
                 <div class="list-header">
                     <h3>Conversations</h3>
@@ -500,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- Chat Area -->
             <div class="chat-area">
                 <div class="chat-area-header">
                     <div class="user-info">
@@ -530,58 +156,18 @@
         </div>
     </div>
 
-    <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-            </div>
-        </div>
+        <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
     <script>
         const API_URL = window.location.origin;
         let currentConversationId = null;
         let conversations = [];
-        let pollInterval = null;
 
-        // ==================== HIDE LOADER ====================
-        window.addEventListener('load', function() {
-            const loader = document.getElementById('loader');
-            if (loader) {
-                setTimeout(function() {
-                    loader.classList.add('hidden');
-                }, 2500);
-            }
-        });
-
-        // ==================== PROGRESS PERCENTAGE ====================
-        let progress = 0;
-        const progressInterval = setInterval(function() {
-            progress += Math.random() * 8 + 3;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(progressInterval);
-            }
-            const percentEl = document.getElementById('progressPercent');
-            if (percentEl) {
-                percentEl.textContent = Math.floor(progress) + '%';
-            }
-        }, 150);
-
-        // ==================== AUTH CHECK ====================
         function checkAuth() {
             const token = localStorage.getItem('adminToken');
-            if (!token) {
-                window.location.href = 'admin-login.html';
-                return false;
-            }
+            if (!token) { window.location.href = 'admin-login.html'; return false; }
             const username = localStorage.getItem('adminUsername') || 'Admin';
             document.getElementById('adminName').textContent = username;
             return true;
@@ -593,7 +179,6 @@
             window.location.href = 'admin-login.html';
         }
 
-        // ==================== LOAD CONVERSATIONS ====================
         async function loadConversations() {
             if (!checkAuth()) return;
             try {
@@ -606,12 +191,9 @@
                 conversations = data.conversations || [];
                 renderConversations();
                 updateUnreadCount();
-            } catch (error) {
-                console.error('Load conversations error:', error);
-            }
+            } catch (error) { console.error('Load conversations error:', error); }
         }
 
-        // ==================== RENDER CONVERSATIONS ====================
         function renderConversations() {
             const list = document.getElementById('conversationsList');
             if (!conversations || conversations.length === 0) {
@@ -622,35 +204,26 @@
                 const statusClass = conv.status || 'open';
                 const unread = conv.unreadCount || 0;
                 const time = conv.lastMessageTime ? new Date(conv.lastMessageTime).toLocaleString() : 'N/A';
-                return `
-                    <div class="conversation-item ${currentConversationId === conv.conversationId ? 'active' : ''}" 
-                         onclick="selectConversation('${conv.conversationId}')">
-                        <div class="conv-header">
-                            <span class="conv-name">${conv.userName || 'Guest'}</span>
-                            <span class="conv-time">${time}</span>
-                        </div>
-                        <div class="conv-email">${conv.userEmail}</div>
-                        <div class="conv-last-msg">${conv.lastMessage || 'No messages'}</div>
-                        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:4px;">
-                            <span class="conv-status ${statusClass}">${statusClass}</span>
-                            ${unread > 0 ? `<span class="conv-unread">${unread} new</span>` : ''}
-                        </div>
+                return `<div class="conversation-item ${currentConversationId === conv.conversationId ? 'active' : ''}" onclick="selectConversation('${conv.conversationId}')">
+                    <div class="conv-header"><span class="conv-name">${conv.userName || 'Guest'}</span><span class="conv-time">${time}</span></div>
+                    <div class="conv-email">${conv.userEmail}</div>
+                    <div class="conv-last-msg">${conv.lastMessage || 'No messages'}</div>
+                    <div style="display:flex;gap:0.5rem;align-items:center;margin-top:4px;">
+                        <span class="conv-status ${statusClass}">${statusClass}</span>
+                        ${unread > 0 ? `<span class="conv-unread">${unread} new</span>` : ''}
                     </div>
-                `;
+                </div>`;
             }).join('');
         }
 
-        // ==================== UPDATE UNREAD COUNT ====================
         function updateUnreadCount() {
             const total = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
             document.getElementById('unreadCount').textContent = total;
         }
 
-        // ==================== SELECT CONVERSATION ====================
         async function selectConversation(conversationId) {
             currentConversationId = conversationId;
             renderConversations();
-
             try {
                 const response = await fetch(`${API_URL}/api/chat/${conversationId}/messages?admin=true`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
@@ -666,17 +239,13 @@
                 document.getElementById('chatInputArea').style.display = 'flex';
                 document.getElementById('resolveBtn').style.display = 'inline-block';
                 document.getElementById('deleteAllBtn').style.display = 'inline-block';
-                // Mark as read
                 await fetch(`${API_URL}/api/chat/${conversationId}/messages?admin=true`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
                 });
                 loadConversations();
-            } catch (error) {
-                console.error('Select conversation error:', error);
-            }
+            } catch (error) { console.error('Select conversation error:', error); }
         }
 
-        // ==================== RENDER MESSAGES WITH DELETE BUTTONS ====================
         function renderMessages(messages) {
             const container = document.getElementById('chatMessages');
             if (!messages || messages.length === 0) {
@@ -685,23 +254,20 @@
             }
             container.innerHTML = messages.map(msg => {
                 const isUser = msg.sender === 'user';
-                return `
-                    <div class="message ${isUser ? 'user' : 'admin'}" data-message-id="${msg.messageId}">
-                        <div class="bubble">
-                            <span class="sender-name">${isUser ? msg.senderName || 'Customer' : 'Support Team'}</span>
-                            ${msg.message}
-                            <span class="time">${new Date(msg.timestamp).toLocaleString()}</span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteMessage('${msg.messageId}')" title="Delete this message">
-                            <i class="fas fa-times"></i>
-                        </button>
+                return `<div class="message ${isUser ? 'user' : 'admin'}" data-message-id="${msg.messageId}">
+                    <div class="bubble">
+                        <span class="sender-name">${isUser ? msg.senderName || 'Customer' : 'Support Team'}</span>
+                        ${msg.message}
+                        <span class="time">${new Date(msg.timestamp).toLocaleString()}</span>
                     </div>
-                `;
+                    <button class="delete-btn" onclick="deleteMessage('${msg.messageId}')" title="Delete this message">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
         }
 
-        // ==================== DELETE INDIVIDUAL MESSAGE ====================
         async function deleteMessage(messageId) {
             if (!confirm('Delete this message? This cannot be undone.')) return;
             try {
@@ -710,57 +276,35 @@
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
                 });
                 if (!response.ok) throw new Error('Failed to delete message');
-                
-                // Remove message from UI
                 const messageEl = document.querySelector(`.message[data-message-id="${messageId}"]`);
-                if (messageEl) {
-                    messageEl.remove();
-                }
-                
-                // If no messages left, show empty state
+                if (messageEl) messageEl.remove();
                 const remainingMessages = document.querySelectorAll('.message');
                 if (remainingMessages.length === 0) {
-                    document.getElementById('chatMessages').innerHTML = 
-                        `<div class="empty-chat"><i class="fas fa-comment"></i><p>No messages in this conversation</p></div>`;
+                    document.getElementById('chatMessages').innerHTML = `<div class="empty-chat"><i class="fas fa-comment"></i><p>No messages in this conversation</p></div>`;
                 }
-                
                 loadConversations();
-            } catch (error) {
-                console.error('Delete message error:', error);
-                alert('Failed to delete message: ' + error.message);
-            }
+            } catch (error) { console.error('Delete message error:', error); alert('Failed to delete message: ' + error.message); }
         }
 
-        // ==================== DELETE ALL MESSAGES IN CONVERSATION ====================
         async function deleteAllMessages() {
             if (!currentConversationId) return;
             if (!confirm('⚠️ Delete ALL messages in this conversation? This cannot be undone!')) return;
-            
             try {
                 const response = await fetch(`${API_URL}/api/admin/chat/${currentConversationId}/messages`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
                 });
                 if (!response.ok) throw new Error('Failed to delete messages');
-                
-                // Clear UI
-                document.getElementById('chatMessages').innerHTML = 
-                    `<div class="empty-chat"><i class="fas fa-comment"></i><p>All messages deleted</p></div>`;
-                
+                document.getElementById('chatMessages').innerHTML = `<div class="empty-chat"><i class="fas fa-comment"></i><p>All messages deleted</p></div>`;
                 loadConversations();
-            } catch (error) {
-                console.error('Delete all messages error:', error);
-                alert('Failed to delete all messages: ' + error.message);
-            }
+            } catch (error) { console.error('Delete all messages error:', error); alert('Failed to delete all messages: ' + error.message); }
         }
 
-        // ==================== SEND ADMIN MESSAGE ====================
         async function sendAdminMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             if (!message || !currentConversationId) return;
             input.value = '';
-
             try {
                 const response = await fetch(`${API_URL}/api/chat/${currentConversationId}/send`, {
                     method: 'POST',
@@ -768,43 +312,24 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        sender: 'admin',
-                        senderName: 'Support Team'
-                    })
+                    body: JSON.stringify({ message, sender: 'admin', senderName: 'Support Team' })
                 });
                 if (!response.ok) throw new Error('Failed to send');
                 const data = await response.json();
                 if (data.success) {
                     const container = document.getElementById('chatMessages');
-                    // Remove empty state if exists
                     const emptyState = container.querySelector('.empty-chat');
                     if (emptyState) emptyState.remove();
-                    
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'message admin';
-                    msgDiv.innerHTML = `
-                        <div class="bubble">
-                            <span class="sender-name">Support Team</span>
-                            ${message}
-                            <span class="time">${new Date().toLocaleString()}</span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteMessage('${data.message.messageId}')" title="Delete this message">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
+                    msgDiv.innerHTML = `<div class="bubble"><span class="sender-name">Support Team</span>${message}<span class="time">${new Date().toLocaleString()}</span></div><button class="delete-btn" onclick="deleteMessage('${data.message.messageId}')" title="Delete this message"><i class="fas fa-times"></i></button>`;
                     container.appendChild(msgDiv);
                     container.scrollTop = container.scrollHeight;
                     loadConversations();
                 }
-            } catch (error) {
-                console.error('Send message error:', error);
-                alert('Failed to send message');
-            }
+            } catch (error) { console.error('Send message error:', error); alert('Failed to send message'); }
         }
 
-        // ==================== RESOLVE CONVERSATION ====================
         async function resolveConversation() {
             if (!currentConversationId) return;
             if (!confirm('Mark this conversation as resolved?')) return;
@@ -817,33 +342,15 @@
                 document.getElementById('resolveBtn').style.display = 'none';
                 loadConversations();
                 selectConversation(currentConversationId);
-            } catch (error) {
-                console.error('Resolve error:', error);
-                alert('Failed to resolve conversation');
-            }
+            } catch (error) { console.error('Resolve error:', error); alert('Failed to resolve conversation'); }
         }
 
-        // ==================== POLL FOR NEW MESSAGES ====================
-        function startPolling() {
-            if (pollInterval) clearInterval(pollInterval);
-            pollInterval = setInterval(() => {
-                loadConversations();
-                if (currentConversationId) {
-                    selectConversation(currentConversationId);
-                }
-            }, 10000);
-        }
-
-        // ==================== INIT ====================
         checkAuth();
         loadConversations();
-        startPolling();
-
-        window.addEventListener('beforeunload', () => {
-            if (pollInterval) clearInterval(pollInterval);
-        });
-
-        console.log('🚀 Admin Chat loaded successfully!');
+        setInterval(() => {
+            loadConversations();
+            if (currentConversationId) selectConversation(currentConversationId);
+        }, 10000);
     </script>
 </body>
 </html>
