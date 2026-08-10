@@ -312,9 +312,8 @@
         /* ==================== NAVBAR ==================== */
         .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,14,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,27,140,0.2)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-        .logo .purple{color:#6C1B8C}
-        .logo .orange{color:#FF6600}
+        .logo img{height:50px;width:auto;display:block;transition:all 0.3s ease}
+        .logo img:hover{transform:scale(1.05);filter:brightness(1.1)}
         .nav-links{display:flex;gap:2rem;align-items:center}
         .nav-links a{color:#fff;text-decoration:none;transition:0.3s;font-size:14px}
         .nav-links a:hover{color:#8B3AB8}
@@ -323,89 +322,322 @@
         .track-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(108,27,140,0.4)}
         .menu-toggle{display:none;font-size:1.5rem;cursor:pointer}
 
-        /* ==================== SERVICE DETAIL PAGE ==================== */
-        .service-detail-hero{padding:8rem 5% 4rem;text-align:center}
-        .service-detail-hero h1{font-size:3.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:1rem}
-        .service-detail-hero p{color:#9aa8c9;font-size:1.2rem;max-width:700px;margin:0 auto}
+        /* ==================== SERVICE HERO WITH BACKGROUND ==================== */
+        .service-hero {
+            padding: 8rem 5% 4rem;
+            text-align: center;
+            background: url('/images/hero-bg.jpg') center/cover no-repeat;
+            position: relative;
+        }
+        .service-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,14,26,0.8);
+            z-index: 0;
+        }
+        .service-hero .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .service-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .service-hero p {
+            color: #c8d4e8;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
         
-        .service-detail-section{padding:3rem 0 5rem}
-        .service-detail-section .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-        .service-detail-section .content-grid.reverse{direction:rtl}
-        .service-detail-section .content-grid.reverse>*{direction:ltr}
-        .service-detail-section .text h2{font-size:2rem;font-weight:700;margin-bottom:1rem;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .service-detail-section .text p{color:#9aa8c9;line-height:1.8;margin-bottom:1rem}
-        .service-detail-section .text ul{list-style:none;padding:0}
-        .service-detail-section .text ul li{padding:0.5rem 0;color:#9aa8c9;display:flex;align-items:center;gap:0.8rem}
-        .service-detail-section .text ul li i{color:#FF6600}
-        .service-detail-section .image{border-radius:24px;overflow:hidden;border:1px solid rgba(108,27,140,0.2)}
-        .service-detail-section .image img{width:100%;height:350px;object-fit:cover}
-        
-        .service-features{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3rem}
-        .service-features .feature{background:rgba(255,255,255,0.03);border-radius:24px;padding:2rem;text-align:center;border:1px solid rgba(108,27,140,0.15)}
-        .service-features .feature i{font-size:2.5rem;color:#FF6600;margin-bottom:1rem}
-        .service-features .feature h4{font-size:1.1rem;margin-bottom:0.5rem}
-        .service-features .feature p{color:#9aa8c9;font-size:0.9rem}
-        
-        .cta-box-service{background:linear-gradient(135deg,rgba(108,27,140,0.1),rgba(255,102,0,0.05));border-radius:24px;padding:3rem;text-align:center;border:1px solid rgba(108,27,140,0.2);margin-top:3rem}
-        .cta-box-service h3{font-size:1.8rem;margin-bottom:0.5rem;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .cta-box-service p{color:#9aa8c9;margin-bottom:1.5rem}
-        .btn-primary{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#6C1B8C,#FF6600);border:none;border-radius:60px;color:#fff;font-weight:700;font-size:15px;cursor:pointer;transition:all 0.3s;text-align:center;text-decoration:none}
-        .btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(108,27,140,0.4)}
+        /* ==================== SERVICE CONTENT ==================== */
+        .service-content {
+            padding: 4rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .service-content .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+        .service-content .grid.reverse {
+            direction: rtl;
+        }
+        .service-content .grid.reverse > * {
+            direction: ltr;
+        }
+        .service-content .text h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .service-content .text p {
+            color: #9aa8c9;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .service-content .text ul {
+            list-style: none;
+            padding: 0;
+        }
+        .service-content .text ul li {
+            padding: 0.5rem 0;
+            color: #9aa8c9;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .service-content .text ul li i {
+            color: #FF6600;
+            font-size: 1.1rem;
+            width: 20px;
+        }
+        .service-content .image {
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(108,27,140,0.2);
+        }
+        .service-content .image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ==================== SERVICE FEATURES ==================== */
+        .service-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .service-features .feature {
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
+        }
+        .service-features .feature:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,102,0,0.3);
+            background: rgba(255,255,255,0.05);
+        }
+        .service-features .feature i {
+            font-size: 2.5rem;
+            color: #FF6600;
+            margin-bottom: 1rem;
+        }
+        .service-features .feature h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        .service-features .feature p {
+            color: #9aa8c9;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ==================== SERVICE CTA ==================== */
+        .service-cta {
+            background: linear-gradient(135deg, rgba(108,27,140,0.1), rgba(255,102,0,0.05));
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid rgba(108,27,140,0.2);
+            margin-top: 2rem;
+        }
+        .service-cta h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .service-cta p {
+            color: #9aa8c9;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border: none;
+            border-radius: 60px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(108,27,140,0.4);
+        }
 
         /* ==================== FOOTER ==================== */
-        .footer{background:#060a16;padding:4rem 5% 2rem;border-top:1px solid rgba(108,27,140,0.2);margin-top:4rem}
-        .footer .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:3rem}
-        .footer .footer-col h4{background:linear-gradient(135deg,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.2rem}
-        .footer .footer-col p{color:#9aa8c9;font-size:14px;line-height:1.8}
-        .footer .footer-col a{display:block;color:#9aa8c9;font-size:14px;margin-bottom:0.6rem;transition:all 0.3s;text-decoration:none}
-        .footer .footer-col a:hover{color:#FF6600;transform:translateX(5px)}
-        .footer .footer-col .social-links{display:flex;gap:12px;margin-top:1rem}
-        .footer .footer-col .social-links a{width:42px;height:42px;background:rgba(255,255,255,0.05);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s;margin-bottom:0}
-        .footer .footer-col .social-links a:hover{background:linear-gradient(135deg,#6C1B8C,#FF6600);transform:translateY(-3px)}
-        .footer .footer-col .social-links a i{color:#fff;font-size:16px}
-        .footer .footer-bottom{max-width:1200px;margin:0 auto;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-        .footer .footer-bottom p{color:#667799;font-size:13px}
-        .footer .footer-bottom .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
-        .footer .footer-bottom .footer-links a{color:#667799;font-size:13px;transition:color 0.3s;text-decoration:none}
-        .footer .footer-bottom .footer-links a:hover{color:#FF6600}
+        .footer {
+            background: #060a16;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(108,27,140,0.2);
+            margin-top: 4rem;
+        }
+        .footer p {
+            color: #667799;
+            font-size: 13px;
+        }
 
         /* ==================== RESPONSIVE ==================== */
         @media(max-width:992px){
-            .service-detail-section .content-grid{grid-template-columns:1fr;gap:2rem}
-            .service-detail-section .content-grid.reverse{direction:ltr}
-            .service-features{grid-template-columns:repeat(2,1fr)}
+            .service-content .grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .service-content .grid.reverse {
+                direction: ltr;
+            }
+            .service-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .service-hero h1 {
+                font-size: 2.8rem;
+            }
         }
         @media(max-width:768px){
-            .menu-toggle{display:block}
-            .nav-links{position:fixed;top:70px;left:-100%;width:100%;background:rgba(10,14,26,0.98);flex-direction:column;padding:2rem;transition:left 0.3s;gap:1.5rem}
-            .nav-links.active{left:0}
-            .service-detail-hero h1{font-size:2.2rem}
-            .service-detail-section .text h2{font-size:1.6rem}
-            .footer .footer-grid{grid-template-columns:1fr;gap:2rem}
-            .footer .footer-bottom{flex-direction:column;text-align:center}
-            .footer .footer-bottom .footer-links{justify-content:center}
-            .loader-truck{width:260px;height:130px}
-            .loader-truck .cargo{width:190px;height:95px}
-            .loader-truck .cargo .brand{font-size:22px}
-            .loader-truck .cabin{width:80px;height:70px}
-            .loader-progress-container{width:260px}
+            .menu-toggle {
+                display: block;
+            }
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                background: rgba(10,14,26,0.98);
+                flex-direction: column;
+                padding: 2rem;
+                transition: left 0.3s;
+                gap: 1.5rem;
+            }
+            .nav-links.active {
+                left: 0;
+            }
+            .service-hero {
+                padding: 6rem 5% 3rem;
+            }
+            .service-hero h1 {
+                font-size: 2.2rem;
+            }
+            .service-hero p {
+                font-size: 1rem;
+            }
+            .service-content {
+                padding: 2rem 5%;
+            }
+            .service-content .text h2 {
+                font-size: 1.6rem;
+            }
+            .service-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .service-content .image img {
+                height: 250px;
+            }
+            .service-cta {
+                padding: 2rem 1.5rem;
+            }
+            .service-cta h3 {
+                font-size: 1.4rem;
+            }
+            .logo img {
+                height: 40px;
+            }
+            .footer {
+                padding: 1.5rem 5%;
+            }
         }
         @media(max-width:480px){
-            .service-features{grid-template-columns:1fr}
-            .service-detail-hero h1{font-size:1.8rem}
-            .loader-truck{width:200px;height:100px}
-            .loader-truck .cargo{width:140px;height:75px}
-            .loader-truck .cargo .brand{font-size:16px;letter-spacing:1px}
-            .loader-truck .cabin{width:60px;height:55px}
-            .loader-truck .cabin .window{width:22px;height:18px}
-            .loader-truck .wheel{width:20px;height:20px}
-            .loader-truck .wheel.front{right:10px}
-            .loader-truck .wheel.rear{left:18px}
-            .loader-truck .wheel.rear2{left:32px}
-            .loader-progress-container{width:200px}
-            .loader-text-container .loader-title{font-size:16px}
-            .loader-progress-container .progress-text{font-size:9px}
-            .loader-progress-container .progress-text .percentage{font-size:12px}
+            .service-hero h1 {
+                font-size: 1.8rem;
+            }
+            .service-content .text h2 {
+                font-size: 1.3rem;
+            }
+            .service-content .image img {
+                height: 200px;
+            }
+            .service-cta h3 {
+                font-size: 1.2rem;
+            }
+            .logo img {
+                height: 35px;
+            }
+            .loader-truck {
+                width: 200px;
+                height: 100px;
+            }
+            .loader-truck .cargo {
+                width: 140px;
+                height: 75px;
+            }
+            .loader-truck .cargo .brand {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+            .loader-truck .cabin {
+                width: 60px;
+                height: 55px;
+            }
+            .loader-truck .cabin .window {
+                width: 22px;
+                height: 18px;
+            }
+            .loader-truck .wheel {
+                width: 20px;
+                height: 20px;
+            }
+            .loader-truck .wheel.front {
+                right: 10px;
+            }
+            .loader-truck .wheel.rear {
+                left: 18px;
+            }
+            .loader-truck .wheel.rear2 {
+                left: 32px;
+            }
+            .loader-progress-container {
+                width: 200px;
+            }
+            .loader-text-container .loader-title {
+                font-size: 16px;
+            }
+            .loader-progress-container .progress-text {
+                font-size: 9px;
+            }
+            .loader-progress-container .progress-text .percentage {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -451,8 +683,8 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -465,113 +697,64 @@
         </div>
     </nav>
 
-    <!-- ==================== SERVICE HERO ==================== -->
-    <section class="service-detail-hero">
-        <h1>Air Freight Services</h1>
-        <p>IATA-certified express air freight solutions for time-critical shipments worldwide. Fast, reliable, and secure.</p>
+    <!-- ==================== SERVICE HERO WITH BACKGROUND ==================== -->
+    <section class="service-hero">
+        <div class="content">
+            <h1>Air Freight Services</h1>
+            <p>IATA-certified express air freight solutions for time-critical shipments worldwide. Fast, reliable, and secure.</p>
+        </div>
     </section>
 
-    <!-- ==================== SERVICE DETAIL ==================== -->
-    <section class="service-detail-section">
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 5%">
-            <div class="content-grid">
-                <div class="text">
-                    <h2>Express Air Freight Solutions</h2>
-                    <p>Our air freight services are designed for businesses that require speed and reliability. With IATA-certified handling and a global network of partners, we ensure your cargo reaches its destination on time.</p>
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> 24-48 hour delivery worldwide</li>
-                        <li><i class="fas fa-check-circle"></i> IATA-certified safe handling</li>
-                        <li><i class="fas fa-check-circle"></i> Real-time tracking updates</li>
-                        <li><i class="fas fa-check-circle"></i> Customs clearance support</li>
-                        <li><i class="fas fa-check-circle"></i> Temperature-controlled options</li>
-                    </ul>
-                    <a href="contact.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Request a Quote</a>
-                </div>
-                <div class="image">
-                    <img src="images/air-freight.jpg.PNG" alt="Air Freight" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'background:#111b33;height:350px;display:flex;align-items:center;justify-content:center;color:#667799;\'><i class=\'fas fa-plane\' style=\'font-size:4rem;opacity:0.3;\'></i></div>'">
-                </div>
+    <!-- ==================== SERVICE CONTENT ==================== -->
+    <section class="service-content">
+        <div class="grid">
+            <div class="text">
+                <h2>Express Air Freight Solutions</h2>
+                <p>Our air freight services are designed for businesses that require speed and reliability. With IATA-certified handling and a global network of partners, we ensure your cargo reaches its destination on time.</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> 24-48 hour delivery worldwide</li>
+                    <li><i class="fas fa-check-circle"></i> IATA-certified safe handling</li>
+                    <li><i class="fas fa-check-circle"></i> Real-time tracking updates</li>
+                    <li><i class="fas fa-check-circle"></i> Customs clearance support</li>
+                    <li><i class="fas fa-check-circle"></i> Temperature-controlled options</li>
+                </ul>
+                <a href="contact.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Request a Quote</a>
             </div>
+            <div class="image">
+                <img src="/images/air-freight.jpg" alt="Air Freight" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'background:#111b33;height:350px;display:flex;align-items:center;justify-content:center;color:#667799;border-radius:24px;\'><i class=\'fas fa-plane\' style=\'font-size:4rem;opacity:0.3;\'></i></div>'">
+            </div>
+        </div>
 
-            <!-- ==================== FEATURES ==================== -->
-            <div class="service-features">
-                <div class="feature">
-                    <i class="fas fa-clock"></i>
-                    <h4>Express Delivery</h4>
-                    <p>24-48 hour delivery to major global destinations</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-shield-alt"></i>
-                    <h4>Secure Handling</h4>
-                    <p>IATA-certified safe transport for all cargo types</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-chart-line"></i>
-                    <h4>Real-Time Tracking</h4>
-                    <p>Live GPS tracking updates for full visibility</p>
-                </div>
+        <!-- ==================== FEATURES ==================== -->
+        <div class="service-features">
+            <div class="feature">
+                <i class="fas fa-clock"></i>
+                <h4>Express Delivery</h4>
+                <p>24-48 hour delivery to major global destinations</p>
             </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Secure Handling</h4>
+                <p>IATA-certified safe transport for all cargo types</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-chart-line"></i>
+                <h4>Real-Time Tracking</h4>
+                <p>Live GPS tracking updates for full visibility</p>
+            </div>
+        </div>
 
-            <!-- ==================== CTA ==================== -->
-            <div class="cta-box-service">
-                <h3>Ready to Ship by Air?</h3>
-                <p>Get a competitive quote for your air freight needs today.</p>
-                <a href="contact.html" class="btn-primary">Get a Quote</a>
-            </div>
+        <!-- ==================== CTA ==================== -->
+        <div class="service-cta">
+            <h3>Ready to Ship by Air?</h3>
+            <p>Get a competitive quote for your air freight needs today.</p>
+            <a href="contact.html" class="btn-primary">Get a Quote</a>
         </div>
     </section>
 
     <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 5%">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>SwiftLogix</h4>
-                    <p>Global logistics intelligence for the modern enterprise.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <a href="about.html">About Us</a>
-                    <a href="services.html">Services</a>
-                    <a href="blog.html">Blog</a>
-                    <a href="careers.html">Careers</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Support</h4>
-                    <a href="contact.html">Contact</a>
-                    <a href="tracking.html">Track Shipment</a>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Contact</h4>
-                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
-                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
-                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-            </div>
-        </div>
+        <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
     <script>
