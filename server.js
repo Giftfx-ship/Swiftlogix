@@ -8,15 +8,13 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const http = require('http');
 const socketIo = require('socket.io');
-const { Resend } = require('resend');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Init Resend
-const resendClient = new Resend(process.env.RESEND_API_KEY);
+// Email configuration
 const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix Support <support@swiftlogix.biz>';
 
 // Create HTTP server with Socket.IO
@@ -149,7 +147,7 @@ const EmailLog = mongoose.model('EmailLog', emailLogSchema);
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
-// ==================== EMAIL SERVICE (RESEND) ====================
+// ==================== EMAIL SERVICE (DIRECT RESEND API - NO REACT DEPENDENCY) ====================
 
 const sendEmail = async (to, subject, html) => {
     try {
@@ -160,20 +158,29 @@ const sendEmail = async (to, subject, html) => {
 
         console.log(`📧 Sending email to ${to}...`);
         
-        const { data, error } = await resendClient.emails.send({
-            from: EMAIL_FROM,
-            to: [to],
-            subject: subject,
-            html: html,
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: EMAIL_FROM,
+                to: [to],
+                subject: subject,
+                html: html,
+            })
         });
-
-        if (error) {
-            console.error('❌ Resend error:', error);
-            return { success: false, error: error.message };
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            console.error('❌ Resend API error:', data);
+            return { success: false, error: data.message || 'Email failed' };
         }
 
-        console.log(`✅ Email sent to ${to}:`, data?.id);
-        return { success: true, data, resendId: data?.id };
+        console.log(`✅ Email sent to ${to}:`, data.id);
+        return { success: true, resendId: data.id };
     } catch (error) {
         console.error('❌ Email error:', error.message);
         return { success: false, error: error.message };
@@ -1162,7 +1169,7 @@ createDefaultAdmin().then(() => {
         console.log(`📍 URL: http://localhost:${PORT}`);
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD}`);
         console.log(`📊 Database: MongoDB Connected`);
-        console.log(`📧 Email: Resend (support@swiftlogix.biz)`);
+        console.log(`📧 Email: Resend API (support@swiftlogix.biz)`);
         console.log(`💬 Chat Support: Enabled with WebSocket`);
         console.log(`🔌 WebSocket: Active on /socket.io/`);
         console.log('='.repeat(70) + '\n');
