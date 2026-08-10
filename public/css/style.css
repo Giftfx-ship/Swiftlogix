@@ -6,17 +6,29 @@
 }
 
 :root {
-    --primary: #00f2fe;
-    --primary-dark: #00d4ff;
-    --secondary: #0a0a12;
-    --dark: #12121f;
-    --card: #1a1a2e;
+    /* FedEx Inspired Colors */
+    --primary: #6C1B8C;
+    --primary-light: #8B3AB8;
+    --primary-dark: #4A0F6B;
+    --secondary: #FF6600;
+    --secondary-light: #FF8533;
+    --secondary-dark: #CC5200;
+    --dark: #0a0e1a;
+    --dark-card: #111827;
+    --card: #1a2236;
+    --card-hover: #24304a;
     --text: #ffffff;
-    --text-muted: #888;
-    --border: rgba(0, 242, 254, 0.15);
+    --text-muted: #9aa8c9;
+    --text-light: #c8d4e8;
+    --border: rgba(108, 27, 140, 0.2);
+    --border-hover: rgba(108, 27, 140, 0.4);
     --shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-    --radius: 24px;
+    --radius: 16px;
+    --radius-lg: 24px;
     --transition: 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    --gradient: linear-gradient(135deg, #6C1B8C, #4A0F6B);
+    --gradient-secondary: linear-gradient(135deg, #FF6600, #CC5200);
+    --gradient-glow: linear-gradient(135deg, rgba(108, 27, 140, 0.15), rgba(255, 102, 0, 0.08));
 }
 
 html {
@@ -25,7 +37,7 @@ html {
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--secondary);
+    background: var(--dark);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -52,24 +64,30 @@ img {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--secondary);
+    background: var(--dark);
 }
 ::-webkit-scrollbar-thumb {
     background: var(--primary);
     border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark);
+    background: var(--primary-light);
 }
 
-/* ==================== LOADING ANIMATION - DELIVERY TRUCK ==================== */
+/* ==================== SELECTION ==================== */
+::selection {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* ==================== LOADING ANIMATION - TRUCK CENTERED ==================== */
 .loader-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--secondary);
+    background: var(--dark);
     z-index: 99999;
     display: flex;
     justify-content: center;
@@ -78,29 +96,22 @@ img {
     transition: opacity 0.8s ease, visibility 0.8s ease;
     overflow: hidden;
 }
-
 .loader-wrapper.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
 
-/* Road Background */
+/* Road - Centered */
 .loader-road {
     position: absolute;
-    bottom: 20%;
-    left: 0;
-    width: 100%;
+    bottom: 22%;
+    left: 5%;
+    width: 90%;
     height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    animation: roadLines 0.5s linear infinite;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
 }
-
-@keyframes roadLines {
-    0% { background-position: 0 0; }
-    100% { background-position: 30px 0; }
-}
-
 .loader-road::before {
     content: '';
     position: absolute;
@@ -108,80 +119,103 @@ img {
     left: 0;
     width: 200%;
     height: 100%;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        transparent 15px,
-        rgba(0, 242, 254, 0.3) 15px,
-        rgba(0, 242, 254, 0.3) 20px
-    );
+    background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(108, 27, 140, 0.3) 15px, rgba(108, 27, 140, 0.3) 20px);
     animation: roadMove 2s linear infinite;
 }
-
 @keyframes roadMove {
     0% { transform: translateX(0); }
     100% { transform: translateX(-40px); }
 }
 
-/* Truck Container */
+/* Truck Container - Centered */
 .loader-truck-container {
     position: relative;
-    animation: truckDrive 3s ease-in-out infinite;
     z-index: 2;
+    margin-bottom: 40px;
 }
 
-@keyframes truckDrive {
-    0% { transform: translateX(-60vw) scale(1); }
-    50% { transform: translateX(10vw) scale(1.02); }
-    100% { transform: translateX(60vw) scale(1); }
-}
-
-/* Truck Body */
+/* Truck - Static in center */
 .loader-truck {
     position: relative;
-    width: 300px;
-    height: 140px;
+    width: 320px;
+    height: 150px;
+    margin: 0 auto;
 }
 
-/* Truck Cabin */
+/* Cargo Area */
+.loader-truck .cargo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 230px;
+    height: 115px;
+    background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
+    border-radius: 8px 12px 8px 8px;
+    border: 2px solid rgba(108, 27, 140, 0.3);
+    z-index: 2;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader-truck .cargo .brand {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 3;
+}
+.loader-truck .cargo .brand .purple {
+    -webkit-text-fill-color: #6C1B8C;
+}
+.loader-truck .cargo .brand .orange {
+    -webkit-text-fill-color: #FF6600;
+}
+.loader-truck .cargo .door-line {
+    position: absolute;
+    top: 10%;
+    width: 2px;
+    height: 80%;
+    background: rgba(108, 27, 140, 0.1);
+}
+.loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
+.loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
+.loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
+.loader-truck .cargo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, transparent 0px, transparent 30px, rgba(108, 27, 140, 0.05) 30px, rgba(108, 27, 140, 0.05) 31px);
+}
+
+/* Cabin */
 .loader-truck .cabin {
     position: absolute;
     right: 0;
-    top: 10px;
-    width: 90px;
-    height: 80px;
+    top: 12px;
+    width: 95px;
+    height: 85px;
     background: linear-gradient(180deg, #1a2a4a, #0a1628);
     border-radius: 12px 20px 8px 8px;
-    border: 2px solid rgba(0, 242, 254, 0.3);
+    border: 2px solid rgba(108, 27, 140, 0.3);
     z-index: 3;
 }
-
-.loader-truck .cabin::before {
-    content: '';
-    position: absolute;
-    bottom: -6px;
-    left: 15px;
-    width: 60px;
-    height: 10px;
-    background: linear-gradient(180deg, #0a1628, #1a2a4a);
-    border-radius: 0 0 8px 8px;
-    border: 2px solid rgba(0, 242, 254, 0.2);
-    border-top: none;
-}
-
-/* Cabin Window */
 .loader-truck .cabin .window {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 14px;
+    left: 14px;
     width: 40px;
-    height: 30px;
-    background: rgba(0, 242, 254, 0.15);
+    height: 32px;
+    background: rgba(108, 27, 140, 0.15);
     border-radius: 8px 8px 0 0;
-    border: 1px solid rgba(0, 242, 254, 0.2);
+    border: 1px solid rgba(108, 27, 140, 0.2);
     overflow: hidden;
 }
-
 .loader-truck .cabin .window::before {
     content: '';
     position: absolute;
@@ -189,28 +223,24 @@ img {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(108, 27, 140, 0.3), transparent);
     animation: windowGlow 2s ease-in-out infinite;
 }
-
 @keyframes windowGlow {
     0% { left: -100%; }
     50% { left: 100%; }
     100% { left: 100%; }
 }
-
-/* Cabin Door */
 .loader-truck .cabin .door {
     position: absolute;
-    bottom: 8px;
-    right: 12px;
-    width: 25px;
-    height: 30px;
-    background: rgba(0, 242, 254, 0.08);
+    bottom: 10px;
+    right: 14px;
+    width: 24px;
+    height: 32px;
+    background: rgba(108, 27, 140, 0.08);
     border-radius: 4px 4px 0 0;
-    border: 1px solid rgba(0, 242, 254, 0.15);
+    border: 1px solid rgba(108, 27, 140, 0.12);
 }
-
 .loader-truck .cabin .door::before {
     content: '';
     position: absolute;
@@ -219,101 +249,20 @@ img {
     transform: translate(-50%, -50%);
     width: 4px;
     height: 4px;
-    background: rgba(0, 242, 254, 0.3);
+    background: rgba(108, 27, 140, 0.3);
     border-radius: 50%;
 }
-
-/* Headlights */
 .loader-truck .cabin .headlight {
     position: absolute;
     bottom: 8px;
     width: 12px;
     height: 6px;
-    background: rgba(0, 242, 254, 0.6);
+    background: rgba(255, 102, 0, 0.6);
     border-radius: 0 4px 4px 0;
-    box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
 }
-
-.loader-truck .cabin .headlight.left {
-    left: -10px;
-}
-
-.loader-truck .cabin .headlight.right {
-    left: 18px;
-}
-
-/* Truck Body (Cargo Area) */
-.loader-truck .cargo {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 220px;
-    height: 110px;
-    background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
-    border-radius: 8px 12px 8px 8px;
-    border: 2px solid rgba(0, 242, 254, 0.25);
-    z-index: 2;
-    overflow: hidden;
-}
-
-/* Cargo Stripes */
-.loader-truck .cargo::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        transparent 25px,
-        rgba(0, 242, 254, 0.05) 25px,
-        rgba(0, 242, 254, 0.05) 26px
-    );
-}
-
-/* Brand Name on Truck */
-.loader-truck .cargo .brand {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, #ffffff, #00f2fe);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: none;
-    z-index: 3;
-    white-space: nowrap;
-}
-
-.loader-truck .cargo .brand span {
-    -webkit-text-fill-color: #00f2fe;
-}
-
-/* Cargo Door Lines */
-.loader-truck .cargo .door-line {
-    position: absolute;
-    top: 10%;
-    width: 2px;
-    height: 80%;
-    background: rgba(0, 242, 254, 0.1);
-}
-
-.loader-truck .cargo .door-line:nth-child(3) {
-    left: 45%;
-}
-
-.loader-truck .cargo .door-line:nth-child(4) {
-    left: 55%;
-}
-
-.loader-truck .cargo .door-line:nth-child(5) {
-    left: 65%;
-}
+.loader-truck .cabin .headlight.left { left: -10px; }
+.loader-truck .cabin .headlight.right { left: 18px; }
 
 /* Wheels */
 .loader-truck .wheel {
@@ -327,12 +276,10 @@ img {
     z-index: 4;
     animation: wheelSpin 1s linear infinite;
 }
-
 @keyframes wheelSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
 .loader-truck .wheel::before {
     content: '';
     position: absolute;
@@ -341,35 +288,25 @@ img {
     transform: translate(-50%, -50%);
     width: 8px;
     height: 8px;
-    background: rgba(0, 242, 254, 0.2);
+    background: rgba(108, 27, 140, 0.2);
     border-radius: 50%;
-    border: 1px solid rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(108, 27, 140, 0.1);
 }
+.loader-truck .wheel.front { right: 15px; }
+.loader-truck .wheel.rear { left: 30px; }
+.loader-truck .wheel.rear2 { left: 55px; }
 
-.loader-truck .wheel.front {
-    right: 15px;
-}
-
-.loader-truck .wheel.rear {
-    left: 30px;
-}
-
-.loader-truck .wheel.rear2 {
-    left: 55px;
-}
-
-/* Exhaust Pipe */
+/* Exhaust */
 .loader-truck .exhaust {
     position: absolute;
-    bottom: 25px;
-    right: -8px;
+    bottom: 28px;
+    right: -6px;
     width: 6px;
-    height: 15px;
+    height: 14px;
     background: #2a2a3a;
     border-radius: 0 0 4px 4px;
     z-index: 1;
 }
-
 .loader-truck .exhaust::before {
     content: '';
     position: absolute;
@@ -377,134 +314,87 @@ img {
     left: -4px;
     width: 14px;
     height: 8px;
-    background: radial-gradient(ellipse, rgba(0, 242, 254, 0.2), transparent);
+    background: radial-gradient(ellipse, rgba(255, 102, 0, 0.2), transparent);
     border-radius: 50%;
     animation: exhaustPuff 1s ease-out infinite;
 }
-
 @keyframes exhaustPuff {
     0% { transform: scale(0.5); opacity: 0.8; }
     100% { transform: scale(2); opacity: 0; }
 }
 
-/* Loader Text Below Truck */
+/* Loader Text */
 .loader-text-container {
-    position: absolute;
-    bottom: 30%;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     text-align: center;
     z-index: 5;
-    animation: textPulse 2s ease-in-out infinite;
+    margin-top: 20px;
 }
-
-@keyframes textPulse {
-    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-    50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
-}
-
 .loader-text-container .loader-title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
-    letter-spacing: 6px;
-    background: linear-gradient(135deg, #ffffff, #00f2fe);
+    letter-spacing: 5px;
+    background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 .loader-text-container .loader-sub {
-    color: var(--text-muted);
+    color: #9aa8c9;
     font-size: 12px;
     letter-spacing: 3px;
     margin-top: 6px;
-    -webkit-text-fill-color: var(--text-muted);
 }
 
-/* Progress Bar */
+/* Progress Bar - Centered */
 .loader-progress-container {
-    position: absolute;
-    bottom: 12%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
+    position: relative;
+    width: 320px;
     z-index: 5;
+    margin-top: 25px;
 }
-
 .loader-progress-container .progress-bar {
     width: 100%;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
     overflow: hidden;
 }
-
 .loader-progress-container .progress-bar .fill {
     width: 0%;
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-    border-radius: 3px;
-    animation: progressFill 1.8s ease-out forwards;
+    background: linear-gradient(90deg, #6C1B8C, #FF6600, #6C1B8C);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    animation: progressFill 2s ease-in-out forwards, progressShine 1.5s ease-in-out infinite;
 }
-
 @keyframes progressFill {
     0% { width: 0%; }
-    20% { width: 15%; }
-    40% { width: 35%; }
-    60% { width: 55%; }
-    80% { width: 80%; }
+    10% { width: 8%; }
+    25% { width: 22%; }
+    40% { width: 38%; }
+    55% { width: 52%; }
+    70% { width: 68%; }
+    85% { width: 85%; }
     100% { width: 100%; }
 }
-
+@keyframes progressShine {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
 .loader-progress-container .progress-text {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
-    font-size: 10px;
-    color: var(--text-muted);
+    margin-top: 10px;
+    font-size: 11px;
+    color: #667799;
     letter-spacing: 1px;
 }
-
-/* ==================== RESPONSIVE TRUCK ==================== */
-@media (max-width: 768px) {
-    .loader-truck {
-        transform: scale(0.7);
-    }
-    
-    .loader-text-container .loader-title {
-        font-size: 18px;
-        letter-spacing: 4px;
-    }
-    
-    .loader-progress-container {
-        width: 200px;
-    }
-    
-    @keyframes truckDrive {
-        0% { transform: translateX(-80vw) scale(0.7); }
-        50% { transform: translateX(0vw) scale(0.75); }
-        100% { transform: translateX(80vw) scale(0.7); }
-    }
-}
-
-@media (max-width: 480px) {
-    .loader-truck {
-        transform: scale(0.5);
-    }
-    
-    .loader-text-container .loader-title {
-        font-size: 14px;
-        letter-spacing: 3px;
-    }
-    
-    .loader-progress-container {
-        width: 150px;
-    }
-    
-    @keyframes truckDrive {
-        0% { transform: translateX(-90vw) scale(0.5); }
-        50% { transform: translateX(0vw) scale(0.55); }
-        100% { transform: translateX(90vw) scale(0.5); }
-    }
+.loader-progress-container .progress-text .percentage {
+    font-weight: 700;
+    font-size: 14px;
+    background: linear-gradient(135deg, #6C1B8C, #FF6600);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* ==================== NAVBAR ==================== */
@@ -515,7 +405,7 @@ img {
     right: 0;
     z-index: 1000;
     padding: 1.2rem 5%;
-    background: rgba(10, 10, 18, 0.85);
+    background: rgba(10, 14, 26, 0.92);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     transition: all var(--transition);
@@ -523,7 +413,7 @@ img {
 
 .navbar.scrolled {
     padding: 0.8rem 5%;
-    background: rgba(10, 10, 18, 0.95);
+    background: rgba(10, 14, 26, 0.98);
 }
 
 .navbar .nav-container {
@@ -538,13 +428,16 @@ img {
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #ffffff, var(--primary));
+    background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.navbar .logo span {
-    -webkit-text-fill-color: var(--primary);
+.navbar .logo .purple {
+    -webkit-text-fill-color: #6C1B8C;
+}
+.navbar .logo .orange {
+    -webkit-text-fill-color: #FF6600;
 }
 
 .navbar .nav-links {
@@ -568,7 +461,7 @@ img {
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
     transition: width var(--transition);
 }
 
@@ -578,18 +471,18 @@ img {
 }
 
 .navbar .nav-links a:hover {
-    color: var(--primary);
+    color: var(--primary-light);
 }
 
 .navbar .nav-links a.active {
-    color: var(--primary);
+    color: var(--secondary);
 }
 
 .navbar .track-btn {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     padding: 0.6rem 1.5rem;
     border-radius: 50px;
-    color: var(--secondary) !important;
+    color: #fff !important;
     font-weight: 600 !important;
 }
 
@@ -599,7 +492,7 @@ img {
 
 .navbar .track-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 242, 254, 0.4);
+    box-shadow: 0 8px 25px rgba(108, 27, 140, 0.4);
 }
 
 .navbar .menu-toggle {
@@ -613,10 +506,10 @@ img {
 .btn-primary {
     display: inline-block;
     padding: 14px 36px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     border: none;
     border-radius: 60px;
-    color: var(--secondary);
+    color: #fff;
     font-weight: 700;
     font-size: 15px;
     cursor: pointer;
@@ -626,7 +519,7 @@ img {
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(0, 242, 254, 0.35);
+    box-shadow: 0 12px 35px rgba(108, 27, 140, 0.35);
 }
 
 .btn-secondary {
@@ -644,8 +537,8 @@ img {
 }
 
 .btn-secondary:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--secondary);
+    color: var(--secondary);
     transform: translateY(-3px);
 }
 
@@ -657,7 +550,7 @@ img {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: radial-gradient(ellipse at 30% 20%, #0a0a2a, var(--secondary));
+    background: radial-gradient(ellipse at 30% 20%, #0a0e1a, var(--dark));
     pointer-events: none;
 }
 
@@ -671,7 +564,7 @@ img {
 .bg-glow .orb.orb-1 {
     width: 400px;
     height: 400px;
-    background: rgba(0, 242, 254, 0.06);
+    background: rgba(108, 27, 140, 0.08);
     top: -100px;
     left: -100px;
     animation: floatOrb 20s ease-in-out infinite;
@@ -680,7 +573,7 @@ img {
 .bg-glow .orb.orb-2 {
     width: 500px;
     height: 500px;
-    background: rgba(0, 242, 254, 0.04);
+    background: rgba(255, 102, 0, 0.05);
     bottom: -200px;
     right: -150px;
     animation: floatOrb 25s ease-in-out infinite reverse;
@@ -689,7 +582,7 @@ img {
 .bg-glow .orb.orb-3 {
     width: 250px;
     height: 250px;
-    background: rgba(0, 242, 254, 0.05);
+    background: rgba(108, 27, 140, 0.06);
     top: 50%;
     right: 10%;
     animation: floatOrb 15s ease-in-out infinite 2s;
@@ -702,7 +595,7 @@ img {
 
 /* ==================== FOOTER ==================== */
 .footer {
-    background: #050508;
+    background: #060a16;
     padding: 4rem 5% 2rem;
     border-top: 1px solid var(--border);
     margin-top: 4rem;
@@ -718,7 +611,9 @@ img {
 }
 
 .footer .footer-col h4 {
-    color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -741,7 +636,7 @@ img {
 }
 
 .footer .footer-col a:hover {
-    color: var(--primary);
+    color: var(--secondary);
     transform: translateX(5px);
 }
 
@@ -786,7 +681,7 @@ img {
 }
 
 .footer .footer-bottom p {
-    color: #555;
+    color: #667799;
     font-size: 13px;
 }
 
@@ -797,16 +692,16 @@ img {
 }
 
 .footer .footer-bottom .footer-links a {
-    color: #555;
+    color: #667799;
     font-size: 13px;
     transition: color var(--transition);
 }
 
 .footer .footer-bottom .footer-links a:hover {
-    color: var(--primary);
+    color: var(--secondary);
 }
 
-/* ==================== CHAT WIDGET ==================== */
+/* ==================== CHAT WIDGET - FIXED ==================== */
 .chat-widget {
     position: fixed;
     bottom: 30px;
@@ -815,15 +710,15 @@ img {
 }
 
 .chat-widget .chat-toggle {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     border: none;
-    color: var(--secondary);
-    font-size: 28px;
+    color: #fff;
+    font-size: 26px;
     cursor: pointer;
-    box-shadow: 0 8px 30px rgba(0, 242, 254, 0.4);
+    box-shadow: 0 8px 30px rgba(108, 27, 140, 0.4);
     transition: all var(--transition);
     display: flex;
     align-items: center;
@@ -832,8 +727,8 @@ img {
 }
 
 .chat-widget .chat-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 40px rgba(0, 242, 254, 0.6);
+    transform: scale(1.08);
+    box-shadow: 0 12px 40px rgba(108, 27, 140, 0.6);
 }
 
 .chat-widget .chat-toggle .badge {
@@ -858,8 +753,8 @@ img {
     right: 0;
     width: 380px;
     max-height: 550px;
-    background: var(--dark);
-    border-radius: var(--radius);
+    background: var(--dark-card);
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
     overflow: hidden;
@@ -873,7 +768,7 @@ img {
 
 .chat-widget .chat-header {
     padding: 1.2rem 1.5rem;
-    background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(0, 242, 254, 0.02));
+    background: linear-gradient(135deg, rgba(108, 27, 140, 0.15), rgba(255, 102, 0, 0.05));
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
@@ -918,8 +813,8 @@ img {
 }
 
 .chat-widget .chat-body .message.user .bubble {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: var(--secondary);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
     border-bottom-right-radius: 4px;
 }
 
@@ -955,18 +850,23 @@ img {
 
 .chat-widget .chat-footer input:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--secondary);
 }
 
 .chat-widget .chat-footer .send-btn {
     padding: 0.8rem 1.2rem;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     border: none;
     border-radius: 50%;
-    color: var(--secondary);
+    color: #fff;
     cursor: pointer;
     font-size: 18px;
     transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    min-height: 48px;
 }
 
 .chat-widget .chat-footer .send-btn:hover {
@@ -978,6 +878,25 @@ img {
     .footer .footer-grid {
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
+    }
+    .loader-truck {
+        width: 280px;
+        height: 130px;
+    }
+    .loader-truck .cargo {
+        width: 200px;
+        height: 100px;
+    }
+    .loader-truck .cargo .brand {
+        font-size: 24px;
+    }
+    .loader-truck .cabin {
+        width: 85px;
+        height: 75px;
+        top: 10px;
+    }
+    .loader-progress-container {
+        width: 280px;
     }
 }
 
@@ -992,7 +911,7 @@ img {
         left: -100%;
         width: 100%;
         height: calc(100vh - 70px);
-        background: rgba(10, 10, 18, 0.98);
+        background: rgba(10, 14, 26, 0.98);
         backdrop-filter: blur(20px);
         flex-direction: column;
         padding: 2rem;
@@ -1021,13 +940,134 @@ img {
     .chat-widget .chat-window {
         width: 320px;
         right: -60px;
+        max-height: 450px;
+    }
+
+    .chat-widget {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .chat-widget .chat-toggle {
+        width: 55px;
+        height: 55px;
+        font-size: 22px;
+    }
+
+    .loader-truck {
+        width: 220px;
+        height: 110px;
+    }
+    .loader-truck .cargo {
+        width: 160px;
+        height: 85px;
+    }
+    .loader-truck .cargo .brand {
+        font-size: 18px;
+    }
+    .loader-truck .cabin {
+        width: 70px;
+        height: 60px;
+        top: 8px;
+    }
+    .loader-truck .cabin .window {
+        width: 28px;
+        height: 22px;
+        top: 10px;
+        left: 10px;
+    }
+    .loader-truck .wheel {
+        width: 22px;
+        height: 22px;
+        bottom: -10px;
+    }
+    .loader-truck .wheel::before {
+        width: 6px;
+        height: 6px;
+    }
+    .loader-truck .wheel.front { right: 12px; }
+    .loader-truck .wheel.rear { left: 22px; }
+    .loader-truck .wheel.rear2 { left: 40px; }
+    .loader-truck .exhaust { display: none; }
+    .loader-progress-container {
+        width: 220px;
+    }
+    .loader-text-container .loader-title {
+        font-size: 18px;
+    }
+    .loader-text-container .loader-sub {
+        font-size: 10px;
     }
 }
 
 @media (max-width: 480px) {
+    .loader-truck {
+        width: 180px;
+        height: 90px;
+    }
+    .loader-truck .cargo {
+        width: 130px;
+        height: 70px;
+    }
+    .loader-truck .cargo .brand {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+    .loader-truck .cabin {
+        width: 55px;
+        height: 48px;
+        top: 6px;
+    }
+    .loader-truck .cabin .window {
+        width: 20px;
+        height: 16px;
+        top: 8px;
+        left: 8px;
+    }
+    .loader-truck .wheel {
+        width: 18px;
+        height: 18px;
+        bottom: -8px;
+    }
+    .loader-truck .wheel::before {
+        width: 4px;
+        height: 4px;
+    }
+    .loader-truck .wheel.front { right: 8px; }
+    .loader-truck .wheel.rear { left: 16px; }
+    .loader-truck .wheel.rear2 { left: 30px; }
+    .loader-progress-container {
+        width: 180px;
+    }
+    .loader-text-container .loader-title {
+        font-size: 14px;
+        letter-spacing: 3px;
+    }
+    .loader-text-container .loader-sub {
+        font-size: 9px;
+        letter-spacing: 2px;
+    }
+    .loader-progress-container .progress-text {
+        font-size: 9px;
+    }
+    .loader-progress-container .progress-text .percentage {
+        font-size: 12px;
+    }
+
     .chat-widget .chat-window {
         width: 290px;
         right: -40px;
         max-height: 450px;
+    }
+
+    .chat-widget .chat-footer .send-btn {
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .chat-widget .chat-footer input {
+        font-size: 13px;
+        padding: 0.6rem 1rem;
     }
 }
