@@ -7,11 +7,24 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+const http = require('http');
+const socketIo = require('socket.io');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Create HTTP server with Socket.IO
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: true
+    },
+    transports: ['websocket', 'polling']
+});
 
 app.use(cors());
 app.use(express.json());
@@ -19,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => console.error('❌ MongoDB error:', err));
@@ -132,6 +146,132 @@ const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 const Shipment = mongoose.model('Shipment', shipmentSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const EmailLog = mongoose.model('EmailLog', emailLogSchema);
+
+// ==================== WEBSOCKET CHAT LOGIC ====================
+
+let adminOnline = false;
+let adminSocketId = null;
+
+io.on('connection', (socket) => {
+    console.log('🟢 Client connected:', socket.id);
+
+    // Admin authentication via socket
+    socket.on('admin-auth', (data) => {
+        try {
+            const { token } = data;
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            adminOnline = true;
+            adminSocketId = socket.id;
+            socket.join('admin-room');
+            
+            console.log(`👑 Admin ${decoded.username} is online`);
+            io.emit('admin-status', { online: true, username: decoded.username });
+            
+            socket.emit('admin-auth-success', { success: true });
+        } catch (error) {
+            socket.emit('admin-auth-error', { error: 'Invalid token' });
+        }
+    });
+
+    // Check admin status (for clients)
+    socket.on('check-admin-status', () => {
+        socket.emit('admin-status', { online: adminOnline });
+    });
+
+    // User sends message
+    socket.on('user-message', async (data) => {
+        try {
+            const { conversationId, message, userEmail, userName } = data;
+            
+            const messageId = uuidv4();
+            const chatMessage = new ChatMessage({
+                conversationId,
+                messageId,
+                sender: 'user',
+                senderName: userName || 'Guest',
+                message,
+                timestamp: new Date(),
+                read: false
+            });
+            await chatMessage.save();
+            
+            await ChatConversation.findOneAndUpdate(
+                { conversationId },
+                { 
+                    updatedAt: new Date(), 
+                    unreadAdmin: true
+                }
+            );
+            
+            if (adminOnline && adminSocketId) {
+                io.to('admin-room').emit('new-user-message', {
+                    conversationId,
+                    message: chatMessage,
+                    userEmail,
+                    userName: userName || 'Guest'
+                });
+            }
+            
+            socket.emit('message-sent', { success: true, messageId });
+        } catch (error) {
+            console.error('User message error:', error);
+            socket.emit('message-error', { error: 'Failed to send' });
+        }
+    });
+
+    // Admin sends message
+    socket.on('admin-message', async (data) => {
+        try {
+            const { conversationId, message, senderName } = data;
+            
+            const messageId = uuidv4();
+            const chatMessage = new ChatMessage({
+                conversationId,
+                messageId,
+                sender: 'admin',
+                senderName: senderName || 'Support Team',
+                message,
+                timestamp: new Date(),
+                read: false
+            });
+            await chatMessage.save();
+            
+            await ChatConversation.findOneAndUpdate(
+                { conversationId },
+                { 
+                    updatedAt: new Date(), 
+                    unreadUser: true
+                }
+            );
+            
+            socket.emit('admin-message-sent', { success: true, messageId });
+            
+        } catch (error) {
+            console.error('Admin message error:', error);
+            socket.emit('admin-message-error', { error: 'Failed to send' });
+        }
+    });
+
+    // Admin typing indicator
+    socket.on('admin-typing', (data) => {
+        const { conversationId, isTyping } = data;
+        socket.to(`user-${conversationId}`).emit('admin-typing-status', { 
+            isTyping, 
+            conversationId 
+        });
+    });
+
+    // Disconnect
+    socket.on('disconnect', () => {
+        console.log('🔴 Client disconnected:', socket.id);
+        if (socket.id === adminSocketId) {
+            adminOnline = false;
+            adminSocketId = null;
+            io.emit('admin-status', { online: false });
+            console.log('👑 Admin is offline');
+        }
+    });
+});
 
 // ==================== CREATE ADMIN ====================
 const createDefaultAdmin = async () => {
@@ -607,7 +747,6 @@ app.post('/api/track', async (req, res) => {
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        // EMAIL #1: Tracking Confirmation → user's email
         const trackingLink = `${process.env.BASE_URL || 'http://localhost:3000'}/tracking-result.html?code=${shipment.trackingCode}`;
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
         const email1Result = await sendEmail(
@@ -616,7 +755,6 @@ app.post('/api/track', async (req, res) => {
             email1HTML
         );
 
-        // EMAIL #2: Full Invoice → receiver's email
         let email2Result = { success: false, error: 'No receiver email' };
         if (shipment.receiver?.email) {
             const email2HTML = getInvoiceEmailHTML(shipment);
@@ -632,7 +770,6 @@ app.post('/api/track', async (req, res) => {
             }
         }
 
-        // Log emails
         if (email1Result.success) {
             const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'tracking', recipient: userEmail, status: 'sent' });
             await log.save();
@@ -671,14 +808,12 @@ app.post('/api/chat/start', async (req, res) => {
         const conversationId = uuidv4();
         const messageId = uuidv4();
 
-        // Check if user already has an open conversation
         let existingConversation = await ChatConversation.findOne({ 
             userEmail: userEmail,
             status: { $in: ['open', 'in_progress'] }
         });
 
         if (existingConversation) {
-            // Add message to existing conversation
             const newMessage = new ChatMessage({
                 conversationId: existingConversation.conversationId,
                 messageId: uuidv4(),
@@ -701,7 +836,6 @@ app.post('/api/chat/start', async (req, res) => {
             });
         }
 
-        // Create new conversation
         const conversation = new ChatConversation({
             conversationId,
             userEmail,
@@ -714,7 +848,6 @@ app.post('/api/chat/start', async (req, res) => {
         });
         await conversation.save();
 
-        // Create first message
         const chatMessage = new ChatMessage({
             conversationId,
             messageId,
@@ -750,7 +883,6 @@ app.get('/api/chat/:conversationId/messages', async (req, res) => {
 
         const messages = await ChatMessage.find({ conversationId }).sort({ timestamp: 1 });
         
-        // Mark messages as read (for admin)
         if (req.query.admin === 'true') {
             await ChatMessage.updateMany(
                 { conversationId, sender: 'user', read: false },
@@ -798,7 +930,6 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         });
         await chatMessage.save();
 
-        // Update conversation
         conversation.updatedAt = new Date();
         if (sender === 'admin') {
             conversation.unreadUser = true;
@@ -826,7 +957,6 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
         const conversations = await ChatConversation.find()
             .sort({ updatedAt: -1 });
         
-        // Get last message for each conversation
         const conversationsWithLastMessage = await Promise.all(conversations.map(async (conv) => {
             const lastMessage = await ChatMessage.findOne({ 
                 conversationId: conv.conversationId 
@@ -869,7 +999,6 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
         conversation.updatedAt = new Date();
         await conversation.save();
 
-        // Add system message
         const systemMessage = new ChatMessage({
             conversationId,
             messageId: uuidv4(),
@@ -925,7 +1054,6 @@ app.delete('/api/admin/chat/:conversationId/messages', authMiddleware, async (re
     try {
         const { conversationId } = req.params;
         
-        // Check if conversation exists
         const conversation = await ChatConversation.findOne({ conversationId });
         if (!conversation) {
             return res.status(404).json({ error: 'Conversation not found' });
@@ -933,7 +1061,6 @@ app.delete('/api/admin/chat/:conversationId/messages', authMiddleware, async (re
 
         const result = await ChatMessage.deleteMany({ conversationId });
         
-        // Update conversation status
         conversation.updatedAt = new Date();
         await conversation.save();
 
@@ -972,7 +1099,7 @@ app.get('/gdpr', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gdpr
 
 // ==================== START SERVER ====================
 createDefaultAdmin().then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
+    server.listen(PORT, '0.0.0.0', () => {
         console.log('\n' + '='.repeat(70));
         console.log('🚀 SwiftLogix Logistics Server');
         console.log('='.repeat(70));
@@ -980,7 +1107,8 @@ createDefaultAdmin().then(() => {
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD}`);
         console.log(`📊 Database: MongoDB Connected`);
         console.log(`📧 Email: Netlify Function`);
-        console.log(`💬 Chat Support: Enabled with Delete functionality`);
+        console.log(`💬 Chat Support: Enabled with WebSocket`);
+        console.log(`🔌 WebSocket: Active on /socket.io/`);
         console.log('='.repeat(70) + '\n');
     });
 });
