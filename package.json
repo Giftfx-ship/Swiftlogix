@@ -1,7 +1,7 @@
 {
   "name": "swiftlogix",
   "version": "2.0.0",
-  "description": "SwiftLogix - Premium Global Logistics Platform with Live Chat Support",
+  "description": "SwiftLogix - Premium Global Logistics Platform with Live Chat Support & PDF Invoice Generation",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -17,9 +17,25 @@
     "uuid": "^9.0.0",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
-    "resend": "^3.0.0"
+    "resend": "^3.0.0",
+    "html-pdf": "^3.0.1",
+    "puppeteer": "^21.0.0",
+    "ejs": "^3.1.9"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "logistics",
+    "tracking",
+    "shipping",
+    "invoice",
+    "pdf",
+    "swiftlogix"
+  ],
+  "author": "SwiftLogix Team",
+  "license": "MIT"
 }
