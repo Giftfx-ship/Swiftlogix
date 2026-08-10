@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ocean Freight - SwiftLogix</title>
+    <title>Ocean Freight Services - SwiftLogix</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* ==================== HERO WITH BACKGROUND ==================== */
         .service-hero {
             padding: 8rem 5% 4rem;
             text-align: center;
@@ -44,8 +43,6 @@
             font-size: 1.2rem;
             line-height: 1.8;
         }
-
-        /* ==================== SERVICE CONTENT ==================== */
         .service-content {
             padding: 4rem 5%;
             max-width: 1200px;
@@ -104,8 +101,6 @@
             object-fit: cover;
             display: block;
         }
-
-        /* ==================== SERVICE FEATURES ==================== */
         .service-features {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -140,8 +135,6 @@
             font-size: 0.9rem;
             line-height: 1.6;
         }
-
-        /* ==================== CTA ==================== */
         .service-cta {
             background: linear-gradient(135deg, rgba(108,27,140,0.1), rgba(255,102,0,0.05));
             border-radius: 24px;
@@ -161,7 +154,6 @@
             color: #9aa8c9;
             margin-bottom: 1.5rem;
         }
-
         .btn-primary {
             display: inline-block;
             padding: 14px 36px;
@@ -180,8 +172,6 @@
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(108,27,140,0.4);
         }
-
-        /* ==================== FOOTER ==================== */
         .footer {
             background: #060a16;
             padding: 2rem 5%;
@@ -193,72 +183,29 @@
             color: #667799;
             font-size: 13px;
         }
-
-        /* ==================== RESPONSIVE ==================== */
         @media(max-width:992px){
-            .service-content .grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            .service-content .grid.reverse {
-                direction: ltr;
-            }
-            .service-features {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .service-hero h1 {
-                font-size: 2.8rem;
-            }
+            .service-content .grid { grid-template-columns: 1fr; gap: 2rem; }
+            .service-content .grid.reverse { direction: ltr; }
+            .service-features { grid-template-columns: repeat(2, 1fr); }
         }
         @media(max-width:768px){
-            .service-hero {
-                padding: 6rem 5% 3rem;
-            }
-            .service-hero h1 {
-                font-size: 2.2rem;
-            }
-            .service-hero p {
-                font-size: 1rem;
-            }
-            .service-content {
-                padding: 2rem 5%;
-            }
-            .service-content .text h2 {
-                font-size: 1.6rem;
-            }
-            .service-features {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            .service-content .image img {
-                height: 250px;
-            }
-            .service-cta {
-                padding: 2rem 1.5rem;
-            }
-            .service-cta h3 {
-                font-size: 1.4rem;
-            }
+            .service-hero { padding: 6rem 5% 3rem; }
+            .service-hero h1 { font-size: 2.2rem; }
+            .service-content { padding: 2rem 5%; }
+            .service-content .text h2 { font-size: 1.6rem; }
+            .service-features { grid-template-columns: 1fr; gap: 1rem; }
+            .service-content .image img { height: 250px; }
+            .service-cta { padding: 2rem 1.5rem; }
         }
         @media(max-width:480px){
-            .service-hero h1 {
-                font-size: 1.8rem;
-            }
-            .service-content .text h2 {
-                font-size: 1.3rem;
-            }
-            .service-content .image img {
-                height: 200px;
-            }
-            .service-cta h3 {
-                font-size: 1.2rem;
-            }
+            .service-hero h1 { font-size: 1.8rem; }
+            .service-content .text h2 { font-size: 1.3rem; }
+            .service-content .image img { height: 200px; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ==================== TRUCK LOADER ==================== -->
+    <!-- TRUCK LOADER -->
     <div class="loader-wrapper" id="loader">
         <div class="loader-road"></div>
         <div class="loader-truck-container">
@@ -294,14 +241,7 @@
         </div>
     </div>
 
-    <!-- BACKGROUND -->
-    <div class="bg-glow">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-
-    <!-- ==================== NAVBAR ==================== -->
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
@@ -319,68 +259,68 @@
         </div>
     </nav>
 
-    <!-- ==================== SERVICE HERO WITH BACKGROUND ==================== -->
+    <!-- HERO -->
     <section class="service-hero">
         <div class="content">
             <h1>Ocean Freight Services</h1>
-            <p>FCL, LCL, and consolidation services with global coverage and competitive rates. Reliable ocean freight solutions for your international shipping needs.</p>
+            <p>Comprehensive ocean freight solutions with FCL, LCL, and consolidation services across 190+ countries worldwide.</p>
         </div>
     </section>
 
-    <!-- ==================== SERVICE CONTENT ==================== -->
+    <!-- CONTENT -->
     <section class="service-content">
         <div class="grid">
             <div class="text">
                 <h2>Global Ocean Freight Solutions</h2>
-                <p>Our ocean freight services offer flexible and cost-effective shipping solutions for businesses of all sizes. Whether you need a full container or less than container load, we have the expertise to handle your cargo with care.</p>
+                <p>SwiftLogix offers comprehensive ocean freight services that combine cost efficiency with global reach. Our extensive network of shipping partners and agents ensures that your cargo moves seamlessly across international waters, regardless of destination.</p>
+                <p>Whether you require a full container load for large shipments or less than container load for smaller consignments, we provide flexible solutions that adapt to your specific needs. Our consolidation services allow you to share container space with other shippers, reducing costs while maintaining reliable transit times.</p>
+                <p>With expertise in customs brokerage and documentation, we handle the complexities of international shipping so you can focus on your core business. Our team ensures compliance with local regulations and provides real-time visibility into your shipment's journey from port to port.</p>
                 <ul>
-                    <li><i class="fas fa-check-circle"></i> Full Container Load (FCL) services</li>
-                    <li><i class="fas fa-check-circle"></i> Less than Container Load (LCL) consolidation</li>
+                    <li><i class="fas fa-check-circle"></i> Full Container Load (FCL) services for large shipments</li>
+                    <li><i class="fas fa-check-circle"></i> Less than Container Load (LCL) consolidation options</li>
                     <li><i class="fas fa-check-circle"></i> Global port coverage in 190+ countries</li>
-                    <li><i class="fas fa-check-circle"></i> Real-time container tracking</li>
-                    <li><i class="fas fa-check-circle"></i> Customs brokerage and documentation</li>
+                    <li><i class="fas fa-check-circle"></i> Real-time container tracking and monitoring</li>
+                    <li><i class="fas fa-check-circle"></i> Customs brokerage and documentation support</li>
+                    <li><i class="fas fa-check-circle"></i> Competitive rates with flexible scheduling</li>
                 </ul>
                 <a href="contact.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Request a Quote</a>
             </div>
             <div class="image">
-                <img src="/images/ocean-freight.jpg" alt="Ocean Freight" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'background:#111b33;height:350px;display:flex;align-items:center;justify-content:center;color:#667799;border-radius:24px;\'><i class=\'fas fa-ship\' style=\'font-size:4rem;opacity:0.3;\'></i></div>'">
+                <img src="/images/ocean-freight.jpg.PNG" alt="Ocean Freight">
             </div>
         </div>
 
-        <!-- ==================== FEATURES ==================== -->
         <div class="service-features">
             <div class="feature">
                 <i class="fas fa-boxes"></i>
                 <h4>FCL / LCL</h4>
-                <p>Full container load or less than container load options available</p>
+                <p>Full container load or less than container load options tailored to your shipment size.</p>
             </div>
             <div class="feature">
                 <i class="fas fa-globe"></i>
                 <h4>Global Ports</h4>
-                <p>Coverage to 190+ countries worldwide</p>
+                <p>Coverage to 190+ countries with reliable shipping routes and schedules.</p>
             </div>
             <div class="feature">
                 <i class="fas fa-map-marker-alt"></i>
                 <h4>Container Tracking</h4>
-                <p>Real-time container location updates</p>
+                <p>Real-time container location updates with instant notifications at every milestone.</p>
             </div>
         </div>
 
-        <!-- ==================== CTA ==================== -->
         <div class="service-cta">
             <h3>Ready to Ship by Sea?</h3>
-            <p>Get a competitive quote for your ocean freight needs today.</p>
+            <p>Get a competitive quote for your ocean freight needs today. Our experts are ready to assist you.</p>
             <a href="contact.html" class="btn-primary">Get a Quote</a>
         </div>
     </section>
 
-    <!-- ==================== FOOTER ==================== -->
+    <!-- FOOTER -->
     <footer class="footer">
         <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
     <script>
-        // ==================== HIDE LOADER ====================
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader');
             if (loader) {
@@ -389,8 +329,6 @@
                 }, 2500);
             }
         });
-
-        // ==================== PROGRESS PERCENTAGE ====================
         let progress = 0;
         const progressInterval = setInterval(function() {
             progress += Math.random() * 8 + 3;
@@ -403,18 +341,14 @@
                 percentEl.textContent = Math.floor(progress) + '%';
             }
         }, 150);
-
-        // ==================== MOBILE MENU ====================
         document.querySelector('.menu-toggle')?.addEventListener('click', function() {
             document.querySelector('.nav-links').classList.toggle('active');
         });
-
         document.querySelectorAll('.nav-links a').forEach(function(link) {
             link.addEventListener('click', function() {
                 document.querySelector('.nav-links').classList.remove('active');
             });
         });
-
         console.log('🚀 Ocean Freight page loaded successfully!');
     </script>
 </body>
