@@ -8,24 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .legal-page { padding: 8rem 5% 4rem; max-width: 900px; margin: 0 auto; }
+        /* ==================== LEGAL PAGE ==================== */
+        .legal-page {
+            padding: 8rem 5% 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
         .legal-page h1 {
             font-size: 2.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-        .legal-page .last-updated { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .legal-page .last-updated {
+            color: #9aa8c9;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legal-page .last-updated i {
+            color: #FF6600;
+        }
         .legal-page h2 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary);
+            color: #FF6600;
             margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .legal-page h2 i {
+            color: #6C1B8C;
+            font-size: 1.2rem;
         }
         .legal-page p {
-            color: var(--text-muted);
+            color: #9aa8c9;
             line-height: 1.8;
             margin-bottom: 1rem;
         }
@@ -35,105 +57,150 @@
         }
         .legal-page ul li {
             padding: 0.5rem 0;
-            color: var(--text-muted);
+            color: #9aa8c9;
             display: flex;
             align-items: flex-start;
             gap: 0.8rem;
         }
-        .legal-page ul li i { color: var(--primary); margin-top: 0.3rem; }
+        .legal-page ul li i {
+            color: #FF6600;
+            margin-top: 0.3rem;
+            font-size: 0.9rem;
+        }
+        .legal-page .highlight-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,102,0,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255,102,0,0.15);
+        }
+        .legal-page .highlight-box p {
+            color: #9aa8c9;
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        .legal-page .highlight-box i {
+            color: #FF6600;
+            margin-right: 0.5rem;
+        }
+
+        /* Cookie Types Grid */
+        .cookie-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .cookie-types .cookie-card {
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
+        }
+        .cookie-types .cookie-card:hover {
+            border-color: #FF6600;
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.04);
+        }
+        .cookie-types .cookie-card h4 {
+            color: #FF6600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .cookie-types .cookie-card p {
+            color: #9aa8c9;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+        .cookie-types .cookie-card .cookie-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #6C1B8C;
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 0.6rem;
-            color: var(--text-muted);
+            color: #9aa8c9;
             margin-bottom: 2rem;
-            transition: all var(--transition);
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
-        .back-link:hover { color: var(--primary); gap: 1rem; }
-        .cookie-types { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
-        .cookie-types .cookie-card {
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border);
+        .back-link:hover {
+            color: #FF6600;
+            gap: 1rem;
         }
-        .cookie-types .cookie-card h4 { color: var(--primary); margin-bottom: 0.5rem; }
-        .cookie-types .cookie-card p { font-size: 0.9rem; margin-bottom: 0; }
-        @media (max-width: 480px) {
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .legal-page { padding: 6rem 5% 3rem; }
+            .legal-page h1 { font-size: 2.2rem; }
+            .legal-page h2 { font-size: 1.3rem; }
             .cookie-types { grid-template-columns: 1fr; }
-            .legal-page h1 { font-size: 2rem; }
+        }
+        @media (max-width: 480px) {
+            .legal-page h1 { font-size: 1.8rem; }
+            .legal-page h2 { font-size: 1.1rem; }
+            .legal-page { padding: 5rem 5% 2rem; }
+            .legal-page ul li { padding: 0.4rem 0; }
+            .cookie-types .cookie-card { padding: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading cookie policy...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
     </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
 
-    <!-- BACKGROUND -->
+    <!-- ==================== BACKGROUND ==================== -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -147,38 +214,45 @@
         </div>
     </nav>
 
-    <!-- COOKIE POLICY -->
+    <!-- ==================== COOKIE POLICY ==================== -->
     <div class="legal-page">
         <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        
         <h1>Cookie Policy</h1>
-        <div class="last-updated">Last Updated: March 2026</div>
+        <div class="last-updated">
+            <i class="fas fa-calendar-alt"></i> Last Updated: March 2026
+        </div>
 
         <p>This Cookie Policy explains how SwiftLogix uses cookies and similar technologies to enhance your experience on our website. By using our website, you consent to our use of cookies in accordance with this policy.</p>
 
-        <h2>What Are Cookies?</h2>
+        <h2><i class="fas fa-cookie"></i> What Are Cookies?</h2>
         <p>Cookies are small text files that are stored on your device when you visit a website. They help us remember your preferences, improve functionality, and analyze how you interact with our site.</p>
 
-        <h2>Types of Cookies We Use</h2>
+        <h2><i class="fas fa-list"></i> Types of Cookies We Use</h2>
         <div class="cookie-types">
             <div class="cookie-card">
+                <div class="cookie-icon"><i class="fas fa-shield-alt"></i></div>
                 <h4>Essential Cookies</h4>
                 <p>These are necessary for the website to function properly. They enable core features like security, network management, and accessibility.</p>
             </div>
             <div class="cookie-card">
+                <div class="cookie-icon"><i class="fas fa-chart-line"></i></div>
                 <h4>Performance Cookies</h4>
                 <p>These cookies help us understand how visitors interact with our website, allowing us to improve performance and user experience.</p>
             </div>
             <div class="cookie-card">
+                <div class="cookie-icon"><i class="fas fa-sliders-h"></i></div>
                 <h4>Functional Cookies</h4>
                 <p>These remember your preferences and choices, such as language settings and region selection, to provide a personalized experience.</p>
             </div>
             <div class="cookie-card">
+                <div class="cookie-icon"><i class="fas fa-bullhorn"></i></div>
                 <h4>Marketing Cookies</h4>
                 <p>These are used to deliver relevant advertisements and track the effectiveness of marketing campaigns across websites.</p>
             </div>
         </div>
 
-        <h2>How We Use Cookies</h2>
+        <h2><i class="fas fa-cogs"></i> How We Use Cookies</h2>
         <ul>
             <li><i class="fas fa-check-circle"></i> To remember your login session and preferences</li>
             <li><i class="fas fa-check-circle"></i> To analyze website traffic and usage patterns</li>
@@ -186,25 +260,26 @@
             <li><i class="fas fa-check-circle"></i> To deliver targeted content and advertisements</li>
         </ul>
 
-        <h2>Managing Cookie Preferences</h2>
+        <h2><i class="fas fa-sliders-h"></i> Managing Cookie Preferences</h2>
         <p>You can control and manage cookies through your browser settings. Most browsers allow you to block or delete cookies. However, disabling essential cookies may affect the functionality of our website.</p>
 
-        <h2>Third-Party Cookies</h2>
+        <h2><i class="fas fa-share-alt"></i> Third-Party Cookies</h2>
         <p>We may use third-party services that set their own cookies, such as analytics providers and advertising partners. These third parties have their own privacy policies and cookie practices.</p>
 
-        <h2>Changes to This Policy</h2>
+        <h2><i class="fas fa-sync-alt"></i> Changes to This Policy</h2>
         <p>We may update this Cookie Policy from time to time. Changes will be posted on this page with an updated date.</p>
 
-        <h2>Contact Us</h2>
+        <h2><i class="fas fa-envelope"></i> Contact Us</h2>
         <p>If you have questions about our Cookie Policy, please contact us at:</p>
-        <p style="color:#fff;">📧 privacy@swiftlogix.com<br>📞 +1 (888) 123-ELITE</p>
+        <p style="color:#fff;font-weight:500;">📧 <a href="mailto:privacy@swiftlogix.com" style="color:#FF6600;text-decoration:none;">privacy@swiftlogix.com</a><br>
+        📞 +1 (888) 123-ELITE</p>
 
-        <div style="margin-top:2rem;padding:1rem;background:rgba(0,242,254,0.05);border-radius:12px;border:1px solid var(--border);">
-            <p style="color:var(--text-muted);font-size:0.85rem;">This Cookie Policy is effective as of March 2026 and may be updated periodically.</p>
+        <div class="highlight-box">
+            <p><i class="fas fa-info-circle"></i> This Cookie Policy is effective as of March 2026 and may be updated periodically. Please review this page for any changes.</p>
         </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- ==================== FOOTER ==================== -->
     <footer class="footer" style="margin-top:0;">
         <div class="container">
             <div class="footer-bottom">
@@ -219,6 +294,43 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+
+        // ==================== MOBILE MENU ====================
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        console.log('🚀 Cookie Policy page loaded successfully!');
+    </script>
 </body>
 </html>
