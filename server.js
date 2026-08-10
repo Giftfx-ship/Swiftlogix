@@ -30,7 +30,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -127,7 +126,8 @@ const chatConversationSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     unreadUser: { type: Boolean, default: false },
-    unreadAdmin: { type: Boolean, default: false }
+    unreadAdmin: { type: Boolean, default: false },
+    lastMessageAt: { type: Date }
 });
 
 // Chat Message Schema
@@ -141,11 +141,11 @@ const chatMessageSchema = new mongoose.Schema({
     read: { type: Boolean, default: false }
 });
 
-const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
-const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 const Shipment = mongoose.model('Shipment', shipmentSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const EmailLog = mongoose.model('EmailLog', emailLogSchema);
+const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
+const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
 // ==================== WEBSOCKET CHAT LOGIC ====================
 
@@ -199,7 +199,8 @@ io.on('connection', (socket) => {
                 { conversationId },
                 { 
                     updatedAt: new Date(), 
-                    unreadAdmin: true
+                    unreadAdmin: true,
+                    lastMessageAt: new Date()
                 }
             );
             
@@ -240,7 +241,8 @@ io.on('connection', (socket) => {
                 { conversationId },
                 { 
                     updatedAt: new Date(), 
-                    unreadUser: true
+                    unreadUser: true,
+                    lastMessageAt: new Date()
                 }
             );
             
@@ -805,15 +807,14 @@ app.post('/api/chat/start', async (req, res) => {
             return res.status(400).json({ error: 'Email and message are required' });
         }
 
-        const conversationId = uuidv4();
-        const messageId = uuidv4();
-
+        // Check if user already has an open conversation
         let existingConversation = await ChatConversation.findOne({ 
             userEmail: userEmail,
             status: { $in: ['open', 'in_progress'] }
         });
 
         if (existingConversation) {
+            // Add message to existing conversation
             const newMessage = new ChatMessage({
                 conversationId: existingConversation.conversationId,
                 messageId: uuidv4(),
@@ -826,7 +827,18 @@ app.post('/api/chat/start', async (req, res) => {
 
             existingConversation.updatedAt = new Date();
             existingConversation.unreadAdmin = true;
+            existingConversation.lastMessageAt = new Date();
             await existingConversation.save();
+
+            // Notify admin via WebSocket if online
+            if (adminOnline && adminSocketId) {
+                io.to('admin-room').emit('new-user-message', {
+                    conversationId: existingConversation.conversationId,
+                    message: newMessage,
+                    userEmail,
+                    userName: userName || 'Guest'
+                });
+            }
 
             return res.json({
                 success: true,
@@ -836,6 +848,8 @@ app.post('/api/chat/start', async (req, res) => {
             });
         }
 
+        // Create new conversation
+        const conversationId = uuidv4();
         const conversation = new ChatConversation({
             conversationId,
             userEmail,
@@ -844,10 +858,13 @@ app.post('/api/chat/start', async (req, res) => {
             status: 'open',
             createdAt: new Date(),
             updatedAt: new Date(),
-            unreadAdmin: true
+            unreadAdmin: true,
+            lastMessageAt: new Date()
         });
         await conversation.save();
 
+        // Create first message
+        const messageId = uuidv4();
         const chatMessage = new ChatMessage({
             conversationId,
             messageId,
@@ -858,6 +875,16 @@ app.post('/api/chat/start', async (req, res) => {
             read: false
         });
         await chatMessage.save();
+
+        // Notify admin via WebSocket if online
+        if (adminOnline && adminSocketId) {
+            io.to('admin-room').emit('new-user-message', {
+                conversationId,
+                message: chatMessage,
+                userEmail,
+                userName: userName || 'Guest'
+            });
+        }
 
         res.json({
             success: true,
@@ -883,6 +910,7 @@ app.get('/api/chat/:conversationId/messages', async (req, res) => {
 
         const messages = await ChatMessage.find({ conversationId }).sort({ timestamp: 1 });
         
+        // Mark messages as read for admin
         if (req.query.admin === 'true') {
             await ChatMessage.updateMany(
                 { conversationId, sender: 'user', read: false },
@@ -931,6 +959,7 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         await chatMessage.save();
 
         conversation.updatedAt = new Date();
+        conversation.lastMessageAt = new Date();
         if (sender === 'admin') {
             conversation.unreadUser = true;
             conversation.unreadAdmin = false;
@@ -940,6 +969,14 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
             conversation.unreadUser = false;
         }
         await conversation.save();
+
+        // If admin sent message, notify via WebSocket
+        if (sender === 'admin' && adminOnline && adminSocketId) {
+            io.to('admin-room').emit('admin-message-sent', {
+                conversationId,
+                message: chatMessage
+            });
+        }
 
         res.json({
             success: true,
@@ -968,11 +1005,17 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
                 read: false
             });
 
+            // Get message count
+            const messageCount = await ChatMessage.countDocuments({
+                conversationId: conv.conversationId
+            });
+
             return {
                 ...conv.toObject(),
                 lastMessage: lastMessage?.message || 'No messages',
                 lastMessageTime: lastMessage?.timestamp || conv.createdAt,
-                unreadCount
+                unreadCount,
+                messageCount
             };
         }));
 
@@ -983,6 +1026,19 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error('Get chats error:', error);
         res.status(500).json({ error: 'Failed to get conversations' });
+    }
+});
+
+// Get unread count for admin
+app.get('/api/admin/chats/unread', authMiddleware, async (req, res) => {
+    try {
+        const count = await ChatConversation.countDocuments({ 
+            unreadAdmin: true,
+            status: { $in: ['open', 'in_progress'] }
+        });
+        res.json({ success: true, unreadCount: count });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get unread count' });
     }
 });
 
@@ -999,6 +1055,7 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
         conversation.updatedAt = new Date();
         await conversation.save();
 
+        // Add system message
         const systemMessage = new ChatMessage({
             conversationId,
             messageId: uuidv4(),
@@ -1017,19 +1074,6 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
     } catch (error) {
         console.error('Resolve chat error:', error);
         res.status(500).json({ error: 'Failed to resolve conversation' });
-    }
-});
-
-// Get unread count for admin
-app.get('/api/admin/chats/unread', authMiddleware, async (req, res) => {
-    try {
-        const count = await ChatConversation.countDocuments({ 
-            unreadAdmin: true,
-            status: { $in: ['open', 'in_progress'] }
-        });
-        res.json({ success: true, unreadCount: count });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to get unread count' });
     }
 });
 
