@@ -1,7 +1,7 @@
 {
   "name": "swiftlogix",
   "version": "2.0.0",
-  "description": "SwiftLogix - Premium Global Logistics Platform",
+  "description": "SwiftLogix - Premium Global Logistics Platform with Live Chat Support",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -22,5 +22,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
