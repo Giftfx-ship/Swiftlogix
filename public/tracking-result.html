@@ -246,17 +246,22 @@
 
         function generatePDFHTML(shipment) {
             const inv = shipment.invoice || {};
-            const dutyDisplay = shipment.parcel?.dutyFeesAmount !== 'N/A' ? shipment.parcel.dutyFeesAmount : shipment.parcel?.dutyFeesStatus || 'N/A';
+            const dutyDisplay = shipment.parcel?.dutyFeesAmount !== 'N/A' 
+                ? shipment.parcel.dutyFeesAmount 
+                : shipment.parcel?.dutyFeesStatus || 'N/A';
             
-            let timelineHTML = shipment.timeline.map(item => `
-                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <div>
-                        <div style="font-weight:600;font-size:13px;color:#fff;">${item.title}</div>
-                        <div style="color:rgba(255,255,255,0.4);font-size:11px;">${item.desc}</div>
+            let timelineHTML = '';
+            if (shipment.timeline && shipment.timeline.length > 0) {
+                timelineHTML = shipment.timeline.map(item => `
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <div>
+                            <div style="font-weight:600;font-size:13px;color:#fff;">${item.title || 'N/A'}</div>
+                            <div style="color:rgba(255,255,255,0.4);font-size:11px;">${item.desc || 'N/A'}</div>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;">${item.date || 'N/A'}</div>
                     </div>
-                    <div style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;">${item.date}</div>
-                </div>
-            `).join('');
+                `).join('');
+            }
 
             return `
             <!DOCTYPE html>
@@ -564,7 +569,6 @@
 
         async function loadTracking() {
             try {
-                // ✅ FIXED: Use PUBLIC endpoint instead of ADMIN endpoint
                 const response = await fetch(`${API_URL}/api/track/${trackingNumber}`);
                 
                 if (!response.ok) {
@@ -601,54 +605,72 @@
             const progress = document.getElementById('pdfProgress');
             loading.classList.add('active');
 
-            const pdfHTML = generatePDFHTML(shipment);
+            // ✅ Create a dedicated PDF container
+            const pdfContainer = document.createElement('div');
+            pdfContainer.id = 'pdfContainer';
+            pdfContainer.style.cssText = `
+                position: fixed;
+                left: -9999px;
+                top: 0;
+                width: 900px;
+                background: #0a0e1a;
+                padding: 40px;
+                font-family: 'Inter', sans-serif;
+                color: #fff;
+                z-index: 10000;
+            `;
             
-            const container = document.createElement('div');
-            container.innerHTML = pdfHTML;
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
-            container.style.top = '0';
-            container.style.width = '900px';
-            container.style.background = '#0a0e1a';
-            container.style.padding = '40px';
-            document.body.appendChild(container);
+            const pdfHTML = generatePDFHTML(shipment);
+            pdfContainer.innerHTML = pdfHTML;
+            document.body.appendChild(pdfContainer);
 
             progress.style.width = '30%';
 
-            const opt = {
-                margin: [0.5, 0.5, 0.5, 0.5],
-                filename: `SwiftLogix_Invoice_${shipment.trackingCode}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#0a0e1a',
-                    logging: false
-                },
-                jsPDF: { 
-                    unit: 'in', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
-                },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
+            setTimeout(() => {
+                progress.style.width = '50%';
+                
+                const opt = {
+                    margin: [0.5, 0.5, 0.5, 0.5],
+                    filename: `SwiftLogix_Invoice_${shipment.trackingCode}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#0a0e1a',
+                        logging: false,
+                        width: 900,
+                        height: pdfContainer.scrollHeight
+                    },
+                    jsPDF: { 
+                        unit: 'in', 
+                        format: 'a4', 
+                        orientation: 'portrait' 
+                    },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
 
-            progress.style.width = '60%';
+                progress.style.width = '75%';
 
-            html2pdf().set(opt).from(container).save().then(() => {
-                progress.style.width = '100%';
-                setTimeout(() => {
-                    loading.classList.remove('active');
-                    progress.style.width = '0%';
-                    document.body.removeChild(container);
-                }, 500);
-            }).catch((error) => {
-                console.error('PDF generation error:', error);
-                loading.classList.remove('active');
-                progress.style.width = '0%';
-                document.body.removeChild(container);
-                alert('Failed to generate PDF. Please try again.');
-            });
+                html2pdf()
+                    .set(opt)
+                    .from(pdfContainer)
+                    .save()
+                    .then(() => {
+                        progress.style.width = '100%';
+                        setTimeout(() => {
+                            loading.classList.remove('active');
+                            progress.style.width = '0%';
+                            document.body.removeChild(pdfContainer);
+                        }, 500);
+                    })
+                    .catch((error) => {
+                        console.error('PDF generation error:', error);
+                        loading.classList.remove('active');
+                        progress.style.width = '0%';
+                        document.body.removeChild(pdfContainer);
+                        alert('Failed to generate PDF. Please try again.');
+                    });
+            }, 300);
         }
 
         loadTracking();
