@@ -5,15 +5,19 @@ const dotenv = require('dotenv');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const http = require('http');
 const socketIo = require('socket.io');
+const { Resend } = require('resend');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Init Resend
+const resendClient = new Resend(process.env.RESEND_API_KEY);
+const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix Support <support@swiftlogix.biz>';
 
 // Create HTTP server with Socket.IO
 const server = http.createServer(app);
@@ -111,12 +115,11 @@ const emailLogSchema = new mongoose.Schema({
     recipient: { type: String, required: true },
     sentAt: { type: Date, default: Date.now },
     status: { type: String, enum: ['sent', 'failed'], default: 'sent' },
-    error: { type: String }
+    error: { type: String },
+    resendId: { type: String }
 });
 
-// ==================== CHAT SUPPORT SCHEMAS ====================
-
-// Chat Conversation Schema
+// Chat Schemas
 const chatConversationSchema = new mongoose.Schema({
     conversationId: { type: String, required: true, unique: true },
     userEmail: { type: String, required: true },
@@ -130,7 +133,6 @@ const chatConversationSchema = new mongoose.Schema({
     lastMessageAt: { type: Date }
 });
 
-// Chat Message Schema
 const chatMessageSchema = new mongoose.Schema({
     conversationId: { type: String, required: true },
     messageId: { type: String, required: true, unique: true },
@@ -147,6 +149,37 @@ const EmailLog = mongoose.model('EmailLog', emailLogSchema);
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
+// ==================== EMAIL SERVICE (RESEND) ====================
+
+const sendEmail = async (to, subject, html) => {
+    try {
+        if (!process.env.RESEND_API_KEY) {
+            console.error('❌ RESEND_API_KEY not configured');
+            return { success: false, error: 'API key not configured' };
+        }
+
+        console.log(`📧 Sending email to ${to}...`);
+        
+        const { data, error } = await resendClient.emails.send({
+            from: EMAIL_FROM,
+            to: [to],
+            subject: subject,
+            html: html,
+        });
+
+        if (error) {
+            console.error('❌ Resend error:', error);
+            return { success: false, error: error.message };
+        }
+
+        console.log(`✅ Email sent to ${to}:`, data?.id);
+        return { success: true, data, resendId: data?.id };
+    } catch (error) {
+        console.error('❌ Email error:', error.message);
+        return { success: false, error: error.message };
+    }
+};
+
 // ==================== WEBSOCKET CHAT LOGIC ====================
 
 let adminOnline = false;
@@ -155,7 +188,6 @@ let adminSocketId = null;
 io.on('connection', (socket) => {
     console.log('🟢 Client connected:', socket.id);
 
-    // Admin authentication via socket
     socket.on('admin-auth', (data) => {
         try {
             const { token } = data;
@@ -173,12 +205,10 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Check admin status (for clients)
     socket.on('check-admin-status', () => {
         socket.emit('admin-status', { online: adminOnline });
     });
 
-    // User sends message
     socket.on('user-message', async (data) => {
         try {
             const { conversationId, message, userEmail, userName } = data;
@@ -220,7 +250,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Admin sends message
     socket.on('admin-message', async (data) => {
         try {
             const { conversationId, message, senderName } = data;
@@ -254,7 +283,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Admin typing indicator
     socket.on('admin-typing', (data) => {
         const { conversationId, isTyping } = data;
         socket.to(`user-${conversationId}`).emit('admin-typing-status', { 
@@ -263,7 +291,6 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Disconnect
     socket.on('disconnect', () => {
         console.log('🔴 Client disconnected:', socket.id);
         if (socket.id === adminSocketId) {
@@ -287,21 +314,6 @@ const createDefaultAdmin = async () => {
         }
     } catch (error) {
         console.error('❌ Admin error:', error);
-    }
-};
-
-// ==================== EMAIL SERVICE ====================
-const sendEmail = async (to, subject, html) => {
-    try {
-        const url = process.env.NETLIFY_EMAIL_URL;
-        if (!url) return { success: false, error: 'Netlify URL not configured' };
-        const response = await axios.post(url, { to, subject, html }, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        return response.data || { success: true };
-    } catch (error) {
-        console.error('Email error:', error.message);
-        return { success: false, error: error.message };
     }
 };
 
@@ -708,7 +720,7 @@ app.post('/api/admin/shipments/:code/send-invoice', authMiddleware, async (req, 
             shipment.invoiceSent = true;
             shipment.invoiceSentAt = new Date().toISOString();
             await shipment.save();
-            const log = new EmailLog({ trackingCode, emailType: 'invoice', recipient: shipment.receiver.email, status: 'sent' });
+            const log = new EmailLog({ trackingCode, emailType: 'invoice', recipient: shipment.receiver.email, status: 'sent', resendId: result.resendId });
             await log.save();
             res.json({ success: true, message: `Invoice sent to ${shipment.receiver.email}` });
         } else {
@@ -773,11 +785,11 @@ app.post('/api/track', async (req, res) => {
         }
 
         if (email1Result.success) {
-            const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'tracking', recipient: userEmail, status: 'sent' });
+            const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'tracking', recipient: userEmail, status: 'sent', resendId: email1Result.resendId });
             await log.save();
         }
         if (email2Result.success && shipment.receiver?.email) {
-            const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'invoice', recipient: shipment.receiver.email, status: 'sent' });
+            const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'invoice', recipient: shipment.receiver.email, status: 'sent', resendId: email2Result.resendId });
             await log.save();
         }
 
@@ -1150,7 +1162,7 @@ createDefaultAdmin().then(() => {
         console.log(`📍 URL: http://localhost:${PORT}`);
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD}`);
         console.log(`📊 Database: MongoDB Connected`);
-        console.log(`📧 Email: Netlify Function`);
+        console.log(`📧 Email: Resend (support@swiftlogix.biz)`);
         console.log(`💬 Chat Support: Enabled with WebSocket`);
         console.log(`🔌 WebSocket: Active on /socket.io/`);
         console.log('='.repeat(70) + '\n');
