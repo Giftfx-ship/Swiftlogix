@@ -7,703 +7,100 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0e1a;
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .bg-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            animation: orbFloat 20s ease-in-out infinite;
-        }
-        
-        .orb-1 {
-            width: 600px;
-            height: 600px;
-            background: rgba(108, 27, 140, 0.15);
-            top: -200px;
-            right: -200px;
-        }
-        
-        .orb-2 {
-            width: 500px;
-            height: 500px;
-            background: rgba(0, 242, 254, 0.08);
-            bottom: -150px;
-            left: -150px;
-            animation-delay: -5s;
-        }
-        
-        .orb-3 {
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 102, 0, 0.06);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: -10s;
-        }
-        
-        @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(50px, -30px) scale(1.1); }
-            50% { transform: translate(-20px, 40px) scale(0.9); }
-            75% { transform: translate(30px, -20px) scale(1.05); }
-        }
-        
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            padding: 1rem 5%;
-            background: rgba(10, 14, 26, 0.92);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(108, 27, 140, 0.2);
-        }
-        
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo img {
-            height: 50px;
-            width: auto;
-            display: block;
-            transition: all 0.3s ease;
-        }
-        
-        .logo img:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-        
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 14px;
-            font-weight: 500;
-            position: relative;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #6C1B8C, #00f2fe);
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
-        
-        .nav-links a:hover {
-            color: #fff;
-        }
-        
-        .nav-links a.active {
-            color: #00f2fe;
-        }
-        
-        .track-btn-nav {
-            background: linear-gradient(135deg, #6C1B8C, #FF6600);
-            padding: 0.7rem 1.8rem;
-            border-radius: 50px;
-            color: #fff !important;
-            font-weight: 600 !important;
-            transition: all 0.3s !important;
-        }
-        
-        .track-btn-nav::after {
-            display: none !important;
-        }
-        
-        .track-btn-nav:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(108, 27, 140, 0.4);
-        }
-        
-        .menu-toggle {
-            display: none;
-            font-size: 1.5rem;
-            color: #fff;
-            cursor: pointer;
-        }
-        
-        .track-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6rem 5% 4rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .track-card {
-            max-width: 620px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 32px;
-            padding: 3.5rem;
-            border: 1px solid rgba(108, 27, 140, 0.2);
-            backdrop-filter: blur(20px);
-            position: relative;
-            animation: fadeUp 0.8s ease forwards;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-        }
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .track-card::before {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: -1px;
-            right: -1px;
-            bottom: -1px;
-            border-radius: 32px;
-            background: linear-gradient(135deg, rgba(108, 27, 140, 0.3), rgba(0, 242, 254, 0.1), rgba(255, 102, 0, 0.3));
-            z-index: -1;
-            opacity: 0.5;
-        }
-        
-        .track-card .icon-top {
-            text-align: center;
-            font-size: 52px;
-            margin-bottom: 1.5rem;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        .track-card .icon-top i {
-            background: linear-gradient(135deg, #6C1B8C, #00f2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .track-card h1 {
-            text-align: center;
-            font-size: 2.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #6C1B8C, #00f2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-        
-        .track-card .subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 2.5rem;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        .track-card .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .track-card .form-group label {
-            display: block;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .track-card .form-group label i {
-            color: #00f2fe;
-            margin-right: 0.5rem;
-        }
-        
-        .track-card .form-group input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 60px;
-            color: #fff;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .track-card .form-group input:focus {
-            outline: none;
-            border-color: #6C1B8C;
-            box-shadow: 0 0 0 4px rgba(108, 27, 140, 0.15);
-            background: rgba(255, 255, 255, 0.08);
-        }
-        
-        .track-card .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .track-card .email-hint {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 12px;
-            margin-top: 0.6rem;
-        }
-        
-        .track-card .email-hint i {
-            color: #00f2fe;
-        }
-        
-        .track-card .track-btn {
-            width: 100%;
-            padding: 1.1rem;
-            background: linear-gradient(135deg, #6C1B8C, #FF6600);
-            border: none;
-            border-radius: 60px;
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .track-card .track-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.6s;
-        }
-        
-        .track-card .track-btn:hover::before {
-            left: 100%;
-        }
-        
-        .track-card .track-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(108, 27, 140, 0.4);
-        }
-        
-        .track-card .track-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .track-card .result-box {
-            margin-top: 1.5rem;
-            padding: 1rem 1.5rem;
-            border-radius: 16px;
-            display: none;
-            align-items: center;
-            gap: 0.8rem;
-            animation: slideDown 0.4s ease forwards;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .track-card .result-box.success {
-            display: flex;
-            background: rgba(76, 175, 80, 0.1);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            color: #4CAF50;
-        }
-        
-        .track-card .result-box.error {
-            display: flex;
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid rgba(255, 68, 68, 0.3);
-            color: #ff4444;
-        }
-        
-        .track-card .result-box.info {
-            display: flex;
-            background: rgba(108, 27, 140, 0.1);
-            border: 1px solid rgba(108, 27, 140, 0.2);
-            color: #8B3AB8;
-        }
-        
-        .track-card .result-box i {
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-        
-        .track-card .result-box .result-content {
-            flex: 1;
-        }
-        
-        .track-card .result-box .result-content strong {
-            display: block;
-            font-size: 14px;
-        }
-        
-        .track-card .result-box .result-content .small {
-            font-size: 13px;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
-        
-        /* ===== LOADING OVERLAY ===== */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 14, 26, 0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .loading-overlay.active {
-            display: flex;
-        }
-        
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-        
-        /* Animated Truck */
-        .truck-loader {
-            position: relative;
-            width: 120px;
-            height: 80px;
-        }
-        
-        .truck {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            animation: truckMove 2s ease-in-out infinite;
-        }
-        
-        @keyframes truckMove {
-            0%, 100% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-        }
-        
-        .truck-body {
-            position: absolute;
-            bottom: 0;
-            left: 20px;
-            width: 80px;
-            height: 40px;
-            background: linear-gradient(135deg, #6C1B8C, #00f2fe);
-            border-radius: 8px 8px 0 0;
-            border: 2px solid rgba(0, 242, 254, 0.3);
-        }
-        
-        .truck-body::after {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            width: 30px;
-            height: 15px;
-            background: linear-gradient(135deg, #6C1B8C, #00f2fe);
-            border-radius: 4px 4px 0 0;
-            border: 2px solid rgba(0, 242, 254, 0.3);
-            border-bottom: none;
-        }
-        
-        .truck-window {
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            width: 20px;
-            height: 14px;
-            background: rgba(0, 242, 254, 0.2);
-            border-radius: 3px;
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            animation: windowGlow 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes windowGlow {
-            0%, 100% { background: rgba(0, 242, 254, 0.2); }
-            50% { background: rgba(0, 242, 254, 0.5); }
-        }
-        
-        .truck-wheel {
-            position: absolute;
-            bottom: -10px;
-            width: 18px;
-            height: 18px;
-            background: #1a1a2e;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            animation: wheelSpin 1s linear infinite;
-        }
-        
-        .truck-wheel::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-        
-        .truck-wheel-left {
-            left: 25px;
-        }
-        
-        .truck-wheel-right {
-            right: 25px;
-        }
-        
-        @keyframes wheelSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Road Line */
-        .road {
-            position: relative;
-            width: 200px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        
-        .road-line {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, #00f2fe, transparent);
-            animation: roadMove 1.5s linear infinite;
-        }
-        
-        @keyframes roadMove {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        /* Loading Text */
-        .loading-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 1px;
-        }
-        
-        .loading-dots {
-            display: inline-flex;
-            gap: 4px;
-        }
-        
-        .loading-dots span {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #00f2fe;
-            border-radius: 50%;
-            animation: dotBounce 1.4s ease-in-out infinite;
-        }
-        
-        .loading-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .loading-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes dotBounce {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-            40% { transform: scale(1); opacity: 1; }
-        }
-        
-        /* Progress Steps */
-        .progress-steps {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin-top: 0.5rem;
-        }
-        
-        .step {
-            width: 40px;
-            height: 4px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.5s;
-        }
-        
-        .step.active {
-            background: linear-gradient(90deg, #6C1B8C, #00f2fe);
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
-        }
-        
-        .step.done {
-            background: #00f2fe;
-        }
-        
-        .step-text {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 11px;
-            margin-top: 0.5rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .step-text.active {
-            color: #00f2fe;
-        }
-        
-        .footer {
-            background: rgba(6, 10, 22, 0.95);
-            padding: 2rem 5%;
-            text-align: center;
-            border-top: 1px solid rgba(108, 27, 140, 0.2);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .footer p {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 13px;
-        }
-        
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            
-            .nav-links {
-                position: fixed;
-                top: 70px;
-                left: -100%;
-                width: 100%;
-                background: rgba(10, 14, 26, 0.98);
-                flex-direction: column;
-                padding: 2rem;
-                transition: left 0.3s;
-                gap: 1.5rem;
-                border-bottom: 1px solid rgba(108, 27, 140, 0.2);
-            }
-            
-            .nav-links.active {
-                left: 0;
-            }
-            
-            .track-card {
-                padding: 2rem 1.5rem;
-            }
-            
-            .track-card h1 {
-                font-size: 1.8rem;
-            }
-            
-            .logo img {
-                height: 40px;
-            }
-            
-            .truck-loader {
-                transform: scale(0.8);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .track-card {
-                padding: 1.5rem 1rem;
-            }
-            
-            .track-card h1 {
-                font-size: 1.5rem;
-            }
-            
-            .track-card .icon-top {
-                font-size: 36px;
-            }
-            
-            .logo img {
-                height: 35px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #fff; min-height: 100vh; overflow-x: hidden; }
+        
+        .bg-glow { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orbFloat 20s ease-in-out infinite; }
+        .orb-1 { width: 600px; height: 600px; background: rgba(108, 27, 140, 0.15); top: -200px; right: -200px; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(0, 242, 254, 0.08); bottom: -150px; left: -150px; animation-delay: -5s; }
+        .orb-3 { width: 400px; height: 400px; background: rgba(255, 102, 0, 0.06); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; }
+        
+        @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 25% { transform: translate(50px, -30px) scale(1.1); } 50% { transform: translate(-20px, 40px) scale(0.9); } 75% { transform: translate(30px, -20px) scale(1.05); } }
+        
+        .navbar { position: sticky; top: 0; z-index: 1000; padding: 1rem 5%; background: rgba(10, 14, 26, 0.92); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(108, 27, 140, 0.2); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo img { height: 50px; width: auto; display: block; transition: all 0.3s ease; }
+        .logo img:hover { transform: scale(1.05); filter: brightness(1.1); }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s; font-size: 14px; font-weight: 500; position: relative; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: linear-gradient(90deg, #6C1B8C, #00f2fe); transition: width 0.3s; }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover { color: #fff; }
+        .nav-links a.active { color: #00f2fe; }
+        .track-btn-nav { background: linear-gradient(135deg, #6C1B8C, #FF6600); padding: 0.7rem 1.8rem; border-radius: 50px; color: #fff !important; font-weight: 600 !important; transition: all 0.3s !important; }
+        .track-btn-nav::after { display: none !important; }
+        .track-btn-nav:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108, 27, 140, 0.4); }
+        .menu-toggle { display: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
+        
+        .track-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 5% 4rem; position: relative; z-index: 1; }
+        .track-card { max-width: 620px; width: 100%; background: rgba(255, 255, 255, 0.03); border-radius: 32px; padding: 3.5rem; border: 1px solid rgba(108, 27, 140, 0.2); backdrop-filter: blur(20px); position: relative; animation: fadeUp 0.8s ease forwards; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .track-card::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 32px; background: linear-gradient(135deg, rgba(108, 27, 140, 0.3), rgba(0, 242, 254, 0.1), rgba(255, 102, 0, 0.3)); z-index: -1; opacity: 0.5; }
+        .track-card .icon-top { text-align: center; font-size: 52px; margin-bottom: 1.5rem; animation: pulse 2s ease-in-out infinite; }
+        .track-card .icon-top i { background: linear-gradient(135deg, #6C1B8C, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .track-card h1 { text-align: center; font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #fff, #6C1B8C, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1.2; }
+        .track-card .subtitle { text-align: center; color: rgba(255, 255, 255, 0.6); margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.6; }
+        .track-card .form-group { margin-bottom: 1.5rem; }
+        .track-card .form-group label { display: block; color: rgba(255, 255, 255, 0.7); font-size: 13px; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
+        .track-card .form-group label i { color: #00f2fe; margin-right: 0.5rem; }
+        .track-card .form-group input { width: 100%; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 60px; color: #fff; font-size: 1rem; transition: all 0.3s; font-family: 'Inter', sans-serif; }
+        .track-card .form-group input:focus { outline: none; border-color: #6C1B8C; box-shadow: 0 0 0 4px rgba(108, 27, 140, 0.15); background: rgba(255, 255, 255, 0.08); }
+        .track-card .form-group input::placeholder { color: rgba(255, 255, 255, 0.3); }
+        .track-card .email-hint { display: flex; align-items: center; gap: 0.6rem; color: rgba(255, 255, 255, 0.4); font-size: 12px; margin-top: 0.6rem; }
+        .track-card .email-hint i { color: #00f2fe; }
+        .track-card .track-btn { width: 100%; padding: 1.1rem; background: linear-gradient(135deg, #6C1B8C, #FF6600); border: none; border-radius: 60px; color: #fff; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.8rem; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; }
+        .track-card .track-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); transition: left 0.6s; }
+        .track-card .track-btn:hover::before { left: 100%; }
+        .track-card .track-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(108, 27, 140, 0.4); }
+        .track-card .track-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .track-card .result-box { margin-top: 1.5rem; padding: 1rem 1.5rem; border-radius: 16px; display: none; align-items: center; gap: 0.8rem; animation: slideDown 0.4s ease forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .track-card .result-box.success { display: flex; background: rgba(76, 175, 80, 0.1); border: 1px solid rgba(76, 175, 80, 0.3); color: #4CAF50; }
+        .track-card .result-box.error { display: flex; background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff4444; }
+        .track-card .result-box.info { display: flex; background: rgba(108, 27, 140, 0.1); border: 1px solid rgba(108, 27, 140, 0.2); color: #8B3AB8; }
+        .track-card .result-box i { font-size: 20px; flex-shrink: 0; }
+        .track-card .result-box .result-content { flex: 1; }
+        .track-card .result-box .result-content strong { display: block; font-size: 14px; }
+        .track-card .result-box .result-content .small { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+        
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 14, 26, 0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; gap: 2rem; }
+        .loading-overlay.active { display: flex; }
+        .loading-container { display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+        .truck-loader { position: relative; width: 120px; height: 80px; }
+        .truck { position: relative; width: 100%; height: 100%; animation: truckMove 2s ease-in-out infinite; }
+        @keyframes truckMove { 0%, 100% { transform: translateX(-10px); } 50% { transform: translateX(10px); } }
+        .truck-body { position: absolute; bottom: 0; left: 20px; width: 80px; height: 40px; background: linear-gradient(135deg, #6C1B8C, #00f2fe); border-radius: 8px 8px 0 0; border: 2px solid rgba(0, 242, 254, 0.3); }
+        .truck-body::after { content: ''; position: absolute; top: -10px; left: 10px; width: 30px; height: 15px; background: linear-gradient(135deg, #6C1B8C, #00f2fe); border-radius: 4px 4px 0 0; border: 2px solid rgba(0, 242, 254, 0.3); border-bottom: none; }
+        .truck-window { position: absolute; top: 6px; right: 8px; width: 20px; height: 14px; background: rgba(0, 242, 254, 0.2); border-radius: 3px; border: 1px solid rgba(0, 242, 254, 0.3); animation: windowGlow 1.5s ease-in-out infinite; }
+        @keyframes windowGlow { 0%, 100% { background: rgba(0, 242, 254, 0.2); } 50% { background: rgba(0, 242, 254, 0.5); } }
+        .truck-wheel { position: absolute; bottom: -10px; width: 18px; height: 18px; background: #1a1a2e; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.2); animation: wheelSpin 1s linear infinite; }
+        .truck-wheel::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 6px; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; }
+        .truck-wheel-left { left: 25px; }
+        .truck-wheel-right { right: 25px; }
+        @keyframes wheelSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .road { position: relative; width: 200px; height: 3px; background: rgba(255, 255, 255, 0.05); border-radius: 2px; overflow: hidden; margin-top: 10px; }
+        .road-line { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, #00f2fe, transparent); animation: roadMove 1.5s linear infinite; }
+        @keyframes roadMove { 0% { left: -100%; } 100% { left: 100%; } }
+        .loading-text { font-size: 1.2rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); letter-spacing: 1px; }
+        .loading-dots { display: inline-flex; gap: 4px; }
+        .loading-dots span { display: inline-block; width: 8px; height: 8px; background: #00f2fe; border-radius: 50%; animation: dotBounce 1.4s ease-in-out infinite; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotBounce { 0%, 80%, 100% { transform: scale(0); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
+        .progress-steps { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+        .step { width: 40px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.05); transition: all 0.5s; }
+        .step.active { background: linear-gradient(90deg, #6C1B8C, #00f2fe); box-shadow: 0 0 20px rgba(0, 242, 254, 0.3); }
+        .step.done { background: #00f2fe; }
+        .step-text { color: rgba(255, 255, 255, 0.3); font-size: 11px; margin-top: 0.5rem; text-align: center; transition: all 0.3s; }
+        .step-text.active { color: #00f2fe; }
+        
+        .footer { background: rgba(6, 10, 22, 0.95); padding: 2rem 5%; text-align: center; border-top: 1px solid rgba(108, 27, 140, 0.2); position: relative; z-index: 1; }
+        .footer p { color: rgba(255, 255, 255, 0.3); font-size: 13px; }
+        
+        @media (max-width: 768px) { .menu-toggle { display: block; } .nav-links { position: fixed; top: 70px; left: -100%; width: 100%; background: rgba(10, 14, 26, 0.98); flex-direction: column; padding: 2rem; transition: left 0.3s; gap: 1.5rem; border-bottom: 1px solid rgba(108, 27, 140, 0.2); } .nav-links.active { left: 0; } .track-card { padding: 2rem 1.5rem; } .track-card h1 { font-size: 1.8rem; } .logo img { height: 40px; } .truck-loader { transform: scale(0.8); } }
+        @media (max-width: 480px) { .track-card { padding: 1.5rem 1rem; } .track-card h1 { font-size: 1.5rem; } .track-card .icon-top { font-size: 36px; } .logo img { height: 35px; } }
     </style>
 </head>
 <body>
@@ -717,7 +114,6 @@
     <!-- ===== LOADING OVERLAY ===== -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-container">
-            <!-- Animated Truck -->
             <div class="truck-loader">
                 <div class="truck">
                     <div class="truck-body">
@@ -730,8 +126,6 @@
                     <div class="road-line"></div>
                 </div>
             </div>
-            
-            <!-- Loading Text -->
             <div class="loading-text">
                 Tracking your package
                 <span class="loading-dots">
@@ -740,8 +134,6 @@
                     <span></span>
                 </span>
             </div>
-            
-            <!-- Progress Steps -->
             <div class="progress-steps" id="progressSteps">
                 <div class="step done" id="step1"></div>
                 <div class="step active" id="step2"></div>
@@ -830,7 +222,6 @@
             const overlay = document.getElementById('loadingOverlay');
             overlay.classList.add('active');
             
-            // Reset steps
             const steps = ['step1', 'step2', 'step3', 'step4'];
             steps.forEach((id, index) => {
                 const el = document.getElementById(id);
@@ -838,12 +229,10 @@
                 if (index === 0) el.className = 'step done';
             });
             
-            // Reset text colors
             ['stepText1', 'stepText2', 'stepText3', 'stepText4'].forEach((id, index) => {
                 document.getElementById(id).style.color = index === 0 ? '#00f2fe' : 'rgba(255,255,255,0.3)';
             });
             
-            // Start animation sequence
             let step = 1;
             const interval = setInterval(() => {
                 if (step < 4) {
@@ -867,7 +256,6 @@
 
         function stopLoading(interval) {
             clearInterval(interval);
-            // Complete all steps
             for (let i = 1; i <= 4; i++) {
                 document.getElementById(`step${i}`).className = 'step done';
                 document.getElementById(`stepText${i}`).style.color = '#00f2fe';
@@ -908,7 +296,6 @@
                 </div>
             `;
 
-            // ===== START LOADING ANIMATION =====
             const interval = startLoading();
 
             try {
@@ -920,7 +307,6 @@
                 
                 const data = await response.json();
                 
-                // ===== STOP LOADING =====
                 stopLoading(interval);
                 
                 if (!response.ok || !data.success) {
