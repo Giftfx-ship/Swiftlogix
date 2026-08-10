@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#0a0a12;color:#fff;min-height:100vh}
+        body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#fff;min-height:100vh}
 
         /* ==================== TRUCK LOADER ==================== */
         .loader-wrapper {
@@ -17,7 +17,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0a12;
+            background: #0a0e1a;
             z-index: 99999;
             display: flex;
             justify-content: center;
@@ -34,10 +34,11 @@
         .loader-road {
             position: absolute;
             bottom: 22%;
-            left: 0;
-            width: 100%;
+            left: 5%;
+            width: 90%;
             height: 4px;
             background: rgba(255,255,255,0.05);
+            border-radius: 2px;
         }
         .loader-road::before {
             content: '';
@@ -46,7 +47,7 @@
             left: 0;
             width: 200%;
             height: 100%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(0,242,254,0.3) 15px, rgba(0,242,254,0.3) 20px);
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(108,27,140,0.3) 15px, rgba(108,27,140,0.3) 20px);
             animation: roadMove 2s linear infinite;
         }
         @keyframes roadMove {
@@ -55,28 +56,24 @@
         }
         .loader-truck-container {
             position: relative;
-            animation: truckDrive 3s ease-in-out infinite;
             z-index: 2;
-        }
-        @keyframes truckDrive {
-            0% { transform: translateX(-60vw) scale(1); }
-            50% { transform: translateX(5vw) scale(1.02); }
-            100% { transform: translateX(60vw) scale(1); }
+            margin-bottom: 40px;
         }
         .loader-truck {
             position: relative;
-            width: 280px;
-            height: 130px;
+            width: 320px;
+            height: 150px;
+            margin: 0 auto;
         }
         .loader-truck .cargo {
             position: absolute;
             left: 0;
             top: 0;
-            width: 200px;
-            height: 100px;
+            width: 230px;
+            height: 115px;
             background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
             border-radius: 8px 12px 8px 8px;
-            border: 2px solid rgba(0,242,254,0.25);
+            border: 2px solid rgba(108,27,140,0.3);
             z-index: 2;
             overflow: hidden;
             display: flex;
@@ -84,47 +81,59 @@
             justify-content: center;
         }
         .loader-truck .cargo .brand {
-            font-size: 26px;
+            font-size: 30px;
             font-weight: 900;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             z-index: 3;
         }
-        .loader-truck .cargo .brand span {
-            -webkit-text-fill-color: #00f2fe;
+        .loader-truck .cargo .brand .purple {
+            -webkit-text-fill-color: #6C1B8C;
+        }
+        .loader-truck .cargo .brand .orange {
+            -webkit-text-fill-color: #FF6600;
         }
         .loader-truck .cargo .door-line {
             position: absolute;
             top: 10%;
             width: 2px;
             height: 80%;
-            background: rgba(0,242,254,0.08);
+            background: rgba(108,27,140,0.1);
         }
         .loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
         .loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
         .loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
+        .loader-truck .cargo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 30px, rgba(108,27,140,0.05) 30px, rgba(108,27,140,0.05) 31px);
+        }
         .loader-truck .cabin {
             position: absolute;
             right: 0;
-            top: 10px;
-            width: 85px;
-            height: 75px;
+            top: 12px;
+            width: 95px;
+            height: 85px;
             background: linear-gradient(180deg, #1a2a4a, #0a1628);
             border-radius: 12px 20px 8px 8px;
-            border: 2px solid rgba(0,242,254,0.3);
+            border: 2px solid rgba(108,27,140,0.3);
             z-index: 3;
         }
         .loader-truck .cabin .window {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 35px;
-            height: 28px;
-            background: rgba(0,242,254,0.12);
+            top: 14px;
+            left: 14px;
+            width: 40px;
+            height: 32px;
+            background: rgba(108,27,140,0.15);
             border-radius: 8px 8px 0 0;
-            border: 1px solid rgba(0,242,254,0.2);
+            border: 1px solid rgba(108,27,140,0.2);
             overflow: hidden;
         }
         .loader-truck .cabin .window::before {
@@ -134,7 +143,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,242,254,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(108,27,140,0.3), transparent);
             animation: windowGlow 2s ease-in-out infinite;
         }
         @keyframes windowGlow {
@@ -144,13 +153,13 @@
         }
         .loader-truck .cabin .door {
             position: absolute;
-            bottom: 8px;
-            right: 12px;
-            width: 22px;
-            height: 28px;
-            background: rgba(0,242,254,0.06);
+            bottom: 10px;
+            right: 14px;
+            width: 24px;
+            height: 32px;
+            background: rgba(108,27,140,0.08);
             border-radius: 4px 4px 0 0;
-            border: 1px solid rgba(0,242,254,0.12);
+            border: 1px solid rgba(108,27,140,0.12);
         }
         .loader-truck .cabin .door::before {
             content: '';
@@ -160,25 +169,25 @@
             transform: translate(-50%, -50%);
             width: 4px;
             height: 4px;
-            background: rgba(0,242,254,0.3);
+            background: rgba(108,27,140,0.3);
             border-radius: 50%;
         }
         .loader-truck .cabin .headlight {
             position: absolute;
             bottom: 8px;
-            width: 10px;
-            height: 5px;
-            background: rgba(0,242,254,0.5);
+            width: 12px;
+            height: 6px;
+            background: rgba(255,102,0,0.6);
             border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 15px rgba(0,242,254,0.2);
+            box-shadow: 0 0 15px rgba(255,102,0,0.3);
         }
-        .loader-truck .cabin .headlight.left { left: -8px; }
-        .loader-truck .cabin .headlight.right { left: 15px; }
+        .loader-truck .cabin .headlight.left { left: -10px; }
+        .loader-truck .cabin .headlight.right { left: 18px; }
         .loader-truck .wheel {
             position: absolute;
             bottom: -12px;
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             background: radial-gradient(circle at 40% 35%, #2a2a3a, #0a0a12);
             border-radius: 50%;
             border: 3px solid #1a1a2a;
@@ -197,19 +206,19 @@
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background: rgba(0,242,254,0.15);
+            background: rgba(108,27,140,0.2);
             border-radius: 50%;
-            border: 1px solid rgba(0,242,254,0.08);
+            border: 1px solid rgba(108,27,140,0.1);
         }
         .loader-truck .wheel.front { right: 15px; }
-        .loader-truck .wheel.rear { left: 25px; }
-        .loader-truck .wheel.rear2 { left: 50px; }
+        .loader-truck .wheel.rear { left: 30px; }
+        .loader-truck .wheel.rear2 { left: 55px; }
         .loader-truck .exhaust {
             position: absolute;
-            bottom: 25px;
+            bottom: 28px;
             right: -6px;
-            width: 5px;
-            height: 12px;
+            width: 6px;
+            height: 14px;
             background: #2a2a3a;
             border-radius: 0 0 4px 4px;
             z-index: 1;
@@ -221,7 +230,7 @@
             left: -4px;
             width: 14px;
             height: 8px;
-            background: radial-gradient(ellipse, rgba(0,242,254,0.15), transparent);
+            background: radial-gradient(ellipse, rgba(255,102,0,0.2), transparent);
             border-radius: 50%;
             animation: exhaustPuff 1s ease-out infinite;
         }
@@ -230,182 +239,193 @@
             100% { transform: scale(2); opacity: 0; }
         }
         .loader-text-container {
-            position: absolute;
-            bottom: 32%;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
             text-align: center;
             z-index: 5;
-            animation: textPulse 2s ease-in-out infinite;
-        }
-        @keyframes textPulse {
-            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+            margin-top: 20px;
         }
         .loader-text-container .loader-title {
             font-size: 22px;
             font-weight: 800;
             letter-spacing: 5px;
-            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .loader-text-container .loader-sub {
-            color: #888;
-            font-size: 11px;
+            color: #9aa8c9;
+            font-size: 12px;
             letter-spacing: 3px;
-            margin-top: 4px;
+            margin-top: 6px;
         }
         .loader-progress-container {
-            position: absolute;
-            bottom: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 280px;
+            position: relative;
+            width: 320px;
             z-index: 5;
+            margin-top: 25px;
         }
         .loader-progress-container .progress-bar {
             width: 100%;
-            height: 3px;
+            height: 4px;
             background: rgba(255,255,255,0.06);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
         }
         .loader-progress-container .progress-bar .fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #00f2fe, #00d4ff);
-            border-radius: 3px;
-            animation: progressFill 1.8s ease-out forwards;
+            background: linear-gradient(90deg, #6C1B8C, #FF6600, #6C1B8C);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            animation: progressFill 2s ease-in-out forwards, progressShine 1.5s ease-in-out infinite;
         }
         @keyframes progressFill {
             0% { width: 0%; }
-            20% { width: 25%; }
-            50% { width: 55%; }
-            80% { width: 85%; }
+            10% { width: 8%; }
+            25% { width: 22%; }
+            40% { width: 38%; }
+            55% { width: 52%; }
+            70% { width: 68%; }
+            85% { width: 85%; }
             100% { width: 100%; }
+        }
+        @keyframes progressShine {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
         .loader-progress-container .progress-text {
             display: flex;
             justify-content: space-between;
-            margin-top: 6px;
-            font-size: 10px;
-            color: #666;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #667799;
             letter-spacing: 1px;
+        }
+        .loader-progress-container .progress-text .percentage {
+            font-weight: 700;
+            font-size: 14px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* ==================== NAVBAR ==================== */
-        .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,242,254,0.2)}
+        .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,14,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,27,140,0.2)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-        .logo span{color:#00f2fe}
+        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
+        .logo .purple{color:#6C1B8C}
+        .logo .orange{color:#FF6600}
         .navbar .admin-info{display:flex;align-items:center;gap:1rem}
-        .navbar .admin-info span{color:#888;font-size:0.8rem}
+        .navbar .admin-info span{color:#9aa8c9;font-size:0.8rem}
         .navbar .admin-info .logout-btn{background:rgba(255,68,68,0.1);padding:0.5rem 1.5rem;border-radius:50px;color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all 0.3s;font-weight:600}
         .navbar .admin-info .logout-btn:hover{background:rgba(255,68,68,0.2)}
 
         /* ==================== CHAT ADMIN PAGE ==================== */
         .chat-admin-page{padding:2rem 5% 4rem;max-width:1400px;margin:0 auto}
         .chat-admin-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:2rem}
-        .chat-admin-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .chat-admin-header .back-btn{padding:0.5rem 1.5rem;border-radius:50px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);text-decoration:none;transition:all 0.3s}
-        .chat-admin-header .back-btn:hover{border-color:#00f2fe;color:#00f2fe}
+        .chat-admin-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .chat-admin-header .back-btn{padding:0.5rem 1.5rem;border-radius:50px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:all 0.3s}
+        .chat-admin-header .back-btn:hover{border-color:#FF6600;color:#FF6600}
 
         .chat-admin-grid{display:grid;grid-template-columns:350px 1fr;gap:2rem;min-height:500px}
 
         /* Conversations List */
-        .conversations-list{background:rgba(255,255,255,0.02);border-radius:24px;border:1px solid rgba(255,255,255,0.05);overflow:hidden;max-height:600px;display:flex;flex-direction:column}
+        .conversations-list{background:rgba(255,255,255,0.03);border-radius:24px;border:1px solid rgba(255,255,255,0.05);overflow:hidden;max-height:600px;display:flex;flex-direction:column}
         .conversations-list .list-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center}
-        .conversations-list .list-header h3{font-size:1rem;font-weight:700;color:#00f2fe}
+        .conversations-list .list-header h3{font-size:1rem;font-weight:700;color:#8B3AB8}
         .conversations-list .list-header .unread-badge{background:#ff4444;color:#fff;font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:50px}
-        .conversations-list .list-body{flex:1;overflow-y:auto}
 
+        .conversations-list .list-body{flex:1;overflow-y:auto}
         .conversation-item{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all 0.3s}
         .conversation-item:hover{background:rgba(255,255,255,0.05)}
-        .conversation-item.active{background:rgba(0,242,254,0.08);border-left:3px solid #00f2fe}
+        .conversation-item.active{background:rgba(108,27,140,0.1);border-left:3px solid #6C1B8C}
         .conversation-item .conv-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
         .conversation-item .conv-name{font-weight:600;font-size:0.95rem}
-        .conversation-item .conv-time{font-size:0.7rem;color:#888}
-        .conversation-item .conv-email{font-size:0.75rem;color:#888}
-        .conversation-item .conv-last-msg{font-size:0.8rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+        .conversation-item .conv-time{font-size:0.7rem;color:#667799}
+        .conversation-item .conv-email{font-size:0.75rem;color:#667799}
+        .conversation-item .conv-last-msg{font-size:0.8rem;color:#667799;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
         .conversation-item .conv-status{display:inline-block;font-size:0.6rem;padding:0.15rem 0.6rem;border-radius:50px;margin-top:4px}
-        .conv-status.open{background:rgba(0,242,254,0.2);color:#00f2fe}
+        .conv-status.open{background:rgba(108,27,140,0.2);color:#8B3AB8}
         .conv-status.in_progress{background:rgba(255,165,0,0.2);color:#ffa500}
         .conv-status.resolved{background:rgba(0,255,0,0.2);color:#0f0}
-        .conv-status.closed{background:rgba(255,255,255,0.1);color:#666}
+        .conv-status.closed{background:rgba(255,255,255,0.1);color:#667799}
         .conv-unread{background:#ff4444;color:#fff;font-size:0.6rem;padding:0.1rem 0.5rem;border-radius:50px}
 
         /* Chat Area */
-        .chat-area{background:rgba(255,255,255,0.02);border-radius:24px;border:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;max-height:600px}
+        .chat-area{background:rgba(255,255,255,0.03);border-radius:24px;border:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;max-height:600px}
         .chat-area .chat-area-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center}
         .chat-area .chat-area-header .user-info h4{font-size:1rem;font-weight:700}
-        .chat-area .chat-area-header .user-info .user-email{font-size:0.8rem;color:#888}
+        .chat-area .chat-area-header .user-info .user-email{font-size:0.8rem;color:#667799}
+        .chat-area .chat-area-header .actions{display:flex;gap:0.5rem;align-items:center}
         .chat-area .chat-area-header .resolve-btn{padding:0.4rem 1.2rem;border-radius:50px;background:rgba(0,255,0,0.1);color:#0f0;border:1px solid rgba(0,255,0,0.2);cursor:pointer;transition:all 0.3s;font-size:0.8rem}
         .chat-area .chat-area-header .resolve-btn:hover{background:rgba(0,255,0,0.2)}
+        .chat-area .chat-area-header .delete-all-btn{padding:0.4rem 1.2rem;border-radius:50px;background:rgba(255,68,68,0.1);color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all 0.3s;font-size:0.8rem}
+        .chat-area .chat-area-header .delete-all-btn:hover{background:rgba(255,68,68,0.2)}
 
         .chat-area .chat-messages{flex:1;padding:1.5rem;overflow-y:auto;min-height:350px}
-        .chat-area .chat-messages .message{margin-bottom:1rem;max-width:80%}
+        .chat-area .chat-messages .message{display:flex;margin-bottom:1rem;max-width:85%;align-items:flex-start;gap:0.5rem}
         .chat-area .chat-messages .message.user{margin-right:auto}
         .chat-area .chat-messages .message.admin{margin-left:auto}
-        .chat-area .chat-messages .message .bubble{padding:0.8rem 1.2rem;border-radius:16px;font-size:0.9rem;line-height:1.5}
+        .chat-area .chat-messages .message .bubble{padding:0.8rem 1.2rem;border-radius:16px;font-size:0.9rem;line-height:1.5;flex:1}
         .chat-area .chat-messages .message.user .bubble{background:rgba(255,255,255,0.08);color:#fff;border-bottom-left-radius:4px}
-        .chat-area .chat-messages .message.admin .bubble{background:linear-gradient(135deg,#00f2fe,#00d4ff);color:#0a0a12;border-bottom-right-radius:4px}
-        .chat-area .chat-messages .message .time{font-size:0.65rem;color:#888;display:block;margin-top:4px}
+        .chat-area .chat-messages .message.admin .bubble{background:linear-gradient(135deg,#6C1B8C,#FF6600);color:#fff;border-bottom-right-radius:4px}
+        .chat-area .chat-messages .message .time{font-size:0.65rem;color:#667799;display:block;margin-top:4px}
         .chat-area .chat-messages .message .sender-name{font-size:0.7rem;font-weight:600;display:block;margin-bottom:2px}
+        .chat-area .chat-messages .message .delete-btn{background:none;border:none;color:#667799;cursor:pointer;font-size:0.8rem;padding:0.2rem 0.5rem;border-radius:8px;transition:all 0.3s;opacity:0}
+        .chat-area .chat-messages .message:hover .delete-btn{opacity:1}
+        .chat-area .chat-messages .message .delete-btn:hover{color:#ff4444;background:rgba(255,68,68,0.1)}
 
         .chat-area .chat-input-area{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:0.8rem}
-        .chat-area .chat-input-area input{flex:1;padding:0.8rem 1.2rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:60px;color:#fff;font-size:0.9rem}
-        .chat-area .chat-input-area input:focus{outline:none;border-color:#00f2fe}
-        .chat-area .chat-input-area .send-btn{padding:0.8rem 1.5rem;background:linear-gradient(135deg,#00f2fe,#00d4ff);border:none;border-radius:60px;color:#0a0a12;font-weight:700;cursor:pointer;transition:all 0.3s}
-        .chat-area .chat-input-area .send-btn:hover{transform:scale(1.02)}
+        .chat-area .chat-input-area input{flex:1;padding:0.8rem 1.2rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:60px;color:#fff;font-size:0.9rem}
+        .chat-area .chat-input-area input:focus{outline:none;border-color:#6C1B8C}
+        .chat-area .chat-input-area .send-btn{padding:0.8rem 1.5rem;background:linear-gradient(135deg,#6C1B8C,#FF6600);border:none;border-radius:60px;color:#fff;font-weight:700;cursor:pointer;transition:all 0.3s}
+        .chat-area .chat-input-area .send-btn:hover{transform:scale(1.02);box-shadow:0 8px 25px rgba(108,27,140,0.3)}
 
-        .empty-chat{display:flex;align-items:center;justify-content:center;flex-direction:column;height:100%;color:#888}
+        .empty-chat{display:flex;align-items:center;justify-content:center;flex-direction:column;height:100%;color:#667799}
         .empty-chat i{font-size:3rem;margin-bottom:1rem;opacity:0.3}
-        .no-conversations{text-align:center;padding:2rem;color:#888}
+        .no-conversations{text-align:center;padding:2rem;color:#667799}
         .no-conversations i{font-size:2rem;margin-bottom:1rem;opacity:0.3}
 
         /* Footer */
-        .footer{background:#050508;padding:2rem 5%;text-align:center;color:#666;margin-top:4rem;border-top:1px solid rgba(0,242,254,0.1)}
+        .footer{background:#060a16;padding:2rem 5%;text-align:center;color:#667799;margin-top:4rem;border-top:1px solid rgba(108,27,140,0.2)}
         .footer .footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-        .footer .footer-bottom p{color:#555;font-size:13px}
+        .footer .footer-bottom p{color:#667799;font-size:13px}
         .footer .footer-bottom .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
-        .footer .footer-bottom .footer-links a{color:#555;font-size:13px;transition:color 0.3s;text-decoration:none}
-        .footer .footer-bottom .footer-links a:hover{color:#00f2fe}
+        .footer .footer-bottom .footer-links a{color:#667799;font-size:13px;transition:color 0.3s;text-decoration:none}
+        .footer .footer-bottom .footer-links a:hover{color:#FF6600}
 
-        /* Responsive */
+        /* ==================== RESPONSIVE ==================== */
         @media(max-width:768px){
-            .loader-truck-container{transform:scale(0.7)}
-            .loader-truck{width:200px;height:100px}
-            .loader-truck .cargo{width:140px;height:75px}
-            .loader-truck .cargo .brand{font-size:18px}
-            .loader-truck .cabin{width:65px;height:55px;top:8px}
-            .loader-truck .cabin .window{width:25px;height:20px;top:8px;left:8px}
-            .loader-truck .wheel{width:20px;height:20px;bottom:-8px}
-            .loader-truck .wheel::before{width:6px;height:6px}
-            .loader-truck .wheel.front{right:10px}
-            .loader-truck .wheel.rear{left:18px}
-            .loader-truck .wheel.rear2{left:35px}
-            .loader-truck .exhaust{display:none}
-            @keyframes truckDrive {
-                0% { transform: translateX(-80vw) scale(0.7); }
-                50% { transform: translateX(0vw) scale(0.75); }
-                100% { transform: translateX(80vw) scale(0.7); }
-            }
-            .loader-progress-container{width:200px}
-            .loader-text-container .loader-title{font-size:18px}
+            .menu-toggle{display:block}
+            .nav-links{position:fixed;top:70px;left:-100%;width:100%;background:rgba(10,14,26,0.98);flex-direction:column;padding:2rem;transition:left 0.3s;gap:1.5rem}
+            .nav-links.active{left:0}
             .chat-admin-grid{grid-template-columns:1fr}
             .conversations-list{max-height:300px}
             .chat-area{max-height:500px}
+            .loader-truck{width:260px;height:130px}
+            .loader-truck .cargo{width:190px;height:95px}
+            .loader-truck .cargo .brand{font-size:22px}
+            .loader-truck .cabin{width:80px;height:70px}
+            .loader-progress-container{width:260px}
+            .footer .footer-bottom{flex-direction:column;text-align:center}
+            .footer .footer-bottom .footer-links{justify-content:center}
         }
         @media(max-width:480px){
-            .loader-truck-container{transform:scale(0.5)}
-            .loader-progress-container{width:150px}
-            .loader-text-container .loader-title{font-size:14px}
-            @keyframes truckDrive {
-                0% { transform: translateX(-90vw) scale(0.5); }
-                50% { transform: translateX(0vw) scale(0.55); }
-                100% { transform: translateX(90vw) scale(0.5); }
-            }
+            .loader-truck{width:200px;height:100px}
+            .loader-truck .cargo{width:140px;height:75px}
+            .loader-truck .cargo .brand{font-size:16px;letter-spacing:1px}
+            .loader-truck .cabin{width:60px;height:55px}
+            .loader-truck .cabin .window{width:22px;height:18px}
+            .loader-truck .wheel{width:20px;height:20px}
+            .loader-truck .wheel.front{right:10px}
+            .loader-truck .wheel.rear{left:18px}
+            .loader-truck .wheel.rear2{left:32px}
+            .loader-progress-container{width:200px}
+            .loader-text-container .loader-title{font-size:16px}
+            .loader-progress-container .progress-text{font-size:9px}
+            .loader-progress-container .progress-text .percentage{font-size:12px}
+            .chat-area .chat-messages .message{max-width:95%}
+            .chat-area .chat-area-header{flex-wrap:wrap;gap:0.5rem}
         }
     </style>
 </head>
@@ -417,7 +437,7 @@
         <div class="loader-truck-container">
             <div class="loader-truck">
                 <div class="cargo">
-                    <div class="brand">Swift<span>Logix</span></div>
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
                     <div class="door-line"></div>
                     <div class="door-line"></div>
                     <div class="door-line"></div>
@@ -440,14 +460,17 @@
         </div>
         <div class="loader-progress-container">
             <div class="progress-bar"><div class="fill"></div></div>
-            <div class="progress-text"><span>Loading</span><span id="progressPercent">0%</span></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
+            </div>
         </div>
     </div>
 
     <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <a href="index.html" class="logo">Swift<span class="purple">Log</span><span class="orange">ix</span></a>
             <div class="admin-info">
                 <span><i class="fas fa-user-shield"></i> <span id="adminName">Admin</span></span>
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -484,9 +507,14 @@
                         <h4 id="chatUserName">Select a conversation</h4>
                         <div class="user-email" id="chatUserEmail">No conversation selected</div>
                     </div>
-                    <button class="resolve-btn" id="resolveBtn" onclick="resolveConversation()" style="display:none;">
-                        <i class="fas fa-check-circle"></i> Resolve
-                    </button>
+                    <div class="actions">
+                        <button class="resolve-btn" id="resolveBtn" onclick="resolveConversation()" style="display:none;">
+                            <i class="fas fa-check-circle"></i> Resolve
+                        </button>
+                        <button class="delete-all-btn" id="deleteAllBtn" onclick="deleteAllMessages()" style="display:none;">
+                            <i class="fas fa-trash"></i> Delete All
+                        </button>
+                    </div>
                 </div>
                 <div class="chat-messages" id="chatMessages">
                     <div class="empty-chat">
@@ -536,7 +564,7 @@
         // ==================== PROGRESS PERCENTAGE ====================
         let progress = 0;
         const progressInterval = setInterval(function() {
-            progress += Math.random() * 10 + 5;
+            progress += Math.random() * 8 + 3;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(progressInterval);
@@ -545,7 +573,7 @@
             if (percentEl) {
                 percentEl.textContent = Math.floor(progress) + '%';
             }
-        }, 200);
+        }, 150);
 
         // ==================== AUTH CHECK ====================
         function checkAuth() {
@@ -637,6 +665,7 @@
                 renderMessages(data.messages || []);
                 document.getElementById('chatInputArea').style.display = 'flex';
                 document.getElementById('resolveBtn').style.display = 'inline-block';
+                document.getElementById('deleteAllBtn').style.display = 'inline-block';
                 // Mark as read
                 await fetch(`${API_URL}/api/chat/${conversationId}/messages?admin=true`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
@@ -647,7 +676,7 @@
             }
         }
 
-        // ==================== RENDER MESSAGES ====================
+        // ==================== RENDER MESSAGES WITH DELETE BUTTONS ====================
         function renderMessages(messages) {
             const container = document.getElementById('chatMessages');
             if (!messages || messages.length === 0) {
@@ -657,16 +686,72 @@
             container.innerHTML = messages.map(msg => {
                 const isUser = msg.sender === 'user';
                 return `
-                    <div class="message ${isUser ? 'user' : 'admin'}">
+                    <div class="message ${isUser ? 'user' : 'admin'}" data-message-id="${msg.messageId}">
                         <div class="bubble">
                             <span class="sender-name">${isUser ? msg.senderName || 'Customer' : 'Support Team'}</span>
                             ${msg.message}
                             <span class="time">${new Date(msg.timestamp).toLocaleString()}</span>
                         </div>
+                        <button class="delete-btn" onclick="deleteMessage('${msg.messageId}')" title="Delete this message">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 `;
             }).join('');
             container.scrollTop = container.scrollHeight;
+        }
+
+        // ==================== DELETE INDIVIDUAL MESSAGE ====================
+        async function deleteMessage(messageId) {
+            if (!confirm('Delete this message? This cannot be undone.')) return;
+            try {
+                const response = await fetch(`${API_URL}/api/admin/chat/message/${messageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete message');
+                
+                // Remove message from UI
+                const messageEl = document.querySelector(`.message[data-message-id="${messageId}"]`);
+                if (messageEl) {
+                    messageEl.remove();
+                }
+                
+                // If no messages left, show empty state
+                const remainingMessages = document.querySelectorAll('.message');
+                if (remainingMessages.length === 0) {
+                    document.getElementById('chatMessages').innerHTML = 
+                        `<div class="empty-chat"><i class="fas fa-comment"></i><p>No messages in this conversation</p></div>`;
+                }
+                
+                loadConversations();
+            } catch (error) {
+                console.error('Delete message error:', error);
+                alert('Failed to delete message: ' + error.message);
+            }
+        }
+
+        // ==================== DELETE ALL MESSAGES IN CONVERSATION ====================
+        async function deleteAllMessages() {
+            if (!currentConversationId) return;
+            if (!confirm('⚠️ Delete ALL messages in this conversation? This cannot be undone!')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/chat/${currentConversationId}/messages`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete messages');
+                
+                // Clear UI
+                document.getElementById('chatMessages').innerHTML = 
+                    `<div class="empty-chat"><i class="fas fa-comment"></i><p>All messages deleted</p></div>`;
+                
+                loadConversations();
+            } catch (error) {
+                console.error('Delete all messages error:', error);
+                alert('Failed to delete all messages: ' + error.message);
+            }
         }
 
         // ==================== SEND ADMIN MESSAGE ====================
@@ -693,6 +778,10 @@
                 const data = await response.json();
                 if (data.success) {
                     const container = document.getElementById('chatMessages');
+                    // Remove empty state if exists
+                    const emptyState = container.querySelector('.empty-chat');
+                    if (emptyState) emptyState.remove();
+                    
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'message admin';
                     msgDiv.innerHTML = `
@@ -701,6 +790,9 @@
                             ${message}
                             <span class="time">${new Date().toLocaleString()}</span>
                         </div>
+                        <button class="delete-btn" onclick="deleteMessage('${data.message.messageId}')" title="Delete this message">
+                            <i class="fas fa-times"></i>
+                        </button>
                     `;
                     container.appendChild(msgDiv);
                     container.scrollTop = container.scrollHeight;
