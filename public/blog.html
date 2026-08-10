@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .blog-hero {
+            padding: 8rem 5% 4rem;
+            text-align: center;
+        }
+        .blog-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .blog-hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .blog-grid-page { padding: 3rem 0 5rem; }
+        .blog-grid-page .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .blog-grid-page .blog-card {
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .blog-grid-page .blog-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0,242,254,0.08);
+        }
+        .blog-grid-page .blog-card .blog-image {
+            height: 200px;
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0.3;
+        }
+        .blog-grid-page .blog-card .blog-content {
+            padding: 1.5rem;
+        }
+        .blog-grid-page .blog-card .blog-content .tag {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: rgba(0,242,254,0.1);
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+        .blog-grid-page .blog-card .blog-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .blog-grid-page .blog-card .blog-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .blog-grid-page .blog-card .blog-content .meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        @media (max-width: 992px) {
+            .blog-grid-page .grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 480px) {
+            .blog-hero h1 { font-size: 2.2rem; }
+            .blog-grid-page .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Loading blog...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tracking.html">Track</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html" class="active">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- BLOG HERO -->
+    <section class="blog-hero">
+        <h1>Blog & Insights</h1>
+        <p>Stay updated with the latest news, insights, and trends in global logistics and supply chain management.</p>
+    </section>
+
+    <!-- BLOG GRID -->
+    <section class="blog-grid-page">
+        <div class="container">
+            <div class="grid">
+                <div class="blog-card">
+                    <div class="blog-image"><i class="fas fa-ship"></i></div>
+                    <div class="blog-content">
+                        <span class="tag">Industry News</span>
+                        <h3>Global Shipping Trends for 2026</h3>
+                        <p>Discover the latest trends shaping the global shipping industry, from digitalization to sustainability.</p>
+                        <div class="meta">
+                            <span><i class="far fa-calendar-alt"></i> Mar 15, 2026</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-image"><i class="fas fa-box"></i></div>
+                    <div class="blog-content">
+                        <span class="tag">Logistics</span>
+                        <h3>How to Reduce Shipping Costs</h3>
+                        <p>Practical strategies to optimize your supply chain and reduce shipping costs without sacrificing quality.</p>
+                        <div class="meta">
+                            <span><i class="far fa-calendar-alt"></i> Mar 10, 2026</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-image"><i class="fas fa-robot"></i></div>
+                    <div class="blog-content">
+                        <span class="tag">Technology</span>
+                        <h3>AI in Logistics: The Future is Here</h3>
+                        <p>How artificial intelligence is transforming logistics operations, from route optimization to demand forecasting.</p>
+                        <div class="meta">
+                            <span><i class="far fa-calendar-alt"></i> Mar 5, 2026</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-image"><i class="fas fa-leaf"></i></div>
+                    <div class="blog-content">
+                        <span class="tag">Sustainability</span>
+                        <h3>Eco-Friendly Packaging Solutions</h3>
+                        <p>Explore sustainable packaging options that reduce environmental impact while protecting your shipments.</p>
+                        <div class="meta">
+                            <span><i class="far fa-calendar-alt"></i> Feb 28, 2026</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-image"><i class="fas fa-truck"></i></div>
+                    <div class="blog-content">
+                        <span class="tag">Transport</span>
+                        <h3>Last-Mile Delivery Innovations</h3>
+                        <p>The latest innovations in last-mile delivery that are improving speed, efficiency, and customer satisfaction.</p>
+                        <div class="meta">
+                            <span><i class="far fa-calendar-alt"></i> Feb 20, 2026</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-image"><i class="fas fa-globe"></i></div>
+                    <div class="blog-content">
+                        <span class="tag">Global Trade</span>
+                        <h3>Navigating Customs Clearance</h3>
+                        <p>A comprehensive guide to navigating customs clearance for international shipments, including common pitfalls.</p>
+                        <div class="meta">
+                            <span><i class="far fa-calendar-alt"></i> Feb 15, 2026</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
