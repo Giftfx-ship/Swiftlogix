@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* ==================== CONTACT HERO WITH BACKGROUND ==================== */
         .contact-hero {
             padding: 8rem 5% 4rem;
             text-align: center;
@@ -47,16 +46,12 @@
             margin: 0 auto;
             line-height: 1.8;
         }
-
-        /* ==================== CONTACT SECTION ==================== */
         .contact-section { padding: 3rem 0 5rem; }
         .contact-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr;
             gap: 3rem;
         }
-
-        /* Info Cards */
         .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
         .contact-info .info-card {
             background: rgba(255,255,255,0.02);
@@ -85,8 +80,6 @@
         .contact-info .info-card h4 { font-size: 1.1rem; margin-bottom: 0.3rem; color: #fff; }
         .contact-info .info-card p { color: #9aa8c9; font-size: 0.9rem; line-height: 1.6; }
         .contact-info .info-card .detail { color: #fff; font-weight: 500; }
-
-        /* Contact Form */
         .contact-form {
             background: rgba(255,255,255,0.02);
             border-radius: 24px;
@@ -152,8 +145,6 @@
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(108,27,140,0.35);
         }
-
-        /* Map */
         .map-container {
             border-radius: 24px;
             overflow: hidden;
@@ -168,8 +159,6 @@
             font-size: 0.8rem;
             background: rgba(0,0,0,0.4);
         }
-
-        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 992px) {
             .contact-grid { grid-template-columns: 1fr; }
             .contact-hero h1 { font-size: 2.8rem; }
@@ -389,6 +378,46 @@
         </div>
     </footer>
 
+    <!-- ==================== CHAT WIDGET - FLOATING ==================== -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-comment-dots"></i>
+            <span class="badge" id="chatBadge" style="display:none;">0</span>
+        </button>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="header-left">
+                    <div class="avatar"><i class="fas fa-headset"></i></div>
+                    <div class="header-info">
+                        <h4>Live Support</h4>
+                        <div class="status-wrapper">
+                            <span class="status-dot online" id="statusDot"></span>
+                            <span class="status-text">Usually replies within <span class="highlight">minutes</span></span>
+                        </div>
+                    </div>
+                </div>
+                <button class="close-chat" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-body" id="chatMessages">
+                <div style="text-align:center;color:#667799;padding:20px 0;">
+                    <i class="fas fa-comment" style="font-size:32px;display:block;margin-bottom:10px;opacity:0.3;"></i>
+                    <p>Start a conversation with our team</p>
+                </div>
+            </div>
+
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendUserMessage()">
+                <button class="send-btn" onclick="sendUserMessage()">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ==================== HIDE LOADER ====================
@@ -450,6 +479,190 @@
             link.addEventListener('click', function() {
                 document.querySelector('.nav-links').classList.remove('active');
             });
+        });
+
+        // ==================== CHAT FUNCTIONS ====================
+        let userEmail = localStorage.getItem('chatUserEmail') || '';
+        let userName = localStorage.getItem('chatUserName') || '';
+        let conversationId = localStorage.getItem('conversationId') || '';
+
+        function toggleChat() {
+            const window = document.getElementById('chatWindow');
+            const toggle = document.querySelector('.chat-toggle');
+            window.classList.toggle('open');
+            
+            if (window.classList.contains('open')) {
+                toggle.innerHTML = '<i class="fas fa-times"></i>';
+                if (conversationId) {
+                    loadMessages();
+                } else {
+                    showEmailPrompt();
+                }
+            } else {
+                toggle.innerHTML = '<i class="fas fa-comment-dots"></i>';
+            }
+        }
+
+        function showEmailPrompt() {
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = `
+                <div style="padding:10px 0;">
+                    <p style="color:#fff;margin-bottom:15px;text-align:center;font-size:14px;">Please enter your email to start a chat</p>
+                    <input type="email" id="chatEmail" placeholder="Your email address" style="width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#fff;margin-bottom:10px;font-size:14px;">
+                    <input type="text" id="chatName" placeholder="Your name (optional)" style="width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#fff;margin-bottom:10px;font-size:14px;">
+                    <textarea id="chatInitialMsg" placeholder="How can we help you?" rows="3" style="width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#fff;resize:vertical;margin-bottom:10px;font-size:14px;font-family:inherit;"></textarea>
+                    <button onclick="startChat()" style="width:100%;padding:14px;background:linear-gradient(135deg,#6C1B8C,#FF6600);border:none;border-radius:60px;color:#fff;font-weight:700;font-size:16px;cursor:pointer;">
+                        <i class="fas fa-paper-plane"></i> Start Chat
+                    </button>
+                </div>
+            `;
+        }
+
+        async function startChat() {
+            const email = document.getElementById('chatEmail').value.trim();
+            const name = document.getElementById('chatName').value.trim() || 'Guest';
+            const message = document.getElementById('chatInitialMsg').value.trim();
+
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/chat/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userEmail: email, userName: name, message })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    conversationId = data.conversationId;
+                    userEmail = email;
+                    userName = name;
+                    
+                    localStorage.setItem('conversationId', conversationId);
+                    localStorage.setItem('chatUserEmail', email);
+                    localStorage.setItem('chatUserName', name);
+
+                    document.getElementById('chatBadge').style.display = 'none';
+                    loadMessages();
+                } else {
+                    alert('Failed to start chat. Please try again.');
+                }
+            } catch (error) {
+                console.error('Start chat error:', error);
+                alert('Network error. Please try again.');
+            }
+        }
+
+        async function loadMessages() {
+            if (!conversationId) return;
+
+            try {
+                const response = await fetch(`/api/chat/${conversationId}/messages`);
+                const data = await response.json();
+                if (data.success) {
+                    renderMessages(data.messages);
+                    const unreadAdmin = data.messages.filter(m => m.sender === 'admin' && !m.read);
+                    if (unreadAdmin.length > 0 && !document.getElementById('chatWindow').classList.contains('open')) {
+                        document.getElementById('chatBadge').style.display = 'flex';
+                        document.getElementById('chatBadge').textContent = unreadAdmin.length;
+                    }
+                }
+            } catch (error) {
+                console.error('Load messages error:', error);
+            }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('chatMessages');
+            if (!messages || messages.length === 0) {
+                container.innerHTML = `<div style="text-align:center;color:#667799;padding:20px 0;"><i class="fas fa-comment" style="font-size:32px;display:block;margin-bottom:10px;opacity:0.3;"></i><p>No messages yet</p></div>`;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isUser = msg.sender === 'user';
+                return `
+                    <div class="message ${isUser ? 'user' : 'admin'}">
+                        <div class="bubble">
+                            <span class="sender-name">${isUser ? (userName || 'You') : 'Support Team'}</span>
+                            ${msg.message}
+                            <span class="time">${new Date(msg.timestamp).toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendUserMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            if (!conversationId) {
+                alert('Please start a chat first');
+                return;
+            }
+
+            input.value = '';
+
+            try {
+                const response = await fetch(`/api/chat/${conversationId}/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        sender: 'user',
+                        senderName: userName || 'Guest'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const container = document.getElementById('chatMessages');
+                    const emptyState = container.querySelector('div[style*="text-align:center"]');
+                    if (emptyState) emptyState.remove();
+
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'message user';
+                    msgDiv.innerHTML = `
+                        <div class="bubble">
+                            <span class="sender-name">${userName || 'You'}</span>
+                            ${message}
+                            <span class="time">${new Date().toLocaleString()}</span>
+                        </div>
+                    `;
+                    container.appendChild(msgDiv);
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch (error) {
+                console.error('Send message error:', error);
+                alert('Failed to send message');
+            }
+        }
+
+        // Poll for new messages every 10 seconds
+        setInterval(() => {
+            if (conversationId) {
+                loadMessages();
+            }
+        }, 10000);
+
+        // Close chat on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const window = document.getElementById('chatWindow');
+                if (window.classList.contains('open')) {
+                    toggleChat();
+                }
+            }
         });
 
         console.log('🚀 Contact page loaded successfully!');
