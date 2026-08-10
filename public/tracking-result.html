@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #fff; min-height: 100vh; }
@@ -38,6 +38,17 @@
         .result-page { padding: 6rem 5% 4rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
         .result-page .back-link { display: inline-flex; align-items: center; gap: 0.6rem; color: rgba(255, 255, 255, 0.5); text-decoration: none; margin-bottom: 2rem; transition: all 0.3s; font-size: 0.95rem; padding: 0.6rem 1.2rem; border-radius: 60px; border: 1px solid rgba(255, 255, 255, 0.05); }
         .result-page .back-link:hover { color: #00f2fe; gap: 1rem; border-color: rgba(0, 242, 254, 0.2); background: rgba(0, 242, 254, 0.05); }
+        
+        .email-status-box { background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.15); border-radius: 16px; padding: 16px 24px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; animation: fadeUp 0.6s ease forwards; opacity: 0; animation-delay: 0.1s; }
+        .email-status-box .label { color: rgba(255, 255, 255, 0.5); font-size: 13px; }
+        .email-status-box .email { color: #00f2fe; font-weight: 600; font-size: 14px; }
+        .email-status-box .status-icons { display: flex; gap: 16px; }
+        .email-status-box .status-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .email-status-box .status-item .icon { font-size: 16px; }
+        .email-status-box .status-item.sent .icon { color: #4CAF50; }
+        .email-status-box .status-item.pending .icon { color: #ffa500; animation: spin 1s linear infinite; }
+        .email-status-box .status-item.failed .icon { color: #ff4444; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .result-header { background: linear-gradient(135deg, rgba(0, 242, 254, 0.08), rgba(108, 27, 140, 0.05)); border-radius: 24px; padding: 2rem; margin-bottom: 2rem; border: 1px solid rgba(108, 27, 140, 0.2); animation: fadeUp 0.6s ease forwards; opacity: 0; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -119,7 +130,7 @@
         .pdf-loading .progress-bar { width: 300px; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; }
         .pdf-loading .progress-bar .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6C1B8C, #00f2fe); border-radius: 4px; transition: width 0.3s; }
         
-        @media (max-width: 768px) { .menu-toggle { display: block; } .nav-links { position: fixed; top: 70px; left: -100%; width: 100%; background: rgba(10, 14, 26, 0.98); flex-direction: column; padding: 2rem; transition: left 0.3s; gap: 1.5rem; border-bottom: 1px solid rgba(108, 27, 140, 0.2); } .nav-links.active { left: 0; } .result-grid { grid-template-columns: 1fr; gap: 1.5rem; } .result-header .tracking-number-box { flex-direction: column; align-items: flex-start; } .result-header .tracking-number { font-size: 1.4rem; } .action-buttons { flex-direction: column; } .btn-primary, .btn-secondary { min-width: auto; width: 100%; } .logo img { height: 40px; } .result-page { padding: 4rem 4% 2rem; } }
+        @media (max-width: 768px) { .menu-toggle { display: block; } .nav-links { position: fixed; top: 70px; left: -100%; width: 100%; background: rgba(10, 14, 26, 0.98); flex-direction: column; padding: 2rem; transition: left 0.3s; gap: 1.5rem; border-bottom: 1px solid rgba(108, 27, 140, 0.2); } .nav-links.active { left: 0; } .result-grid { grid-template-columns: 1fr; gap: 1.5rem; } .result-header .tracking-number-box { flex-direction: column; align-items: flex-start; } .result-header .tracking-number { font-size: 1.4rem; } .action-buttons { flex-direction: column; } .btn-primary, .btn-secondary { min-width: auto; width: 100%; } .logo img { height: 40px; } .result-page { padding: 4rem 4% 2rem; } .email-status-box { flex-direction: column; align-items: stretch; text-align: center; } .email-status-box .status-icons { justify-content: center; } }
         @media (max-width: 480px) { .result-header { padding: 1.5rem; } .info-card { padding: 1.2rem; } .info-row { flex-direction: column; gap: 2px; padding: 0.6rem 0; } .info-value { text-align: left; max-width: 100%; font-size: 0.85rem; } .result-header .tracking-number { font-size: 1.1rem; word-break: break-all; } .logo img { height: 35px; } .result-page { padding: 3rem 3% 2rem; } }
     </style>
 </head>
@@ -170,14 +181,15 @@
         </div>
     </div>
 
-    <div id="pdfContent"></div>
-
     <footer class="footer">
         <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        const API_URL = window.location.origin;
+        console.log('📍 API URL:', API_URL);
+
         function toggleMenu() {
             document.getElementById('navLinks').classList.toggle('active');
         }
@@ -188,6 +200,7 @@
             });
         });
 
+        // ===== CONFETTI =====
         function launchConfetti() {
             const container = document.createElement('div');
             container.className = 'confetti-container';
@@ -213,15 +226,20 @@
             }, 5000);
         }
 
-        const API_URL = window.location.origin;
+        // ===== SHIPMENT DATA =====
         let shipmentData = null;
         let trackingNumber = localStorage.getItem('trackingNumber');
+        let userEmail = localStorage.getItem('userEmail');
 
         if (!trackingNumber) {
             trackingNumber = 'SL-3722-TAB2NLX6';
         }
         trackingNumber = trackingNumber.toUpperCase();
 
+        console.log('🔍 Tracking Number:', trackingNumber);
+        console.log('📧 User Email:', userEmail);
+
+        // ===== STATUS HELPERS =====
         function getStatusClass(status) {
             const map = {
                 'order_confirmed': 'status-order_confirmed',
@@ -244,198 +262,322 @@
             return map[status] || 'fa-truck';
         }
 
-        function generatePDFHTML(shipment) {
-            const inv = shipment.invoice || {};
-            const dutyDisplay = shipment.parcel?.dutyFeesAmount !== 'N/A' 
-                ? shipment.parcel.dutyFeesAmount 
-                : shipment.parcel?.dutyFeesStatus || 'N/A';
-            
-            let timelineHTML = '';
-            if (shipment.timeline && shipment.timeline.length > 0) {
-                timelineHTML = shipment.timeline.map(item => `
-                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-                        <div>
-                            <div style="font-weight:600;font-size:13px;color:#fff;">${item.title || 'N/A'}</div>
-                            <div style="color:rgba(255,255,255,0.4);font-size:11px;">${item.desc || 'N/A'}</div>
-                        </div>
-                        <div style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;">${item.date || 'N/A'}</div>
-                    </div>
-                `).join('');
+        // ===== GENERATE QR CODE (Simple) =====
+        function generateSimpleQRCode(text) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 100;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 100, 100);
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) {
+                hash = ((hash << 5) - hash) + text.charCodeAt(i);
+                hash |= 0;
             }
-
-            return `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Invoice - SwiftLogix</title>
-                <style>
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0e1a; color: #fff; padding: 40px; max-width: 900px; margin: 0 auto; }
-                    .invoice-wrapper { background: #12121f; border-radius: 24px; padding: 40px; border: 1px solid rgba(0, 242, 254, 0.15); box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
-                    .invoice-wrapper::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #6C1B8C, #00f2fe, #FF6600); background-size: 200% 100%; }
-                    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-                    .logo { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #fff, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-                    .logo span { -webkit-text-fill-color: #00f2fe; }
-                    .invoice-badge { background: rgba(0, 242, 254, 0.12); padding: 6px 20px; border-radius: 50px; font-size: 11px; color: #00f2fe; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; border: 1px solid rgba(0, 242, 254, 0.2); }
-                    .seal { text-align: center; margin: 20px 0 30px; padding: 20px; background: rgba(255, 215, 0, 0.05); border: 2px solid rgba(255, 215, 0, 0.2); border-radius: 16px; position: relative; }
-                    .seal .stamp { font-size: 22px; font-weight: 800; color: #ffd700; letter-spacing: 4px; text-transform: uppercase; }
-                    .seal .stamp i { margin: 0 8px; }
-                    .seal .sub { color: rgba(255, 255, 255, 0.4); font-size: 12px; margin-top: 4px; }
-                    .seal .cert-number { position: absolute; right: 20px; bottom: 10px; font-size: 10px; color: rgba(255, 255, 255, 0.2); font-family: monospace; }
-                    .status-badge { display: inline-block; padding: 8px 24px; border-radius: 50px; font-weight: 600; font-size: 14px; background: rgba(0, 242, 254, 0.15); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.3); margin-bottom: 20px; }
-                    .tracking-info { background: rgba(0, 242, 254, 0.05); border-radius: 16px; padding: 16px 20px; margin-bottom: 25px; border: 1px solid rgba(0, 242, 254, 0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-                    .tracking-info .code { font-family: 'Courier New', monospace; font-size: 20px; font-weight: 700; letter-spacing: 2px; }
-                    .tracking-info .date { color: rgba(255, 255, 255, 0.4); font-size: 12px; }
-                    .section { margin: 25px 0; }
-                    .section-title { font-size: 13px; font-weight: 700; color: #00f2fe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(0, 242, 254, 0.1); }
-                    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-                    .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-                    .info-row .label { color: rgba(255, 255, 255, 0.4); font-size: 12px; }
-                    .info-row .value { color: #fff; font-weight: 500; font-size: 13px; }
-                    .info-row .value.gold { color: #ffd700; }
-                    .total-row { display: flex; justify-content: space-between; padding: 16px 0; border-top: 2px solid rgba(255, 215, 0, 0.2); margin-top: 8px; }
-                    .total-row .label { font-weight: 700; color: #ffd700; font-size: 16px; }
-                    .total-row .value { font-weight: 700; font-size: 22px; color: #ffd700; }
-                    .timeline-pdf { margin: 10px 0; }
-                    .footer-pdf { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
-                    .footer-pdf p { color: rgba(255, 255, 255, 0.2); font-size: 11px; margin: 2px 0; }
-                    .footer-pdf .brand { color: #00f2fe; font-weight: 600; font-size: 13px; }
-                    .watermark { position: absolute; bottom: 20px; right: 20px; font-size: 60px; font-weight: 900; color: rgba(255, 215, 0, 0.03); font-family: 'Courier New', monospace; transform: rotate(-15deg); pointer-events: none; }
-                    @media (max-width: 600px) { body { padding: 20px; } .invoice-wrapper { padding: 24px; } .grid-2 { grid-template-columns: 1fr; gap: 10px; } .header { flex-direction: column; gap: 10px; text-align: center; } .tracking-info { flex-direction: column; gap: 8px; text-align: center; } .seal .cert-number { position: static; margin-top: 8px; } }
-                </style>
-            </head>
-            <body>
-                <div class="invoice-wrapper">
-                    <div class="watermark">★ INVOICE ★</div>
-                    
-                    <div class="header">
-                        <div class="logo">Swift<span>Logix</span></div>
-                        <div class="invoice-badge">✦ OFFICIAL INVOICE ✦</div>
-                    </div>
-
-                    <div class="seal">
-                        <div class="stamp">
-                            <i class="fas fa-certificate"></i> 
-                            ★ VERIFIED ★ 
-                            <i class="fas fa-certificate"></i>
-                        </div>
-                        <div class="sub">Digitally Signed &amp; Authenticated</div>
-                        <div class="cert-number">CERT: SL-${Date.now().toString(36).toUpperCase()}</div>
-                    </div>
-
-                    <div style="text-align:center;">
-                        <span class="status-badge">
-                            <i class="fas ${getStatusIcon(shipment.status)}"></i>
-                            ${shipment.statusText || shipment.status}
-                        </span>
-                    </div>
-
-                    <div class="tracking-info">
-                        <div>
-                            <span style="color:rgba(255,255,255,0.4);font-size:12px;">TRACKING NUMBER</span>
-                            <div class="code"><i class="fas fa-barcode"></i> ${shipment.trackingCode}</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <span style="color:rgba(255,255,255,0.4);font-size:12px;">LAST UPDATED</span>
-                            <div class="date">${shipment.lastUpdated}</div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">📋 Tracking Information</div>
-                        <div class="grid-2">
-                            <div>
-                                <div class="info-row"><span class="label">Origin</span><span class="value">${shipment.origin || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Destination</span><span class="value">${shipment.destination || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Status Description</span><span class="value">${shipment.statusDesc || 'N/A'}</span></div>
-                            </div>
-                            <div>
-                                <div class="info-row"><span class="label">Pickup Date</span><span class="value">${shipment.parcel?.pickupDate || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Expected Delivery</span><span class="value" style="color:#00f2fe;">${shipment.parcel?.expectedDelivery || 'Pending'}</span></div>
-                                <div class="info-row"><span class="label">Duty Fees</span><span class="value" style="color:${shipment.parcel?.dutyFeesStatus === 'Paid' ? '#4CAF50' : '#ffa500'};">${dutyDisplay}</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">👤 Sender &amp; Receiver</div>
-                        <div class="grid-2">
-                            <div>
-                                <div style="color:#00f2fe;font-size:12px;font-weight:600;margin-bottom:8px;">SENDER</div>
-                                <div class="info-row"><span class="label">Name</span><span class="value">${shipment.sender?.name || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Country</span><span class="value">${shipment.sender?.country || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Address</span><span class="value">${shipment.sender?.address || shipment.sender?.country || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Phone</span><span class="value">${shipment.sender?.phone || 'N/A'}</span></div>
-                            </div>
-                            <div>
-                                <div style="color:#00f2fe;font-size:12px;font-weight:600;margin-bottom:8px;">RECEIVER</div>
-                                <div class="info-row"><span class="label">Name</span><span class="value">${shipment.receiver?.name || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Country</span><span class="value">${shipment.receiver?.country || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Address</span><span class="value">${shipment.receiver?.address || shipment.receiver?.country || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Phone</span><span class="value">${shipment.receiver?.phone || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Email</span><span class="value" style="color:#00f2fe;">${shipment.receiver?.email || 'N/A'}</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">📦 Parcel Details</div>
-                        <div class="grid-2">
-                            <div>
-                                <div class="info-row"><span class="label">Weight</span><span class="value">${shipment.parcel?.weight || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Type</span><span class="value">${shipment.parcel?.type || 'N/A'}</span></div>
-                            </div>
-                            <div>
-                                <div class="info-row"><span class="label">Booking Mode</span><span class="value">${inv.bookingMode || 'N/A'}</span></div>
-                                <div class="info-row"><span class="label">Order ID</span><span class="value">${inv.orderId || 'N/A'}</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">💰 Invoice Summary</div>
-                        <div class="info-row"><span class="label">Shipping Cost</span><span class="value">${inv.shipmentCost || 'N/A'}</span></div>
-                        <div class="info-row"><span class="label">Clearance Cost</span><span class="value">${inv.clearanceCost || 'N/A'}</span></div>
-                        <div class="total-row">
-                            <span class="label">TOTAL AMOUNT</span>
-                            <span class="value">${inv.totalAmount || 'N/A'}</span>
-                        </div>
-                        <div class="info-row" style="border-bottom:none;padding-top:8px;">
-                            <span class="label">Payment Status</span>
-                            <span class="value" style="color:${inv.paymentStatus === 'Paid' ? '#4CAF50' : '#ffa500'};">${inv.paymentStatus || 'Pending'}</span>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">📊 Shipment Timeline</div>
-                        <div class="timeline-pdf">${timelineHTML}</div>
-                    </div>
-
-                    <div style="background:rgba(0,242,254,0.03);border-radius:12px;padding:16px;text-align:center;margin:20px 0;">
-                        <p style="color:rgba(255,255,255,0.3);font-size:11px;">
-                            <i class="fas fa-shield-alt"></i> This is a digitally generated invoice. 
-                            <i class="fas fa-lock"></i> Verified by SwiftLogix Security
-                        </p>
-                        <p style="color:rgba(255,255,255,0.15);font-size:10px;margin-top:4px;">
-                            Payment Methods: 💳 Credit Card • 🏦 Bank Transfer • ₿ Bitcoin • 🎁 Gift Cards
-                        </p>
-                    </div>
-
-                    <div class="footer-pdf">
-                        <p class="brand">✦ SwiftLogix Logistics ✦</p>
-                        <p>Global Logistics Intelligence</p>
-                        <p>© 2026 SwiftLogix. All rights reserved.</p>
-                        <p style="font-size:9px;margin-top:4px;color:rgba(255,255,255,0.1);">
-                            Invoice generated on ${new Date().toLocaleString()}
-                        </p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            `;
+            ctx.fillStyle = 'black';
+            const seed = Math.abs(hash) % 100;
+            ctx.fillRect(5, 5, 8, 8);
+            ctx.fillRect(5, 87, 8, 8);
+            ctx.fillRect(87, 5, 8, 8);
+            for (let i = 0; i < 20; i++) {
+                const x = 15 + (i * 3.5);
+                const y = 15 + ((seed + i) % 70);
+                ctx.fillRect(x, y, 3, 3);
+            }
+            for (let i = 0; i < 60; i++) {
+                const x = 20 + (Math.sin(i * seed) * 60 + 30);
+                const y = 25 + (Math.cos(i * (seed + 1)) * 50 + 25);
+                if (x > 10 && x < 90 && y > 10 && y < 90) {
+                    ctx.fillRect(x, y, 2, 2);
+                }
+            }
+            return canvas.toDataURL();
         }
 
+        // ===== PDF GENERATION (Using jsPDF - Your Working Method) =====
+        function downloadPDF() {
+            if (!shipmentData) {
+                alert('No shipment data to download');
+                return;
+            }
+            
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+            btn.disabled = true;
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const inv = shipmentData.invoice || {};
+            const now = new Date().toLocaleString();
+            const dutyAmount = shipmentData.parcel?.dutyFeesAmount || shipmentData.parcel?.dutyFeesStatus || 'N/A';
+            const statusText = shipmentData.statusText || shipmentData.status;
+            const verifyUrl = `${window.location.origin}/verify?code=${trackingNumber}`;
+            const qrDataUrl = generateSimpleQRCode(verifyUrl);
+            
+            // Header
+            doc.setFillColor(0, 162, 254);
+            doc.circle(20, 15, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text("SL", 17, 18);
+            doc.setTextColor(0, 162, 254);
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text("SwiftLogix Logistics", 35, 19);
+            doc.setFontSize(8);
+            doc.setTextColor(100);
+            doc.setFont('helvetica', 'normal');
+            doc.text("International Shipping & Logistics Services", 35, 26);
+            doc.text("info@swiftlogix.biz | www.swiftlogix.biz", 35, 31);
+            
+            // Tracking header
+            doc.setDrawColor(0, 162, 254);
+            doc.setFillColor(245, 250, 255);
+            doc.rect(10, 42, 190, 10, 'F');
+            doc.setFontSize(10);
+            doc.setTextColor(0);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Tracking Number: ${trackingNumber}`, 15, 49);
+            doc.setTextColor(0, 162, 254);
+            doc.text("✓ Verified", 160, 49);
+            
+            // Sender & Receiver
+            doc.rect(10, 58, 90, 48);
+            doc.setFontSize(9);
+            doc.setTextColor(0, 162, 254);
+            doc.setFont('helvetica', 'bold');
+            doc.text("SENDER", 15, 65);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(50);
+            doc.setFontSize(8);
+            doc.text(`${shipmentData.sender?.name || 'N/A'}`, 15, 73);
+            doc.text(`${shipmentData.sender?.country || 'N/A'}`, 15, 80);
+            doc.text(`${shipmentData.sender?.address || shipmentData.sender?.country || 'N/A'}`, 15, 87);
+            doc.text(`${shipmentData.sender?.phone || 'N/A'}`, 15, 94);
+            
+            doc.rect(110, 58, 90, 55);
+            doc.setFontSize(9);
+            doc.setTextColor(0, 162, 254);
+            doc.setFont('helvetica', 'bold');
+            doc.text("RECEIVER", 115, 65);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(50);
+            doc.setFontSize(8);
+            doc.text(`${shipmentData.receiver?.name || 'N/A'}`, 115, 73);
+            doc.text(`${shipmentData.receiver?.country || 'N/A'}`, 115, 80);
+            doc.text(`${shipmentData.receiver?.address || shipmentData.receiver?.country || 'N/A'}`, 115, 87);
+            doc.text(`${shipmentData.receiver?.phone || 'N/A'}`, 115, 94);
+            doc.text(`${shipmentData.receiver?.email || 'N/A'}`, 115, 101);
+            
+            // Shipment Details
+            doc.setFontSize(9);
+            doc.setTextColor(0, 162, 254);
+            doc.setFont('helvetica', 'bold');
+            doc.text("Shipment Details", 10, 118);
+            doc.setFillColor(245, 250, 255);
+            doc.rect(10, 122, 190, 7, 'F');
+            doc.setFontSize(7);
+            doc.setTextColor(100);
+            doc.text("Order ID", 12, 127);
+            doc.text("Booking Mode", 55, 127);
+            doc.text("Shipment Cost", 100, 127);
+            doc.text("Status", 150, 127);
+            doc.rect(10, 129, 190, 8);
+            doc.setTextColor(0);
+            doc.text(inv.orderId || 'N/A', 12, 135);
+            doc.text(inv.bookingMode || 'N/A', 55, 135);
+            doc.text(inv.shipmentCost || 'N/A', 100, 135);
+            doc.text(statusText, 150, 135);
+            
+            // Parcel Details
+            doc.setFontSize(9);
+            doc.setTextColor(0, 162, 254);
+            doc.setFont('helvetica', 'bold');
+            doc.text("Parcel Details & Costs", 10, 147);
+            doc.setFillColor(245, 250, 255);
+            doc.rect(10, 151, 190, 7, 'F');
+            doc.setFontSize(6);
+            doc.setTextColor(100);
+            doc.text("QTY", 12, 156);
+            doc.text("PRODUCT", 28, 156);
+            doc.text("STATUS", 65, 156);
+            doc.text("DESCRIPTION", 90, 156);
+            doc.text("SHIPPING", 125, 156);
+            doc.text("CLEARANCE", 145, 156);
+            doc.text("TOTAL", 170, 156);
+            doc.rect(10, 158, 190, 10);
+            doc.setTextColor(0);
+            doc.text("1", 12, 165);
+            doc.text("Parcel", 28, 165);
+            doc.text(statusText, 65, 165);
+            doc.text(shipmentData.parcel?.type || 'N/A', 90, 165);
+            doc.text(inv.shipmentCost || 'N/A', 125, 165);
+            doc.text(inv.clearanceCost || 'N/A', 145, 165);
+            doc.text(inv.totalAmount || 'N/A', 170, 165);
+            
+            // Payment Methods
+            doc.setFontSize(9);
+            doc.setTextColor(0, 162, 254);
+            doc.setFont('helvetica', 'bold');
+            doc.text("Payment Methods", 10, 176);
+            doc.setFontSize(7);
+            doc.setTextColor(100);
+            doc.text("For your convenience we offer several fast, reliable, secure payment options:", 10, 182);
+            doc.setTextColor(0);
+            doc.text("✓ Credit Card", 12, 189);
+            doc.text("✓ Bank Transfer", 12, 195);
+            doc.text("✓ Bitcoin / Crypto", 12, 201);
+            doc.text("✓ Gift Cards (Amazon, Apple, Google)", 12, 207);
+            
+            // Payment Summary
+            doc.setDrawColor(0, 162, 254);
+            doc.setFillColor(248, 252, 255);
+            doc.rect(120, 176, 80, 42, 'F');
+            doc.setFontSize(8);
+            doc.setTextColor(0, 162, 254);
+            doc.setFont('helvetica', 'bold');
+            doc.text("Payment Summary", 125, 183);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0);
+            doc.text(`Shipping: ${inv.shipmentCost || 'N/A'}`, 125, 191);
+            doc.text(`Clearance: ${inv.clearanceCost || 'N/A'}`, 125, 198);
+            doc.setDrawColor(0, 162, 254);
+            doc.line(125, 203, 195, 203);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Total: ${inv.totalAmount || 'N/A'}`, 125, 210);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Status: ${inv.paymentStatus || 'To Pay on Delivery'}`, 125, 217);
+            
+            // Official Stamp
+            doc.setDrawColor(200, 150, 0);
+            doc.setFillColor(255, 248, 225);
+            doc.rect(10, 218, 55, 25, 'F');
+            doc.setFontSize(10);
+            doc.setTextColor(200, 150, 0);
+            doc.setFont('helvetica', 'bold');
+            doc.text("OFFICIAL", 37, 227, { align: "center" });
+            doc.text("STAMP", 37, 233, { align: "center" });
+            doc.setFontSize(7);
+            doc.setTextColor(100);
+            doc.text("Verified & Approved", 37, 240, { align: "center" });
+            
+            // QR Code
+            if (qrDataUrl) {
+                try {
+                    doc.addImage(qrDataUrl, 'PNG', 145, 218, 25, 25);
+                } catch(e) {
+                    doc.rect(145, 218, 25, 25);
+                    doc.setFontSize(6);
+                    doc.setTextColor(0, 162, 254);
+                    doc.text("QR CODE", 157, 230, { align: "center" });
+                }
+            } else {
+                doc.rect(145, 218, 25, 25);
+                doc.setFontSize(6);
+                doc.setTextColor(0, 162, 254);
+                doc.text("QR CODE", 157, 230, { align: "center" });
+            }
+            doc.setFontSize(6);
+            doc.setTextColor(100);
+            doc.text("Scan to verify", 157, 245, { align: "center" });
+            
+            // Footer
+            doc.setDrawColor(220);
+            doc.line(10, 253, 200, 253);
+            doc.setFontSize(7);
+            doc.setTextColor(0, 162, 254);
+            doc.text("Digital Verification", 105, 260, { align: "center" });
+            doc.setFontSize(6);
+            doc.setTextColor(100);
+            doc.text(`Scan QR code to verify this receipt's authenticity`, 105, 266, { align: "center" });
+            doc.text(`and check real-time shipment status.`, 105, 271, { align: "center" });
+            
+            doc.setFontSize(7);
+            doc.setTextColor(150);
+            doc.text(`Generated: ${now}`, 105, 283, { align: "center" });
+            doc.text("Digitally signed and secured", 105, 289, { align: "center" });
+            
+            const fileName = `SwiftLogix_Invoice_${trackingNumber}.pdf`;
+            doc.save(fileName);
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+
+        // ===== SEND EMAILS AUTOMATICALLY (Like Test Email) =====
+        async function autoSendEmails(trackingCode, userEmail) {
+            if (!userEmail) {
+                console.log('❌ No user email found in localStorage');
+                return;
+            }
+
+            console.log(`📧 Auto-sending emails to ${userEmail}...`);
+            
+            // Update email status box
+            const statusBox = document.getElementById('emailStatusBox');
+            if (statusBox) {
+                statusBox.innerHTML = `
+                    <span class="label">📧 Sending emails to:</span>
+                    <span class="email">${userEmail}</span>
+                    <div class="status-icons">
+                        <span class="status-item pending">
+                            <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                            Tracking
+                        </span>
+                        <span class="status-item pending">
+                            <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                            Invoice
+                        </span>
+                    </div>
+                `;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/send-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trackingCode, userEmail })
+                });
+                
+                const data = await response.json();
+                console.log('📥 Auto-email response:', data);
+                
+                // Update status box with results
+                if (statusBox && data.success) {
+                    const trackingStatus = data.emails?.tracking?.success;
+                    const invoiceStatus = data.emails?.invoice?.success;
+                    
+                    statusBox.innerHTML = `
+                        <span class="label">📧 Emails sent to:</span>
+                        <span class="email">${userEmail}</span>
+                        <div class="status-icons">
+                            <span class="status-item ${trackingStatus ? 'sent' : 'failed'}">
+                                <span class="icon"><i class="fas ${trackingStatus ? 'fa-check-circle' : 'fa-times-circle'}"></i></span>
+                                Tracking ${trackingStatus ? '✅' : '❌'}
+                            </span>
+                            <span class="status-item ${invoiceStatus ? 'sent' : 'failed'}">
+                                <span class="icon"><i class="fas ${invoiceStatus ? 'fa-check-circle' : 'fa-times-circle'}"></i></span>
+                                Invoice ${invoiceStatus ? '✅' : '❌'}
+                            </span>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('❌ Auto-email error:', error);
+                if (statusBox) {
+                    statusBox.innerHTML = `
+                        <span class="label">📧 Email status:</span>
+                        <span style="color:#ff4444;">Failed to send emails</span>
+                    `;
+                }
+            }
+        }
+
+        // ===== RENDER TRACKING =====
         function renderTracking(shipment) {
             const container = document.getElementById('resultContent');
             const statusClass = getStatusClass(shipment.status);
@@ -444,19 +586,41 @@
             const dutyStatus = shipment.parcel?.dutyFeesStatus || 'N/A';
             const dutyDisplay = dutyAmount !== 'N/A' ? dutyAmount : dutyStatus;
 
+            // Launch confetti if delivered
             if (shipment.status === 'delivered') {
                 setTimeout(launchConfetti, 800);
             }
 
-            let timelineHTML = shipment.timeline.map(item => `
-                <div class="timeline-item ${item.completed ? 'completed' : ''} ${item.active ? 'active' : ''}">
-                    <div class="timeline-date">${item.date}</div>
-                    <div class="timeline-title">${item.title}</div>
-                    <div class="timeline-desc">${item.desc}</div>
-                </div>
-            `).join('');
+            let timelineHTML = '';
+            if (shipment.timeline && shipment.timeline.length > 0) {
+                timelineHTML = shipment.timeline.map(item => `
+                    <div class="timeline-item ${item.completed ? 'completed' : ''} ${item.active ? 'active' : ''}">
+                        <div class="timeline-date">${item.date}</div>
+                        <div class="timeline-title">${item.title}</div>
+                        <div class="timeline-desc">${item.desc}</div>
+                    </div>
+                `).join('');
+            }
 
+            // Build the HTML
             container.innerHTML = `
+                <!-- Email Status Box -->
+                <div class="email-status-box" id="emailStatusBox">
+                    <span class="label">📧 Sending emails to:</span>
+                    <span class="email">${userEmail || 'No email provided'}</span>
+                    <div class="status-icons">
+                        <span class="status-item pending">
+                            <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                            Tracking
+                        </span>
+                        <span class="status-item pending">
+                            <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                            Invoice
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Header -->
                 <div class="result-header">
                     <div class="tracking-number-box">
                         <div class="tracking-number"><i class="fas fa-barcode"></i> ${shipment.trackingCode}</div>
@@ -471,6 +635,7 @@
                     </div>
                 </div>
 
+                <!-- Grid -->
                 <div class="result-grid">
                     <div>
                         <div class="info-card">
@@ -513,11 +678,13 @@
                     </div>
                 </div>
 
+                <!-- Timeline -->
                 <div class="timeline-section">
                     <h3><i class="fas fa-timeline"></i> Shipment Journey</h3>
                     <div class="timeline">${timelineHTML}</div>
                 </div>
 
+                <!-- Map -->
                 <div class="map-container">
                     <div id="map"></div>
                     <div class="map-caption">
@@ -525,14 +692,17 @@
                     </div>
                 </div>
 
+                <!-- Buttons -->
                 <div class="action-buttons">
                     <button class="btn-primary" onclick="downloadPDF()"><i class="fas fa-download"></i> Download Invoice (PDF)</button>
                     <button class="btn-secondary" onclick="copyLink()"><i class="fas fa-share-alt"></i> Share Tracking</button>
                 </div>
             `;
 
+            // Store data for PDF
             window.currentShipment = shipment;
 
+            // Initialize map
             setTimeout(() => {
                 if (typeof L !== 'undefined') {
                     const coords = shipment.coordinates || [25.2048, 55.2708];
@@ -565,19 +735,31 @@
                     }
                 }
             }, 500);
+
+            // ✅ AUTO-SEND EMAILS (Like Test Email) - AFTER page loads
+            if (userEmail) {
+                console.log('📧 Auto-sending emails on page load...');
+                autoSendEmails(trackingNumber, userEmail);
+            }
         }
 
+        // ===== LOAD TRACKING =====
         async function loadTracking() {
             try {
+                console.log('🔍 Fetching shipment:', trackingNumber);
                 const response = await fetch(`${API_URL}/api/track/${trackingNumber}`);
                 
                 if (!response.ok) {
                     throw new Error('Not found');
                 }
+                
                 const data = await response.json();
+                console.log('📥 Shipment data loaded:', data);
                 shipmentData = data;
                 renderTracking(data);
+                
             } catch (error) {
+                console.error('❌ Error loading tracking:', error);
                 document.getElementById('resultContent').innerHTML = `
                     <div class="not-found">
                         <i class="fas fa-search"></i>
@@ -589,90 +771,14 @@
             }
         }
 
+        // ===== SHARE LINK =====
         function copyLink() {
             navigator.clipboard.writeText(window.location.href);
             alert('✅ Tracking link copied to clipboard!');
         }
 
-        function downloadPDF() {
-            const shipment = window.currentShipment;
-            if (!shipment) {
-                alert('No shipment data available');
-                return;
-            }
-
-            const loading = document.getElementById('pdfLoading');
-            const progress = document.getElementById('pdfProgress');
-            loading.classList.add('active');
-
-            // ✅ Create a dedicated PDF container
-            const pdfContainer = document.createElement('div');
-            pdfContainer.id = 'pdfContainer';
-            pdfContainer.style.cssText = `
-                position: fixed;
-                left: -9999px;
-                top: 0;
-                width: 900px;
-                background: #0a0e1a;
-                padding: 40px;
-                font-family: 'Inter', sans-serif;
-                color: #fff;
-                z-index: 10000;
-            `;
-            
-            const pdfHTML = generatePDFHTML(shipment);
-            pdfContainer.innerHTML = pdfHTML;
-            document.body.appendChild(pdfContainer);
-
-            progress.style.width = '30%';
-
-            setTimeout(() => {
-                progress.style.width = '50%';
-                
-                const opt = {
-                    margin: [0.5, 0.5, 0.5, 0.5],
-                    filename: `SwiftLogix_Invoice_${shipment.trackingCode}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#0a0e1a',
-                        logging: false,
-                        width: 900,
-                        height: pdfContainer.scrollHeight
-                    },
-                    jsPDF: { 
-                        unit: 'in', 
-                        format: 'a4', 
-                        orientation: 'portrait' 
-                    },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                };
-
-                progress.style.width = '75%';
-
-                html2pdf()
-                    .set(opt)
-                    .from(pdfContainer)
-                    .save()
-                    .then(() => {
-                        progress.style.width = '100%';
-                        setTimeout(() => {
-                            loading.classList.remove('active');
-                            progress.style.width = '0%';
-                            document.body.removeChild(pdfContainer);
-                        }, 500);
-                    })
-                    .catch((error) => {
-                        console.error('PDF generation error:', error);
-                        loading.classList.remove('active');
-                        progress.style.width = '0%';
-                        document.body.removeChild(pdfContainer);
-                        alert('Failed to generate PDF. Please try again.');
-                    });
-            }, 300);
-        }
-
+        // ===== START =====
+        console.log('✅ tracking-result.html loaded');
         loadTracking();
     </script>
 </body>
