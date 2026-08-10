@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .careers-hero {
+            padding: 8rem 5% 4rem;
+            text-align: center;
+        }
+        .careers-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .careers-hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .careers-section { padding: 3rem 0 5rem; }
+        .careers-section .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .careers-section .job-card {
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .careers-section .job-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        .careers-section .job-card .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .careers-section .job-card .job-header h3 { font-size: 1.2rem; }
+        .careers-section .job-card .job-header .location {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .careers-section .job-card .job-type {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: rgba(0,242,254,0.1);
+            color: var(--primary);
+        }
+        .careers-section .job-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0.8rem 0;
+        }
+        .careers-section .job-card .apply-btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 60px;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+        }
+        .careers-section .job-card .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,242,254,0.3);
+        }
+        .careers-section .benefits {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .careers-section .benefits .benefit {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .careers-section .benefits .benefit i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+        .careers-section .benefits .benefit h4 { font-size: 1rem; }
+        .careers-section .benefits .benefit p { color: var(--text-muted); font-size: 0.85rem; }
+        @media (max-width: 992px) {
+            .careers-section .grid { grid-template-columns: 1fr; }
+            .careers-section .benefits { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 480px) {
+            .careers-hero h1 { font-size: 2.2rem; }
+            .careers-section .benefits { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Loading careers...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tracking.html">Track</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CAREERS HERO -->
+    <section class="careers-hero">
+        <h1>Join Our Team</h1>
+        <p>Build your career with a global logistics leader. We're looking for passionate professionals to join our mission.</p>
+    </section>
+
+    <!-- CAREERS SECTION -->
+    <section class="careers-section">
+        <div class="container">
+            <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Open Positions</h2>
+            <p style="color:var(--text-muted);margin-bottom:1rem;">Join a team that's shaping the future of global logistics.</p>
+
+            <div class="grid">
+                <div class="job-card">
+                    <div class="job-header">
+                        <h3>Logistics Operations Manager</h3>
+                        <span class="location">Dubai, UAE</span>
+                    </div>
+                    <span class="job-type">Full-Time</span>
+                    <p>Lead our logistics operations team, overseeing global shipments and ensuring on-time delivery excellence.</p>
+                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-header">
+                        <h3>Senior Software Engineer</h3>
+                        <span class="location">Remote</span>
+                    </div>
+                    <span class="job-type">Full-Time</span>
+                    <p>Build and maintain our tracking platform, working with modern technologies to enhance user experience.</p>
+                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-header">
+                        <h3>Customer Success Specialist</h3>
+                        <span class="location">London, UK</span>
+                    </div>
+                    <span class="job-type">Full-Time</span>
+                    <p>Deliver exceptional customer experiences, resolving issues and ensuring client satisfaction.</p>
+                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                </div>
+                <div class="job-card">
+                    <div class="job-header">
+                        <h3>Supply Chain Analyst</h3>
+                        <span class="location">Singapore</span>
+                    </div>
+                    <span class="job-type">Full-Time</span>
+                    <p>Analyze supply chain data to optimize routes, reduce costs, and improve delivery efficiency.</p>
+                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                </div>
+            </div>
+
+            <!-- BENEFITS -->
+            <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:3rem;">Why Join SwiftLogix</h2>
+            <div class="benefits">
+                <div class="benefit">
+                    <i class="fas fa-globe"></i>
+                    <h4>Global Impact</h4>
+                    <p>Work on projects that move the world</p>
+                </div>
+                <div class="benefit">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Growth Opportunities</h4>
+                    <p>Continuous learning and career development</p>
+                </div>
+                <div class="benefit">
+                    <i class="fas fa-users"></i>
+                    <h4>Great Culture</h4>
+                    <p>Collaborative and inclusive environment</p>
+                </div>
+                <div class="benefit">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h4>Benefits Package</h4>
+                    <p>Competitive salary and comprehensive benefits</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
