@@ -6,315 +6,15 @@
     <title>Track Package - SwiftLogix</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#fff;min-height:100vh}
-
-        /* ==================== TRUCK LOADER ==================== */
-        .loader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0e1a;
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-            overflow: hidden;
-        }
-        .loader-wrapper.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .loader-road {
-            position: absolute;
-            bottom: 22%;
-            left: 5%;
-            width: 90%;
-            height: 4px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 2px;
-        }
-        .loader-road::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 100%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(108,27,140,0.3) 15px, rgba(108,27,140,0.3) 20px);
-            animation: roadMove 2s linear infinite;
-        }
-        @keyframes roadMove {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-40px); }
-        }
-        .loader-truck-container {
-            position: relative;
-            z-index: 2;
-            margin-bottom: 40px;
-        }
-        .loader-truck {
-            position: relative;
-            width: 320px;
-            height: 150px;
-            margin: 0 auto;
-        }
-        .loader-truck .cargo {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 230px;
-            height: 115px;
-            background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
-            border-radius: 8px 12px 8px 8px;
-            border: 2px solid rgba(108,27,140,0.3);
-            z-index: 2;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .loader-truck .cargo .brand {
-            font-size: 30px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            z-index: 3;
-        }
-        .loader-truck .cargo .brand .purple {
-            -webkit-text-fill-color: #6C1B8C;
-        }
-        .loader-truck .cargo .brand .orange {
-            -webkit-text-fill-color: #FF6600;
-        }
-        .loader-truck .cargo .door-line {
-            position: absolute;
-            top: 10%;
-            width: 2px;
-            height: 80%;
-            background: rgba(108,27,140,0.1);
-        }
-        .loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
-        .loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
-        .loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
-        .loader-truck .cargo::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 30px, rgba(108,27,140,0.05) 30px, rgba(108,27,140,0.05) 31px);
-        }
-        .loader-truck .cabin {
-            position: absolute;
-            right: 0;
-            top: 12px;
-            width: 95px;
-            height: 85px;
-            background: linear-gradient(180deg, #1a2a4a, #0a1628);
-            border-radius: 12px 20px 8px 8px;
-            border: 2px solid rgba(108,27,140,0.3);
-            z-index: 3;
-        }
-        .loader-truck .cabin .window {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            width: 40px;
-            height: 32px;
-            background: rgba(108,27,140,0.15);
-            border-radius: 8px 8px 0 0;
-            border: 1px solid rgba(108,27,140,0.2);
-            overflow: hidden;
-        }
-        .loader-truck .cabin .window::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(108,27,140,0.3), transparent);
-            animation: windowGlow 2s ease-in-out infinite;
-        }
-        @keyframes windowGlow {
-            0% { left: -100%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
-        }
-        .loader-truck .cabin .door {
-            position: absolute;
-            bottom: 10px;
-            right: 14px;
-            width: 24px;
-            height: 32px;
-            background: rgba(108,27,140,0.08);
-            border-radius: 4px 4px 0 0;
-            border: 1px solid rgba(108,27,140,0.12);
-        }
-        .loader-truck .cabin .door::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 4px;
-            height: 4px;
-            background: rgba(108,27,140,0.3);
-            border-radius: 50%;
-        }
-        .loader-truck .cabin .headlight {
-            position: absolute;
-            bottom: 8px;
-            width: 12px;
-            height: 6px;
-            background: rgba(255,102,0,0.6);
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 15px rgba(255,102,0,0.3);
-        }
-        .loader-truck .cabin .headlight.left { left: -10px; }
-        .loader-truck .cabin .headlight.right { left: 18px; }
-        .loader-truck .wheel {
-            position: absolute;
-            bottom: -12px;
-            width: 30px;
-            height: 30px;
-            background: radial-gradient(circle at 40% 35%, #2a2a3a, #0a0a12);
-            border-radius: 50%;
-            border: 3px solid #1a1a2a;
-            z-index: 4;
-            animation: wheelSpin 1s linear infinite;
-        }
-        @keyframes wheelSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .loader-truck .wheel::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background: rgba(108,27,140,0.2);
-            border-radius: 50%;
-            border: 1px solid rgba(108,27,140,0.1);
-        }
-        .loader-truck .wheel.front { right: 15px; }
-        .loader-truck .wheel.rear { left: 30px; }
-        .loader-truck .wheel.rear2 { left: 55px; }
-        .loader-truck .exhaust {
-            position: absolute;
-            bottom: 28px;
-            right: -6px;
-            width: 6px;
-            height: 14px;
-            background: #2a2a3a;
-            border-radius: 0 0 4px 4px;
-            z-index: 1;
-        }
-        .loader-truck .exhaust::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: -4px;
-            width: 14px;
-            height: 8px;
-            background: radial-gradient(ellipse, rgba(255,102,0,0.2), transparent);
-            border-radius: 50%;
-            animation: exhaustPuff 1s ease-out infinite;
-        }
-        @keyframes exhaustPuff {
-            0% { transform: scale(0.5); opacity: 0.8; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-        .loader-text-container {
-            position: relative;
-            text-align: center;
-            z-index: 5;
-            margin-top: 20px;
-        }
-        .loader-text-container .loader-title {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 5px;
-            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .loader-text-container .loader-sub {
-            color: #9aa8c9;
-            font-size: 12px;
-            letter-spacing: 3px;
-            margin-top: 6px;
-        }
-        .loader-progress-container {
-            position: relative;
-            width: 320px;
-            z-index: 5;
-            margin-top: 25px;
-        }
-        .loader-progress-container .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .loader-progress-container .progress-bar .fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #6C1B8C, #FF6600, #6C1B8C);
-            background-size: 200% 100%;
-            border-radius: 4px;
-            animation: progressFill 2s ease-in-out forwards, progressShine 1.5s ease-in-out infinite;
-        }
-        @keyframes progressFill {
-            0% { width: 0%; }
-            10% { width: 8%; }
-            25% { width: 22%; }
-            40% { width: 38%; }
-            55% { width: 52%; }
-            70% { width: 68%; }
-            85% { width: 85%; }
-            100% { width: 100%; }
-        }
-        @keyframes progressShine {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .loader-progress-container .progress-text {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 11px;
-            color: #667799;
-            letter-spacing: 1px;
-        }
-        .loader-progress-container .progress-text .percentage {
-            font-weight: 700;
-            font-size: 14px;
-            background: linear-gradient(135deg, #6C1B8C, #FF6600);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* ==================== NAVBAR ==================== */
+        
         .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,14,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,27,140,0.2)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-        .logo .purple{color:#6C1B8C}
-        .logo .orange{color:#FF6600}
+        .logo img{height:50px;width:auto;display:block;transition:all 0.3s ease}
+        .logo img:hover{transform:scale(1.05);filter:brightness(1.1)}
         .nav-links{display:flex;gap:2rem;align-items:center}
         .nav-links a{color:#fff;text-decoration:none;transition:0.3s;font-size:14px}
         .nav-links a:hover{color:#8B3AB8}
@@ -323,9 +23,9 @@
         .track-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(108,27,140,0.4)}
         .menu-toggle{display:none;font-size:1.5rem;cursor:pointer}
 
-        /* ==================== TRACKING CARD ==================== */
-        .track-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 5% 4rem}
-        .track-card{max-width:650px;width:100%;background:rgba(255,255,255,0.03);border-radius:24px;padding:3rem;border:1px solid rgba(108,27,140,0.2);backdrop-filter:blur(10px)}
+        .track-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 5% 4rem;background:url('/images/hero-bg.jpg') center/cover fixed;position:relative}
+        .track-page::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(10,14,26,0.85);z-index:0}
+        .track-card{max-width:650px;width:100%;background:rgba(255,255,255,0.05);border-radius:24px;padding:3rem;border:1px solid rgba(108,27,140,0.2);backdrop-filter:blur(20px);position:relative;z-index:1}
         .track-card .icon-top{text-align:center;font-size:48px;color:#FF6600;margin-bottom:1.5rem}
         .track-card h1{text-align:center;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
         .track-card .subtitle{text-align:center;color:#9aa8c9;margin-bottom:2rem;font-size:0.95rem}
@@ -348,84 +48,31 @@
         .track-card .result-box .result-content strong{display:block;font-size:14px}
         .track-card .result-box .result-content .small{font-size:13px;opacity:0.8;margin-top:2px}
 
-        /* ==================== FOOTER ==================== */
         .footer{background:#060a16;padding:2rem 5%;text-align:center;border-top:1px solid rgba(108,27,140,0.2);margin-top:4rem}
         .footer p{color:#667799;font-size:13px}
 
-        /* ==================== RESPONSIVE ==================== */
         @media(max-width:768px){
             .menu-toggle{display:block}
             .nav-links{position:fixed;top:70px;left:-100%;width:100%;background:rgba(10,14,26,0.98);flex-direction:column;padding:2rem;transition:left 0.3s;gap:1.5rem}
             .nav-links.active{left:0}
             .track-card{padding:2rem 1.5rem}
             .track-card h1{font-size:1.8rem}
-            .loader-truck{width:260px;height:130px}
-            .loader-truck .cargo{width:190px;height:95px}
-            .loader-truck .cargo .brand{font-size:22px}
-            .loader-truck .cabin{width:80px;height:70px}
-            .loader-progress-container{width:260px}
+            .logo img{height:40px}
         }
         @media(max-width:480px){
             .track-card{padding:1.5rem 1rem}
             .track-card h1{font-size:1.5rem}
-            .loader-truck{width:200px;height:100px}
-            .loader-truck .cargo{width:140px;height:75px}
-            .loader-truck .cargo .brand{font-size:16px;letter-spacing:1px}
-            .loader-truck .cabin{width:60px;height:55px}
-            .loader-truck .cabin .window{width:22px;height:18px}
-            .loader-truck .wheel{width:20px;height:20px}
-            .loader-truck .wheel.front{right:10px}
-            .loader-truck .wheel.rear{left:18px}
-            .loader-truck .wheel.rear2{left:32px}
-            .loader-progress-container{width:200px}
-            .loader-text-container .loader-title{font-size:16px}
-            .loader-progress-container .progress-text{font-size:9px}
-            .loader-progress-container .progress-text .percentage{font-size:12px}
+            .logo img{height:35px}
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== TRUCK LOADER ==================== -->
-    <div class="loader-wrapper" id="loader">
-        <div class="loader-road"></div>
-        <div class="loader-truck-container">
-            <div class="loader-truck">
-                <div class="cargo">
-                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
-                    <div class="door-line"></div>
-                    <div class="door-line"></div>
-                    <div class="door-line"></div>
-                </div>
-                <div class="cabin">
-                    <div class="window"></div>
-                    <div class="door"></div>
-                    <div class="headlight left"></div>
-                    <div class="headlight right"></div>
-                </div>
-                <div class="exhaust"></div>
-                <div class="wheel rear"></div>
-                <div class="wheel rear2"></div>
-                <div class="wheel front"></div>
-            </div>
-        </div>
-        <div class="loader-text-container">
-            <div class="loader-title">SWIFTLOGIX</div>
-            <div class="loader-sub">Loading tracking system...</div>
-        </div>
-        <div class="loader-progress-container">
-            <div class="progress-bar"><div class="fill"></div></div>
-            <div class="progress-text">
-                <span>Loading</span>
-                <span class="percentage" id="progressPercent">0%</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">Swift<span class="purple">Log</span><span class="orange">ix</span></a>
+            <a href="index.html" class="logo">
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -438,7 +85,6 @@
         </div>
     </nav>
 
-    <!-- ==================== TRACKING PAGE ==================== -->
     <section class="track-page">
         <div class="track-card">
             <div class="icon-top"><i class="fas fa-search"></i></div>
@@ -450,7 +96,6 @@
                     <label><i class="fas fa-barcode"></i> Tracking Number</label>
                     <input type="text" id="trackingCode" placeholder="e.g., SL-3722-TAB2NLX6" required>
                 </div>
-
                 <div class="form-group">
                     <label><i class="fas fa-envelope"></i> Your Email Address</label>
                     <input type="email" id="userEmail" placeholder="Enter your email to receive tracking updates" required>
@@ -459,7 +104,6 @@
                         <span>You'll receive tracking details. The receiver will get the full invoice.</span>
                     </div>
                 </div>
-
                 <button type="submit" class="track-btn" id="trackBtn">
                     <i class="fas fa-rocket"></i> Track Package
                 </button>
@@ -469,53 +113,18 @@
         </div>
     </section>
 
-    <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
         <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
     <script>
-        // ==================== HIDE LOADER ====================
-        window.addEventListener('load', function() {
-            const loader = document.getElementById('loader');
-            if (loader) {
-                setTimeout(function() {
-                    loader.classList.add('hidden');
-                }, 2500);
-            }
-        });
-
-        // ==================== PROGRESS PERCENTAGE ====================
-        let progress = 0;
-        const progressInterval = setInterval(function() {
-            progress += Math.random() * 8 + 3;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(progressInterval);
-            }
-            const percentEl = document.getElementById('progressPercent');
-            if (percentEl) {
-                percentEl.textContent = Math.floor(progress) + '%';
-            }
-        }, 150);
-
-        // ==================== MOBILE MENU ====================
         document.querySelector('.menu-toggle')?.addEventListener('click', function() {
             document.querySelector('.nav-links').classList.toggle('active');
         });
 
-        document.querySelectorAll('.nav-links a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                document.querySelector('.nav-links').classList.remove('active');
-            });
-        });
-
-        // ==================== TRACKING FUNCTION ====================
         const API_URL = window.location.origin;
-
         document.getElementById('trackForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const trackingCode = document.getElementById('trackingCode').value.trim().toUpperCase();
             const userEmail = document.getElementById('userEmail').value.trim();
             const btn = document.getElementById('trackBtn');
@@ -523,27 +132,14 @@
 
             if (!trackingCode || !userEmail) {
                 resultBox.className = 'result-box error';
-                resultBox.innerHTML = `
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div class="result-content">
-                        <strong>Please fill in both fields</strong>
-                        <div class="small">Tracking number and email are required</div>
-                    </div>
-                `;
+                resultBox.innerHTML = `<i class="fas fa-exclamation-circle"></i><div class="result-content"><strong>Please fill in both fields</strong><div class="small">Tracking number and email are required</div></div>`;
                 return;
             }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tracking...';
-
             resultBox.className = 'result-box info';
-            resultBox.innerHTML = `
-                <i class="fas fa-spinner fa-spin"></i>
-                <div class="result-content">
-                    <strong>Checking tracking number...</strong>
-                    <div class="small">Please wait while we verify your package</div>
-                </div>
-            `;
+            resultBox.innerHTML = `<i class="fas fa-spinner fa-spin"></i><div class="result-content"><strong>Checking tracking number...</strong><div class="small">Please wait...</div></div>`;
 
             try {
                 const response = await fetch(`${API_URL}/api/track`, {
@@ -551,64 +147,28 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ trackingCode, userEmail })
                 });
-
                 const data = await response.json();
-
                 if (!response.ok || !data.success) {
                     resultBox.className = 'result-box error';
-                    resultBox.innerHTML = `
-                        <i class="fas fa-exclamation-circle"></i>
-                        <div class="result-content">
-                            <strong>${data.error || 'Tracking number not found'}</strong>
-                            <div class="small">Please check the tracking number and try again</div>
-                        </div>
-                    `;
+                    resultBox.innerHTML = `<i class="fas fa-exclamation-circle"></i><div class="result-content"><strong>${data.error || 'Tracking number not found'}</strong><div class="small">Please check the tracking number and try again</div></div>`;
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
                     return;
                 }
-
-                // SUCCESS
                 const toUserStatus = data.emails?.toUser?.success ? '✅' : '❌';
                 const toReceiverStatus = data.emails?.toReceiver?.success ? '✅' : '❌';
-
                 resultBox.className = 'result-box success';
-                resultBox.innerHTML = `
-                    <i class="fas fa-check-circle"></i>
-                    <div class="result-content">
-                        <strong>Package Found!</strong>
-                        <div class="small">
-                            📧 Tracking sent to you: ${toUserStatus} &nbsp;|&nbsp; 📄 Invoice sent to receiver: ${toReceiverStatus}
-                        </div>
-                        <div class="small" style="margin-top:4px; color:#667799;">
-                            Redirecting to tracking details...
-                        </div>
-                    </div>
-                `;
-
+                resultBox.innerHTML = `<i class="fas fa-check-circle"></i><div class="result-content"><strong>Package Found!</strong><div class="small">📧 Tracking sent to you: ${toUserStatus} &nbsp;|&nbsp; 📄 Invoice sent to receiver: ${toReceiverStatus}</div><div class="small" style="margin-top:4px;color:#667799;">Redirecting...</div></div>`;
                 localStorage.setItem('trackingNumber', trackingCode);
                 localStorage.setItem('trackingData', JSON.stringify(data.shipment));
-
-                setTimeout(() => {
-                    window.location.href = 'tracking-result.html';
-                }, 2500);
-
+                setTimeout(() => { window.location.href = 'tracking-result.html'; }, 2500);
             } catch (error) {
-                console.error('Tracking error:', error);
                 resultBox.className = 'result-box error';
-                resultBox.innerHTML = `
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div class="result-content">
-                        <strong>Network Error</strong>
-                        <div class="small">Please check your connection and try again</div>
-                    </div>
-                `;
+                resultBox.innerHTML = `<i class="fas fa-exclamation-circle"></i><div class="result-content"><strong>Network Error</strong><div class="small">Please check your connection and try again</div></div>`;
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
             }
         });
-
-        console.log('🚀 Tracking page loaded successfully!');
     </script>
 </body>
 </html>
