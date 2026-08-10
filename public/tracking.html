@@ -142,7 +142,7 @@
             color: #00f2fe;
         }
         
-        .track-btn {
+        .track-btn-nav {
             background: linear-gradient(135deg, #6C1B8C, #FF6600);
             padding: 0.7rem 1.8rem;
             border-radius: 50px;
@@ -151,11 +151,11 @@
             transition: all 0.3s !important;
         }
         
-        .track-btn::after {
+        .track-btn-nav::after {
             display: none !important;
         }
         
-        .track-btn:hover {
+        .track-btn-nav:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(108, 27, 140, 0.4);
         }
@@ -413,6 +413,227 @@
             margin-top: 2px;
         }
         
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 26, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        /* Animated Truck */
+        .truck-loader {
+            position: relative;
+            width: 120px;
+            height: 80px;
+        }
+        
+        .truck {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            animation: truckMove 2s ease-in-out infinite;
+        }
+        
+        @keyframes truckMove {
+            0%, 100% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+        }
+        
+        .truck-body {
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(135deg, #6C1B8C, #00f2fe);
+            border-radius: 8px 8px 0 0;
+            border: 2px solid rgba(0, 242, 254, 0.3);
+        }
+        
+        .truck-body::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            width: 30px;
+            height: 15px;
+            background: linear-gradient(135deg, #6C1B8C, #00f2fe);
+            border-radius: 4px 4px 0 0;
+            border: 2px solid rgba(0, 242, 254, 0.3);
+            border-bottom: none;
+        }
+        
+        .truck-window {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            width: 20px;
+            height: 14px;
+            background: rgba(0, 242, 254, 0.2);
+            border-radius: 3px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            animation: windowGlow 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes windowGlow {
+            0%, 100% { background: rgba(0, 242, 254, 0.2); }
+            50% { background: rgba(0, 242, 254, 0.5); }
+        }
+        
+        .truck-wheel {
+            position: absolute;
+            bottom: -10px;
+            width: 18px;
+            height: 18px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            animation: wheelSpin 1s linear infinite;
+        }
+        
+        .truck-wheel::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .truck-wheel-left {
+            left: 25px;
+        }
+        
+        .truck-wheel-right {
+            right: 25px;
+        }
+        
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Road Line */
+        .road {
+            position: relative;
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .road-line {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #00f2fe, transparent);
+            animation: roadMove 1.5s linear infinite;
+        }
+        
+        @keyframes roadMove {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Loading Text */
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+        }
+        
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00f2fe;
+            border-radius: 50%;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+        
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .step {
+            width: 40px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.5s;
+        }
+        
+        .step.active {
+            background: linear-gradient(90deg, #6C1B8C, #00f2fe);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+        
+        .step.done {
+            background: #00f2fe;
+        }
+        
+        .step-text {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 11px;
+            margin-top: 0.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .step-text.active {
+            color: #00f2fe;
+        }
+        
         .footer {
             background: rgba(6, 10, 22, 0.95);
             padding: 2rem 5%;
@@ -460,6 +681,10 @@
             .logo img {
                 height: 40px;
             }
+            
+            .truck-loader {
+                transform: scale(0.8);
+            }
         }
         
         @media (max-width: 480px) {
@@ -489,6 +714,50 @@
         <div class="orb orb-3"></div>
     </div>
 
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-container">
+            <!-- Animated Truck -->
+            <div class="truck-loader">
+                <div class="truck">
+                    <div class="truck-body">
+                        <div class="truck-window"></div>
+                    </div>
+                    <div class="truck-wheel truck-wheel-left"></div>
+                    <div class="truck-wheel truck-wheel-right"></div>
+                </div>
+                <div class="road">
+                    <div class="road-line"></div>
+                </div>
+            </div>
+            
+            <!-- Loading Text -->
+            <div class="loading-text">
+                Tracking your package
+                <span class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+            
+            <!-- Progress Steps -->
+            <div class="progress-steps" id="progressSteps">
+                <div class="step done" id="step1"></div>
+                <div class="step active" id="step2"></div>
+                <div class="step" id="step3"></div>
+                <div class="step" id="step4"></div>
+            </div>
+            <div style="display:flex;gap:1.5rem;font-size:11px;color:rgba(255,255,255,0.3);">
+                <span id="stepText1" style="color:#00f2fe;">🔍 Searching</span>
+                <span id="stepText2">📡 Connecting</span>
+                <span id="stepText3">📦 Found</span>
+                <span id="stepText4">✅ Redirecting</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
@@ -504,11 +773,12 @@
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
                 <a href="blog.html">Blog</a>
-                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+                <a href="tracking.html" class="track-btn-nav"><i class="fas fa-search"></i> Track</a>
             </div>
         </div>
     </nav>
 
+    <!-- TRACK PAGE -->
     <section class="track-page">
         <div class="track-card">
             <div class="icon-top"><i class="fas fa-box-open"></i></div>
@@ -537,6 +807,7 @@
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="footer">
         <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
@@ -553,6 +824,60 @@
         });
 
         const API_URL = window.location.origin;
+        
+        // ===== LOADING ANIMATION CONTROLS =====
+        function startLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('active');
+            
+            // Reset steps
+            const steps = ['step1', 'step2', 'step3', 'step4'];
+            steps.forEach((id, index) => {
+                const el = document.getElementById(id);
+                el.className = 'step';
+                if (index === 0) el.className = 'step done';
+            });
+            
+            // Reset text colors
+            ['stepText1', 'stepText2', 'stepText3', 'stepText4'].forEach((id, index) => {
+                document.getElementById(id).style.color = index === 0 ? '#00f2fe' : 'rgba(255,255,255,0.3)';
+            });
+            
+            // Start animation sequence
+            let step = 1;
+            const interval = setInterval(() => {
+                if (step < 4) {
+                    const current = document.getElementById(`step${step}`);
+                    const next = document.getElementById(`step${step + 1}`);
+                    
+                    current.className = 'step done';
+                    next.className = 'step active';
+                    
+                    document.getElementById(`stepText${step}`).style.color = 'rgba(255,255,255,0.3)';
+                    document.getElementById(`stepText${step + 1}`).style.color = '#00f2fe';
+                    
+                    step++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 800);
+            
+            return interval;
+        }
+
+        function stopLoading(interval) {
+            clearInterval(interval);
+            // Complete all steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step${i}`).className = 'step done';
+                document.getElementById(`stepText${i}`).style.color = '#00f2fe';
+            }
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }, 500);
+        }
+
+        // ===== TRACK FORM =====
         document.getElementById('trackForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const trackingCode = document.getElementById('trackingCode').value.trim().toUpperCase();
@@ -583,6 +908,9 @@
                 </div>
             `;
 
+            // ===== START LOADING ANIMATION =====
+            const interval = startLoading();
+
             try {
                 const response = await fetch(`${API_URL}/api/track`, {
                     method: 'POST',
@@ -591,6 +919,9 @@
                 });
                 
                 const data = await response.json();
+                
+                // ===== STOP LOADING =====
+                stopLoading(interval);
                 
                 if (!response.ok || !data.success) {
                     resultBox.className = 'result-box error';
@@ -629,6 +960,7 @@
                     window.location.href = 'tracking-result.html';
                 }, 2500);
             } catch (error) {
+                stopLoading(interval);
                 resultBox.className = 'result-box error';
                 resultBox.innerHTML = `
                     <i class="fas fa-exclamation-circle"></i>
