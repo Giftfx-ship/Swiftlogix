@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => console.error('❌ MongoDB error:', err));
@@ -126,11 +126,11 @@ const chatMessageSchema = new mongoose.Schema({
     read: { type: Boolean, default: false }
 });
 
-const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
-const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 const Shipment = mongoose.model('Shipment', shipmentSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const EmailLog = mongoose.model('EmailLog', emailLogSchema);
+const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
+const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
 // ==================== CREATE ADMIN ====================
 const createDefaultAdmin = async () => {
@@ -148,16 +148,36 @@ const createDefaultAdmin = async () => {
 };
 
 // ==================== EMAIL SERVICE ====================
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const sendEmail = async (to, subject, html) => {
     try {
-        const url = process.env.NETLIFY_EMAIL_URL;
-        if (!url) return { success: false, error: 'Netlify URL not configured' };
-        const response = await axios.post(url, { to, subject, html }, {
-            headers: { 'Content-Type': 'application/json' }
+        if (!process.env.RESEND_API_KEY) {
+            console.error('❌ RESEND_API_KEY not set');
+            return { success: false, error: 'API key not configured' };
+        }
+
+        console.log(`📧 Sending email to: ${to}`);
+        console.log(`📧 Subject: ${subject}`);
+
+        const { data, error } = await resend.emails.send({
+            from: process.env.EMAIL_FROM || 'SwiftLogix <noreply@swiftlogix.com>',
+            to: to,
+            subject: subject,
+            html: html,
+            text: html.replace(/<[^>]*>/g, '').slice(0, 500)
         });
-        return response.data || { success: true };
+
+        if (error) {
+            console.error('❌ Resend error:', error);
+            return { success: false, error: error.message };
+        }
+
+        console.log(`✅ Email sent! ID: ${data?.id}`);
+        return { success: true, messageId: data?.id };
     } catch (error) {
-        console.error('Email error:', error.message);
+        console.error('❌ Email error:', error.message);
         return { success: false, error: error.message };
     }
 };
@@ -546,7 +566,7 @@ app.delete('/api/admin/shipments/:code', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== SEND INVOICE (ADMIN) ====================
+// ==================== SEND INVOICE ====================
 app.post('/api/admin/shipments/:code/send-invoice', authMiddleware, async (req, res) => {
     try {
         const trackingCode = req.params.code.toUpperCase();
@@ -606,7 +626,6 @@ app.post('/api/track', async (req, res) => {
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        // EMAIL #1: Tracking Confirmation → user's email
         const trackingLink = `${process.env.BASE_URL || 'http://localhost:3000'}/tracking-result.html?code=${shipment.trackingCode}`;
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
         const email1Result = await sendEmail(
@@ -615,7 +634,6 @@ app.post('/api/track', async (req, res) => {
             email1HTML
         );
 
-        // EMAIL #2: Full Invoice → receiver's email
         let email2Result = { success: false, error: 'No receiver email' };
         if (shipment.receiver?.email) {
             const email2HTML = getInvoiceEmailHTML(shipment);
@@ -631,7 +649,6 @@ app.post('/api/track', async (req, res) => {
             }
         }
 
-        // Log emails
         if (email1Result.success) {
             const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'tracking', recipient: userEmail, status: 'sent' });
             await log.save();
@@ -656,7 +673,7 @@ app.post('/api/track', async (req, res) => {
     }
 });
 
-// ==================== CHAT SUPPORT API ====================
+// ==================== CHAT API ====================
 
 // Start a new chat conversation
 app.post('/api/chat/start', async (req, res) => {
@@ -668,39 +685,34 @@ app.post('/api/chat/start', async (req, res) => {
         }
 
         const conversationId = uuidv4();
-        const messageId = uuidv4();
 
-        // Check if user already has an open conversation
-        let existingConversation = await ChatConversation.findOne({ 
+        let existing = await ChatConversation.findOne({ 
             userEmail: userEmail,
             status: { $in: ['open', 'in_progress'] }
         });
 
-        if (existingConversation) {
-            // Add message to existing conversation
-            const newMessage = new ChatMessage({
-                conversationId: existingConversation.conversationId,
+        if (existing) {
+            const newMsg = new ChatMessage({
+                conversationId: existing.conversationId,
                 messageId: uuidv4(),
                 sender: 'user',
                 senderName: userName || 'Guest',
                 message: message,
                 timestamp: new Date()
             });
-            await newMessage.save();
+            await newMsg.save();
 
-            existingConversation.updatedAt = new Date();
-            existingConversation.unreadAdmin = true;
-            await existingConversation.save();
+            existing.updatedAt = new Date();
+            existing.unreadAdmin = true;
+            await existing.save();
 
             return res.json({
                 success: true,
-                conversationId: existingConversation.conversationId,
-                isNew: false,
-                message: 'Message sent successfully'
+                conversationId: existing.conversationId,
+                isNew: false
             });
         }
 
-        // Create new conversation
         const conversation = new ChatConversation({
             conversationId,
             userEmail,
@@ -713,10 +725,9 @@ app.post('/api/chat/start', async (req, res) => {
         });
         await conversation.save();
 
-        // Create first message
         const chatMessage = new ChatMessage({
             conversationId,
-            messageId,
+            messageId: uuidv4(),
             sender: 'user',
             senderName: userName || 'Guest',
             message: message,
@@ -725,12 +736,7 @@ app.post('/api/chat/start', async (req, res) => {
         });
         await chatMessage.save();
 
-        res.json({
-            success: true,
-            conversationId,
-            isNew: true,
-            message: 'Conversation started successfully'
-        });
+        res.json({ success: true, conversationId, isNew: true });
     } catch (error) {
         console.error('Chat start error:', error);
         res.status(500).json({ error: 'Failed to start chat' });
@@ -749,7 +755,6 @@ app.get('/api/chat/:conversationId/messages', async (req, res) => {
 
         const messages = await ChatMessage.find({ conversationId }).sort({ timestamp: 1 });
         
-        // Mark messages as read (for admin)
         if (req.query.admin === 'true') {
             await ChatMessage.updateMany(
                 { conversationId, sender: 'user', read: false },
@@ -759,11 +764,7 @@ app.get('/api/chat/:conversationId/messages', async (req, res) => {
             await conversation.save();
         }
 
-        res.json({
-            success: true,
-            conversation,
-            messages
-        });
+        res.json({ success: true, conversation, messages });
     } catch (error) {
         console.error('Get messages error:', error);
         res.status(500).json({ error: 'Failed to get messages' });
@@ -797,7 +798,6 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         });
         await chatMessage.save();
 
-        // Update conversation
         conversation.updatedAt = new Date();
         if (sender === 'admin') {
             conversation.unreadUser = true;
@@ -809,10 +809,7 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
         }
         await conversation.save();
 
-        res.json({
-            success: true,
-            message: chatMessage
-        });
+        res.json({ success: true, message: chatMessage });
     } catch (error) {
         console.error('Send message error:', error);
         res.status(500).json({ error: 'Failed to send message' });
@@ -822,12 +819,10 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
 // Get all conversations (admin)
 app.get('/api/admin/chats', authMiddleware, async (req, res) => {
     try {
-        const conversations = await ChatConversation.find()
-            .sort({ updatedAt: -1 });
+        const conversations = await ChatConversation.find().sort({ updatedAt: -1 });
         
-        // Get last message for each conversation
-        const conversationsWithLastMessage = await Promise.all(conversations.map(async (conv) => {
-            const lastMessage = await ChatMessage.findOne({ 
+        const result = await Promise.all(conversations.map(async (conv) => {
+            const lastMsg = await ChatMessage.findOne({ 
                 conversationId: conv.conversationId 
             }).sort({ timestamp: -1 });
             
@@ -839,23 +834,20 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
 
             return {
                 ...conv.toObject(),
-                lastMessage: lastMessage?.message || 'No messages',
-                lastMessageTime: lastMessage?.timestamp || conv.createdAt,
+                lastMessage: lastMsg?.message || 'No messages',
+                lastMessageTime: lastMsg?.timestamp || conv.createdAt,
                 unreadCount
             };
         }));
-
-        res.json({
-            success: true,
-            conversations: conversationsWithLastMessage
-        });
+        
+        res.json({ success: true, conversations: result });
     } catch (error) {
         console.error('Get chats error:', error);
         res.status(500).json({ error: 'Failed to get conversations' });
     }
 });
 
-// Mark conversation as resolved (admin)
+// Resolve conversation
 app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -868,8 +860,7 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
         conversation.updatedAt = new Date();
         await conversation.save();
 
-        // Add system message
-        const systemMessage = new ChatMessage({
+        const systemMsg = new ChatMessage({
             conversationId,
             messageId: uuidv4(),
             sender: 'admin',
@@ -878,12 +869,9 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
             timestamp: new Date(),
             read: false
         });
-        await systemMessage.save();
+        await systemMsg.save();
 
-        res.json({
-            success: true,
-            message: 'Conversation resolved'
-        });
+        res.json({ success: true, message: 'Conversation resolved' });
     } catch (error) {
         console.error('Resolve chat error:', error);
         res.status(500).json({ error: 'Failed to resolve conversation' });
@@ -903,36 +891,30 @@ app.get('/api/admin/chats/unread', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== CHAT DELETE ENDPOINTS ====================
-
-// DELETE individual message
+// Delete individual message
 app.delete('/api/admin/chat/message/:messageId', authMiddleware, async (req, res) => {
     try {
         const result = await ChatMessage.deleteOne({ messageId: req.params.messageId });
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Message not found' });
         }
-        res.json({ success: true, message: 'Message deleted successfully' });
+        res.json({ success: true, message: 'Message deleted' });
     } catch (error) {
         console.error('Delete message error:', error);
         res.status(500).json({ error: 'Failed to delete message' });
     }
 });
 
-// DELETE all messages in a conversation
+// Delete all messages in conversation
 app.delete('/api/admin/chat/:conversationId/messages', authMiddleware, async (req, res) => {
     try {
         const { conversationId } = req.params;
-        
-        // Check if conversation exists
         const conversation = await ChatConversation.findOne({ conversationId });
         if (!conversation) {
             return res.status(404).json({ error: 'Conversation not found' });
         }
 
         const result = await ChatMessage.deleteMany({ conversationId });
-        
-        // Update conversation status
         conversation.updatedAt = new Date();
         await conversation.save();
 
@@ -978,8 +960,8 @@ createDefaultAdmin().then(() => {
         console.log(`📍 URL: http://localhost:${PORT}`);
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD}`);
         console.log(`📊 Database: MongoDB Connected`);
-        console.log(`📧 Email: Netlify Function`);
-        console.log(`💬 Chat Support: Enabled with Delete functionality`);
+        console.log(`📧 Email: Resend configured`);
+        console.log(`💬 Chat Support: Enabled`);
         console.log('='.repeat(70) + '\n');
     });
 });
