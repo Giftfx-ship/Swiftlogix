@@ -9,73 +9,103 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* ==================== CONTACT HERO WITH BACKGROUND ==================== */
         .contact-hero {
             padding: 8rem 5% 4rem;
             text-align: center;
+            background: url('/images/hero-bg.jpg') center/cover no-repeat;
+            position: relative;
+        }
+        .contact-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 26, 0.8);
+            z-index: 0;
+        }
+        .contact-hero .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
         }
         .contact-hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
         .contact-hero p {
-            color: var(--text-muted);
+            color: #c8d4e8;
             font-size: 1.2rem;
             max-width: 700px;
             margin: 0 auto;
+            line-height: 1.8;
         }
+
+        /* ==================== CONTACT SECTION ==================== */
         .contact-section { padding: 3rem 0 5rem; }
         .contact-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr;
             gap: 3rem;
         }
+
+        /* Info Cards */
         .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
         .contact-info .info-card {
             background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
+            border-radius: 24px;
             padding: 1.8rem;
-            border: 1px solid var(--border);
-            transition: all var(--transition);
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
         }
-        .contact-info .info-card:hover { border-color: var(--primary); transform: translateX(5px); }
+        .contact-info .info-card:hover {
+            border-color: #FF6600;
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.04);
+        }
         .contact-info .info-card .icon {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, rgba(0,242,254,0.15), rgba(0,242,254,0.05));
+            background: linear-gradient(135deg, rgba(108,27,140,0.15), rgba(255,102,0,0.05));
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            color: var(--primary);
+            color: #FF6600;
             margin-bottom: 1rem;
         }
-        .contact-info .info-card h4 { font-size: 1.1rem; margin-bottom: 0.3rem; }
-        .contact-info .info-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+        .contact-info .info-card h4 { font-size: 1.1rem; margin-bottom: 0.3rem; color: #fff; }
+        .contact-info .info-card p { color: #9aa8c9; font-size: 0.9rem; line-height: 1.6; }
         .contact-info .info-card .detail { color: #fff; font-weight: 500; }
+
+        /* Contact Form */
         .contact-form {
             background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
+            border-radius: 24px;
             padding: 2.5rem;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(108,27,140,0.15);
         }
         .contact-form h2 {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .contact-form .sub { color: var(--text-muted); margin-bottom: 2rem; }
+        .contact-form .sub { color: #9aa8c9; margin-bottom: 2rem; }
         .contact-form .form-group { margin-bottom: 1.5rem; }
         .contact-form .form-group label {
             display: block;
-            color: var(--text-muted);
+            color: #9aa8c9;
             font-size: 0.8rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -88,18 +118,19 @@
             width: 100%;
             padding: 0.9rem 1.2rem;
             background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 12px;
             color: #fff;
             font-size: 0.95rem;
             font-family: inherit;
-            transition: all var(--transition);
+            transition: all 0.3s ease;
         }
         .contact-form .form-group input:focus,
         .contact-form .form-group select:focus,
         .contact-form .form-group textarea:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: #FF6600;
+            background: rgba(255,255,255,0.08);
         }
         .contact-form .form-group textarea {
             resize: vertical;
@@ -108,105 +139,106 @@
         .contact-form .submit-btn {
             width: 100%;
             padding: 1.1rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
             border: none;
             border-radius: 60px;
-            color: var(--secondary);
+            color: #fff;
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all 0.3s ease;
         }
         .contact-form .submit-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0,242,254,0.35);
+            box-shadow: 0 12px 35px rgba(108,27,140,0.35);
         }
+
+        /* Map */
         .map-container {
-            border-radius: var(--radius);
+            border-radius: 24px;
             overflow: hidden;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(108,27,140,0.15);
             margin-top: 3rem;
         }
         #map { height: 300px; width: 100%; background: #0f0f1a; }
-        .map-caption { padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.4); }
+        .map-caption {
+            padding: 1rem;
+            text-align: center;
+            color: #9aa8c9;
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 992px) {
             .contact-grid { grid-template-columns: 1fr; }
+            .contact-hero h1 { font-size: 2.8rem; }
+        }
+        @media (max-width: 768px) {
+            .contact-hero { padding: 6rem 5% 3rem; }
+            .contact-hero h1 { font-size: 2.2rem; }
+            .contact-hero p { font-size: 1rem; }
+            .contact-section { padding: 2rem 0 3rem; }
+            .contact-form { padding: 1.5rem; }
         }
         @media (max-width: 480px) {
-            .contact-hero h1 { font-size: 2.2rem; }
-            .contact-form { padding: 1.5rem; }
+            .contact-hero h1 { font-size: 1.8rem; }
+            .contact-form { padding: 1.2rem; }
+            .contact-info .info-card { padding: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading contact page...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
     </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
 
-    <!-- BACKGROUND -->
+    <!-- ==================== BACKGROUND ==================== -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -214,22 +246,24 @@
                 <a href="services.html">Services</a>
                 <a href="about.html">About</a>
                 <a href="contact.html" class="active">Contact</a>
-                <a href="blog.html">Blog</a>
                 <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
             </div>
         </div>
     </nav>
 
-    <!-- CONTACT HERO -->
+    <!-- ==================== CONTACT HERO ==================== -->
     <section class="contact-hero">
-        <h1>Get In Touch</h1>
-        <p>Have questions about our logistics services? Reach out to our team and we'll respond within 2 hours.</p>
+        <div class="content">
+            <h1>Get In Touch</h1>
+            <p>Have questions about our logistics services? Reach out to our team and we'll respond within 2 hours.</p>
+        </div>
     </section>
 
-    <!-- CONTACT SECTION -->
+    <!-- ==================== CONTACT SECTION ==================== -->
     <section class="contact-section">
         <div class="container">
             <div class="contact-grid">
+                <!-- Contact Info -->
                 <div class="contact-info">
                     <div class="info-card">
                         <div class="icon"><i class="fas fa-phone-alt"></i></div>
@@ -257,6 +291,7 @@
                     </div>
                 </div>
 
+                <!-- Contact Form -->
                 <div class="contact-form">
                     <h2>Send a Message</h2>
                     <p class="sub">We'll get back to you within 2 hours</p>
@@ -290,7 +325,7 @@
                 </div>
             </div>
 
-            <!-- MAP -->
+            <!-- ==================== MAP ==================== -->
             <div class="map-container">
                 <div id="map"></div>
                 <div class="map-caption">
@@ -300,7 +335,7 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -355,14 +390,39 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="js/main.js"></script>
     <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+
+        // ==================== CONTACT FORM ====================
         function handleContact(event) {
             event.preventDefault();
             alert('✅ Thank you! Your message has been sent. We\'ll respond within 2 hours.');
             event.target.reset();
         }
 
+        // ==================== MAP ====================
         setTimeout(() => {
             if (typeof L !== 'undefined') {
                 const map = L.map('map').setView([25.2048, 55.2708], 12);
@@ -371,7 +431,7 @@
                     subdomains: 'abcd'
                 }).addTo(map);
                 const customIcon = L.divIcon({
-                    html: '<div style="background:#00f2fe;width:14px;height:14px;border-radius:50%;box-shadow:0 0 20px #00f2fe;"></div>',
+                    html: '<div style="background:#FF6600;width:14px;height:14px;border-radius:50%;box-shadow:0 0 20px #FF6600;"></div>',
                     iconSize: [14, 14],
                     className: 'custom-marker'
                 });
@@ -379,7 +439,20 @@
                     .bindPopup('<b>SwiftLogix Global HQ</b><br>Dubai International Financial Center')
                     .openPopup();
             }
-        }, 200);
+        }, 300);
+
+        // ==================== MOBILE MENU ====================
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        console.log('🚀 Contact page loaded successfully!');
     </script>
 </body>
 </html>
