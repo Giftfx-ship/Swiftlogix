@@ -1165,7 +1165,207 @@
         let isChatActive = false;
         let unreadCount = 0;
 
-        // ==================== SOCKET.IO CONNECTION ====================
+        // ==================== CHECK SAVED CHAT SESSION ====================
+        function checkSavedSession() {
+            const savedEmail = localStorage.getItem('swiftlogix_chat_email');
+            const savedConversation = localStorage.getItem('swiftlogix_chat_conversation');
+            const savedName = localStorage.getItem('swiftlogix_chat_name');
+            
+            if (savedEmail && savedConversation) {
+                console.log('📂 Found saved chat session for:', savedEmail);
+                userEmail = savedEmail;
+                userName = savedName || savedEmail.split('@')[0] || 'Guest';
+                conversationId = savedConversation;
+                isChatActive = true;
+                
+                // Auto-open chat and load messages
+                chatWelcome.style.display = 'none';
+                chatMessagesContainer.classList.add('active');
+                chatMessageInput.disabled = false;
+                chatSendBtn.disabled = false;
+                chatMessageInput.focus();
+                
+                // Load existing messages
+                loadMessages(conversationId);
+                
+                // Open chat panel
+                chatPanel.classList.add('open');
+                
+                return true;
+            }
+            return false;
+        }
+
+        // ==================== SAVE CHAT SESSION ====================
+        function saveChatSession(email, convId, name) {
+            localStorage.setItem('swiftlogix_chat_email', email);
+            localStorage.setItem('swiftlogix_chat_conversation', convId);
+            if (name) {
+                localStorage.setItem('swiftlogix_chat_name', name);
+            }
+            console.log('💾 Chat session saved:', email, convId);
+        }
+
+        // ==================== CLEAR CHAT SESSION ====================
+        function clearChatSession() {
+            localStorage.removeItem('swiftlogix_chat_email');
+            localStorage.removeItem('swiftlogix_chat_conversation');
+            localStorage.removeItem('swiftlogix_chat_name');
+            console.log('🗑️ Chat session cleared');
+        }
+
+        // ==================== START CHAT ====================
+        function startChat() {
+            const email = userEmailInput.value.trim();
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            userEmail = email;
+            userName = email.split('@')[0] || 'Guest';
+
+            // Get initial message
+            const message = document.getElementById('chatMessageInput')?.value || 'Hello, I need help with my shipment.';
+
+            fetch('/api/chat/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userEmail: userEmail,
+                    userName: userName,
+                    message: message
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    conversationId = data.conversationId;
+                    isChatActive = true;
+                    
+                    // 💾 SAVE SESSION TO LOCAL STORAGE
+                    saveChatSession(userEmail, conversationId, userName);
+                    
+                    chatWelcome.style.display = 'none';
+                    chatMessagesContainer.classList.add('active');
+                    
+                    chatMessageInput.disabled = false;
+                    chatSendBtn.disabled = false;
+                    chatMessageInput.focus();
+
+                    if (message && data.isNew !== false) {
+                        addMessage('user', userName, message);
+                    }
+                    
+                    loadMessages(conversationId);
+                } else {
+                    alert('Failed to start chat. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Start chat error:', error);
+                alert('Failed to start chat. Please try again.');
+            });
+        }
+
+        // ==================== LOAD MESSAGES ====================
+        function loadMessages(convId) {
+            fetch(`/api/chat/${convId}/messages`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.messages) {
+                        chatMessagesList.innerHTML = '';
+                        data.messages.forEach(msg => {
+                            addMessage(msg.sender, msg.senderName, msg.message, msg.timestamp);
+                        });
+                        scrollToBottom();
+                        
+                        // Check if conversation is resolved
+                        if (data.conversation && data.conversation.status === 'resolved') {
+                            addMessage('admin', 'Support Team', '✅ This conversation has been resolved. Thank you for contacting us!');
+                        }
+                    }
+                })
+                .catch(error => console.error('Load messages error:', error));
+        }
+
+        // ==================== SEND MESSAGE ====================
+        function sendChatMessage() {
+            const message = chatMessageInput.value.trim();
+            if (!message || !conversationId) return;
+
+            addMessage('user', userName, message);
+            chatMessageInput.value = '';
+            scrollToBottom();
+
+            fetch(`/api/chat/${conversationId}/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    sender: 'user',
+                    senderName: userName
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to send message');
+                }
+            })
+            .catch(error => console.error('Send message error:', error));
+
+            if (socket && socket.connected) {
+                socket.emit('user-message', {
+                    conversationId,
+                    message,
+                    userEmail,
+                    userName
+                });
+            }
+        }
+
+        // ==================== ADD MESSAGE ====================
+        function addMessage(sender, senderName, message, timestamp) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-bubble ${sender}`;
+            
+            const time = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+            
+            messageDiv.innerHTML = `
+                <div class="bubble">
+                    <span class="sender-name">${sender === 'admin' ? 'Support Team' : senderName}</span>
+                    ${message}
+                    <span class="time">${time}</span>
+                </div>
+            `;
+            
+            chatMessagesList.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // ==================== QUICK REPLY ====================
+        function quickReply(message) {
+            const input = document.getElementById('chatMessageInput');
+            if (input) {
+                input.value = message;
+                if (isChatActive && conversationId) {
+                    sendChatMessage();
+                } else {
+                    userEmailInput.focus();
+                }
+            }
+        }
+
+        // ==================== SCROLL TO BOTTOM ====================
+        function scrollToBottom() {
+            const container = chatMessagesList.parentElement;
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // ==================== SOCKET.IO ====================
         function connectSocket() {
             try {
                 socket = io(window.location.origin, {
@@ -1186,6 +1386,10 @@
                 socket.on('admin-message-received', (data) => {
                     if (data.conversationId === conversationId) {
                         addMessage('admin', 'Support Team', data.message.message);
+                        // Save session again to keep it fresh
+                        if (userEmail) {
+                            saveChatSession(userEmail, conversationId, userName);
+                        }
                     }
                 });
 
@@ -1236,7 +1440,7 @@
             }
         }
 
-        // ==================== CHAT UI FUNCTIONS ====================
+        // ==================== TOGGLE CHAT ====================
         function toggleChat() {
             if (chatPanel.classList.contains('open')) {
                 closeChat();
@@ -1251,147 +1455,14 @@
                 notificationBadge.style.display = 'none';
                 unreadCount = 0;
             }
+            // Refresh messages when reopening
+            if (conversationId) {
+                loadMessages(conversationId);
+            }
         }
 
         function closeChat() {
             chatPanel.classList.remove('open');
-        }
-
-        function startChat() {
-            const email = userEmailInput.value.trim();
-            if (!email || !email.includes('@')) {
-                alert('Please enter a valid email address');
-                return;
-            }
-
-            userEmail = email;
-            userName = email.split('@')[0] || 'Guest';
-
-            // Get initial message
-            const message = document.getElementById('chatMessageInput')?.value || 'Hello, I need help with my shipment.';
-
-            fetch('/api/chat/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userEmail: userEmail,
-                    userName: userName,
-                    message: message
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    conversationId = data.conversationId;
-                    isChatActive = true;
-                    
-                    chatWelcome.style.display = 'none';
-                    chatMessagesContainer.classList.add('active');
-                    
-                    chatMessageInput.disabled = false;
-                    chatSendBtn.disabled = false;
-                    chatMessageInput.focus();
-
-                    if (message) {
-                        addMessage('user', userName, message);
-                    }
-                    
-                    loadMessages(conversationId);
-                } else {
-                    alert('Failed to start chat. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Start chat error:', error);
-                alert('Failed to start chat. Please try again.');
-            });
-        }
-
-        function loadMessages(convId) {
-            fetch(`/api/chat/${convId}/messages`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.messages) {
-                        chatMessagesList.innerHTML = '';
-                        data.messages.forEach(msg => {
-                            addMessage(msg.sender, msg.senderName, msg.message, msg.timestamp);
-                        });
-                        scrollToBottom();
-                    }
-                })
-                .catch(error => console.error('Load messages error:', error));
-        }
-
-        function sendChatMessage() {
-            const message = chatMessageInput.value.trim();
-            if (!message || !conversationId) return;
-
-            addMessage('user', userName, message);
-            chatMessageInput.value = '';
-            scrollToBottom();
-
-            fetch(`/api/chat/${conversationId}/send`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: message,
-                    sender: 'user',
-                    senderName: userName
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.success) {
-                    console.error('Failed to send message');
-                }
-            })
-            .catch(error => console.error('Send message error:', error));
-
-            if (socket && socket.connected) {
-                socket.emit('user-message', {
-                    conversationId,
-                    message,
-                    userEmail,
-                    userName
-                });
-            }
-        }
-
-        function addMessage(sender, senderName, message, timestamp) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message-bubble ${sender}`;
-            
-            const time = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-            
-            messageDiv.innerHTML = `
-                <div class="bubble">
-                    <span class="sender-name">${sender === 'admin' ? 'Support Team' : senderName}</span>
-                    ${message}
-                    <span class="time">${time}</span>
-                </div>
-            `;
-            
-            chatMessagesList.appendChild(messageDiv);
-            scrollToBottom();
-        }
-
-        function quickReply(message) {
-            const input = document.getElementById('chatMessageInput');
-            if (input) {
-                input.value = message;
-                if (isChatActive && conversationId) {
-                    sendChatMessage();
-                } else {
-                    userEmailInput.focus();
-                }
-            }
-        }
-
-        function scrollToBottom() {
-            const container = chatMessagesList.parentElement;
-            if (container) {
-                container.scrollTop = container.scrollHeight;
-            }
         }
 
         // ==================== EVENT LISTENERS ====================
@@ -1414,7 +1485,19 @@
         connectSocket();
         setInterval(checkAdminStatus, 30000);
 
-        console.log('🚀 Contact page with live chat loaded successfully!');
+        // 🔥 CHECK FOR SAVED SESSION ON PAGE LOAD
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasSession = checkSavedSession();
+            if (hasSession) {
+                console.log('✅ Auto-restored chat session!');
+                // Don't show welcome screen, go straight to chat
+            } else {
+                console.log('👋 No saved session. Show welcome screen.');
+            }
+        });
+
+        console.log('🚀 Contact page with persistent chat loaded!');
+        console.log('💾 Chat sessions will be remembered in localStorage.');
     </script>
 </body>
 </html>
