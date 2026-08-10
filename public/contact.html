@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .contact-hero {
+            padding: 8rem 5% 4rem;
+            text-align: center;
+        }
+        .contact-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .contact-hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .contact-section { padding: 3rem 0 5rem; }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 3rem;
+        }
+        .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+        .contact-info .info-card {
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .contact-info .info-card:hover { border-color: var(--primary); transform: translateX(5px); }
+        .contact-info .info-card .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(0,242,254,0.15), rgba(0,242,254,0.05));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .contact-info .info-card h4 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .contact-info .info-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+        .contact-info .info-card .detail { color: #fff; font-weight: 500; }
+        .contact-form {
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+        }
+        .contact-form h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .contact-form .sub { color: var(--text-muted); margin-bottom: 2rem; }
+        .contact-form .form-group { margin-bottom: 1.5rem; }
+        .contact-form .form-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .contact-form .form-group input,
+        .contact-form .form-group select,
+        .contact-form .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+        .contact-form .form-group input:focus,
+        .contact-form .form-group select:focus,
+        .contact-form .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .contact-form .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .contact-form .submit-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 60px;
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .contact-form .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,242,254,0.35);
+        }
+        .map-container {
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+        #map { height: 300px; width: 100%; background: #0f0f1a; }
+        .map-caption { padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.4); }
+        @media (max-width: 992px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .contact-hero h1 { font-size: 2.2rem; }
+            .contact-form { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Loading contact page...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tracking.html">Track</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" class="active">Contact</a>
+                <a href="blog.html">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTACT HERO -->
+    <section class="contact-hero">
+        <h1>Get In Touch</h1>
+        <p>Have questions about our logistics services? Reach out to our team and we'll respond within 2 hours.</p>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <div class="icon"><i class="fas fa-phone-alt"></i></div>
+                        <h4>Phone</h4>
+                        <p>Our support team is available 24/7</p>
+                        <div class="detail">+1 (888) 123-ELITE</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="icon"><i class="fas fa-envelope"></i></div>
+                        <h4>Email</h4>
+                        <p>Send us an email and we'll respond quickly</p>
+                        <div class="detail">info@swiftlogix.com</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <h4>Headquarters</h4>
+                        <p>Visit our global headquarters</p>
+                        <div class="detail">Dubai International Financial Center, UAE</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="icon"><i class="fas fa-clock"></i></div>
+                        <h4>Working Hours</h4>
+                        <p>We're always here for you</p>
+                        <div class="detail">24/7 • 365 Days</div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h2>Send a Message</h2>
+                    <p class="sub">We'll get back to you within 2 hours</p>
+                    <form onsubmit="handleContact(event)">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="Your email address" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select>
+                                <option>General Inquiry</option>
+                                <option>Shipping Question</option>
+                                <option>Partnership</option>
+                                <option>Career Opportunity</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea placeholder="How can we help you?"></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- MAP -->
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-caption">
+                    <i class="fas fa-map-pin"></i> SwiftLogix Global Headquarters | Dubai, United Arab Emirates
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function handleContact(event) {
+            event.preventDefault();
+            alert('✅ Thank you! Your message has been sent. We\'ll respond within 2 hours.');
+            event.target.reset();
+        }
+
+        setTimeout(() => {
+            if (typeof L !== 'undefined') {
+                const map = L.map('map').setView([25.2048, 55.2708], 12);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap',
+                    subdomains: 'abcd'
+                }).addTo(map);
+                const customIcon = L.divIcon({
+                    html: '<div style="background:#00f2fe;width:14px;height:14px;border-radius:50%;box-shadow:0 0 20px #00f2fe;"></div>',
+                    iconSize: [14, 14],
+                    className: 'custom-marker'
+                });
+                L.marker([25.2048, 55.2708], { icon: customIcon }).addTo(map)
+                    .bindPopup('<b>SwiftLogix Global HQ</b><br>Dubai International Financial Center')
+                    .openPopup();
+            }
+        }, 200);
+    </script>
+</body>
+</html>
