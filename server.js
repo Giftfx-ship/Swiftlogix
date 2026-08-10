@@ -170,7 +170,7 @@ const adminSchema = new mongoose.Schema({
     lastLogin: { type: Date }
 });
 
-// Email Log Schema (with more details for debugging)
+// Email Log Schema
 const emailLogSchema = new mongoose.Schema({
     trackingCode: { type: String, required: true },
     emailType: { type: String, enum: ['tracking', 'invoice', 'test'], required: true },
@@ -215,7 +215,7 @@ const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
 log.success('✅ Database schemas created');
 
-// ==================== ✅ EMAIL SERVICE WITH LOGGING ====================
+// ==================== ✅ EMAIL SERVICE ====================
 
 const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = '') => {
     const startTime = Date.now();
@@ -262,7 +262,6 @@ const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = ''
     }
 };
 
-// Helper function to log emails to database
 const logEmailToDB = async (trackingCode, emailType, recipient, subject, status, error = null, resendId = null) => {
     try {
         const logEntry = new EmailLog({
@@ -931,7 +930,7 @@ app.get('/api/admin/search/:query', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== ✅ PUBLIC TRACKING ENDPOINTS WITH LOGGING ====================
+// ==================== ✅ PUBLIC TRACKING ENDPOINTS ====================
 
 // ✅ 1. PUBLIC - Get shipment by tracking code (NO AUTH REQUIRED)
 app.get('/api/track/:trackingCode', async (req, res) => {
@@ -1013,6 +1012,7 @@ app.post('/api/send-email', async (req, res) => {
         // ✅ Email 1: Tracking Update
         const trackingLink = `${process.env.BASE_URL || 'https://swiftlogix.onrender.com'}/tracking-result.html?code=${shipment.trackingCode}`;
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
+        
         log.debug(`📧 Sending tracking email...`);
         const email1Result = await sendEmail(
             userEmail,
