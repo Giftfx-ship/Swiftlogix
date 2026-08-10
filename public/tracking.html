@@ -144,7 +144,7 @@
                 <span id="stepText1" style="color:#00f2fe;">🔍 Searching</span>
                 <span id="stepText2">📡 Connecting</span>
                 <span id="stepText3">📦 Found</span>
-                <span id="stepText4">✅ Redirecting</span>
+                <span id="stepText4">✅ Sending Email</span>
             </div>
         </div>
     </div>
@@ -187,7 +187,7 @@
                     <input type="email" id="userEmail" placeholder="Enter your email to receive tracking updates" required>
                     <div class="email-hint">
                         <i class="fas fa-info-circle"></i>
-                        <span>You'll receive tracking details. The receiver will get the full invoice.</span>
+                        <span>Check your email for tracking details and invoice!</span>
                     </div>
                 </div>
                 <button type="submit" class="track-btn" id="trackBtn">
@@ -296,25 +296,26 @@
                 </div>
             `;
 
+            // Start loading animation
             const interval = startLoading();
 
             try {
-                const response = await fetch(`${API_URL}/api/track`, {
+                // Step 1: Find the shipment
+                const trackResponse = await fetch(`${API_URL}/api/track`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ trackingCode, userEmail })
+                    body: JSON.stringify({ trackingCode })
                 });
                 
-                const data = await response.json();
+                const trackData = await trackResponse.json();
                 
-                stopLoading(interval);
-                
-                if (!response.ok || !data.success) {
+                if (!trackResponse.ok || !trackData.success) {
+                    stopLoading(interval);
                     resultBox.className = 'result-box error';
                     resultBox.innerHTML = `
                         <i class="fas fa-exclamation-circle"></i>
                         <div class="result-content">
-                            <strong>${data.error || 'Tracking number not found'}</strong>
+                            <strong>${trackData.error || 'Tracking number not found'}</strong>
                             <div class="small">Please check the tracking number and try again</div>
                         </div>
                     `;
@@ -323,8 +324,35 @@
                     return;
                 }
 
-                const toUserStatus = data.emails?.toUser?.success ? '✅' : '❌';
-                const toReceiverStatus = data.emails?.toReceiver?.success ? '✅' : '❌';
+                // Step 2: Send emails
+                const emailResponse = await fetch(`${API_URL}/api/send-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trackingCode, userEmail })
+                });
+                
+                const emailData = await emailResponse.json();
+                
+                // Stop loading animation
+                stopLoading(interval);
+                
+                if (!emailResponse.ok || !emailData.success) {
+                    resultBox.className = 'result-box error';
+                    resultBox.innerHTML = `
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div class="result-content">
+                            <strong>${emailData.error || 'Failed to send emails'}</strong>
+                            <div class="small">Please try again later</div>
+                        </div>
+                    `;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
+                    return;
+                }
+
+                // Success!
+                const trackingStatus = emailData.emails?.tracking?.success ? '✅' : '❌';
+                const invoiceStatus = emailData.emails?.invoice?.success ? '✅' : '❌';
                 
                 resultBox.className = 'result-box success';
                 resultBox.innerHTML = `
@@ -332,7 +360,7 @@
                     <div class="result-content">
                         <strong>🎉 Package Found!</strong>
                         <div class="small">
-                            📧 Tracking sent to you: ${toUserStatus} &nbsp;|&nbsp; 📄 Invoice sent to receiver: ${toReceiverStatus}
+                            📧 Tracking email: ${trackingStatus} &nbsp;|&nbsp; 📄 Invoice: ${invoiceStatus}
                         </div>
                         <div class="small" style="margin-top:4px;color:rgba(255,255,255,0.4);">
                             <i class="fas fa-spinner fa-spin"></i> Redirecting to tracking page...
@@ -341,7 +369,7 @@
                 `;
                 
                 localStorage.setItem('trackingNumber', trackingCode);
-                localStorage.setItem('trackingData', JSON.stringify(data.shipment));
+                localStorage.setItem('trackingData', JSON.stringify(emailData.shipment));
                 setTimeout(() => {
                     window.location.href = 'tracking-result.html';
                 }, 2500);
