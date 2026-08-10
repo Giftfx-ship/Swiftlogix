@@ -144,7 +144,7 @@
                 <span id="stepText1" style="color:#00f2fe;">🔍 Searching</span>
                 <span id="stepText2">📡 Connecting</span>
                 <span id="stepText3">📦 Found</span>
-                <span id="stepText4">✅ Sending Email</span>
+                <span id="stepText4">✅ Redirecting</span>
             </div>
         </div>
     </div>
@@ -205,6 +205,9 @@
     </footer>
 
     <script>
+        const API_URL = window.location.origin;
+        console.log('📍 API URL:', API_URL);
+
         function toggleMenu() {
             document.getElementById('navLinks').classList.toggle('active');
         }
@@ -215,9 +218,7 @@
             });
         });
 
-        const API_URL = window.location.origin;
-        
-        // ===== LOADING ANIMATION CONTROLS =====
+        // ===== LOADING ANIMATION =====
         function startLoading() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.classList.add('active');
@@ -300,7 +301,8 @@
             const interval = startLoading();
 
             try {
-                // Step 1: Find the shipment
+                // ✅ Call /api/track to find the shipment
+                console.log('📤 Sending request to /api/track');
                 const trackResponse = await fetch(`${API_URL}/api/track`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -308,6 +310,7 @@
                 });
                 
                 const trackData = await trackResponse.json();
+                console.log('📥 Track response:', trackData);
                 
                 if (!trackResponse.ok || !trackData.success) {
                     stopLoading(interval);
@@ -324,56 +327,29 @@
                     return;
                 }
 
-                // Step 2: Send emails
-                const emailResponse = await fetch(`${API_URL}/api/send-email`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ trackingCode, userEmail })
-                });
+                // ✅ Save data to localStorage for tracking-result.html
+                localStorage.setItem('trackingNumber', trackingCode);
+                localStorage.setItem('userEmail', userEmail);
+                localStorage.setItem('trackingData', JSON.stringify(trackData.shipment));
                 
-                const emailData = await emailResponse.json();
-                
-                // Stop loading animation
-                stopLoading(interval);
-                
-                if (!emailResponse.ok || !emailData.success) {
-                    resultBox.className = 'result-box error';
-                    resultBox.innerHTML = `
-                        <i class="fas fa-exclamation-circle"></i>
-                        <div class="result-content">
-                            <strong>${emailData.error || 'Failed to send emails'}</strong>
-                            <div class="small">Please try again later</div>
-                        </div>
-                    `;
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
-                    return;
-                }
+                console.log('💾 Saved to localStorage:', { trackingCode, userEmail });
 
-                // Success!
-                const trackingStatus = emailData.emails?.tracking?.success ? '✅' : '❌';
-                const invoiceStatus = emailData.emails?.invoice?.success ? '✅' : '❌';
-                
+                // ✅ Show success and redirect
                 resultBox.className = 'result-box success';
                 resultBox.innerHTML = `
                     <i class="fas fa-check-circle"></i>
                     <div class="result-content">
                         <strong>🎉 Package Found!</strong>
-                        <div class="small">
-                            📧 Tracking email: ${trackingStatus} &nbsp;|&nbsp; 📄 Invoice: ${invoiceStatus}
-                        </div>
-                        <div class="small" style="margin-top:4px;color:rgba(255,255,255,0.4);">
-                            <i class="fas fa-spinner fa-spin"></i> Redirecting to tracking page...
-                        </div>
+                        <div class="small">Redirecting to tracking page...</div>
                     </div>
                 `;
                 
-                localStorage.setItem('trackingNumber', trackingCode);
-                localStorage.setItem('trackingData', JSON.stringify(emailData.shipment));
                 setTimeout(() => {
                     window.location.href = 'tracking-result.html';
-                }, 2500);
+                }, 1500);
+                
             } catch (error) {
+                console.error('❌ Error:', error);
                 stopLoading(interval);
                 resultBox.className = 'result-box error';
                 resultBox.innerHTML = `
@@ -387,6 +363,8 @@
                 btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
             }
         });
+
+        console.log('✅ tracking.html loaded');
     </script>
 </body>
 </html>
