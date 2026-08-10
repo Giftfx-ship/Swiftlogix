@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftLogix - Global Logistics Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 5% 4rem;
+            position: relative;
+        }
+        .hero .hero-content {
+            max-width: 950px;
+            z-index: 2;
+            animation: fadeUp 1s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem 1.8rem;
+            background: rgba(0,242,254,0.08);
+            border: 1px solid rgba(0,242,254,0.25);
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, var(--primary), #ffffff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textFlow 5s linear infinite;
+        }
+        @keyframes textFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+        .hero .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .stats-section { padding: 4rem 0; }
+        .stats-section .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+        .stats-section .stat-card {
+            padding: 2rem 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .stats-section .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(0,242,254,0.3);
+        }
+        .stats-section .stat-number {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stats-section .stat-label {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .services-preview { padding: 5rem 0; }
+        .services-preview .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .services-preview .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        .services-preview .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .services-preview .service-card {
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+        }
+        .services-preview .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0,242,254,0.08);
+        }
+        .services-preview .service-card .icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, rgba(0,242,254,0.15), rgba(0,242,254,0.05));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary);
+            margin: 0 auto 1.2rem;
+        }
+        .services-preview .service-card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+        .services-preview .service-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+        .cta-section { padding: 5rem 0; }
+        .cta-section .cta-box {
+            background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(0,242,254,0.02));
+            border-radius: var(--radius);
+            padding: 4rem 3rem;
+            border: 1px solid var(--border);
+        }
+        .cta-section h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
+        .cta-section p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+        @media (max-width: 992px) {
+            .stats-section .stats-grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .services-preview .section-title { font-size: 2rem; }
+            .cta-section h2 { font-size: 1.8rem; }
+            .cta-section .cta-box { padding: 2.5rem 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .stats-section .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .stats-section .stat-number { font-size: 2rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .services-preview .services-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Initializing global logistics network...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="tracking.html">Track</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-globe"></i> Global Logistics Intelligence
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>Intelligent Tracking. Global Precision.</h1>
+            <p>Enter your tracking number to access real-time shipment intelligence and predictive delivery analytics across 190+ countries.</p>
+            <div class="hero-buttons">
+                <a href="tracking.html" class="btn-primary"><i class="fas fa-rocket"></i> Track Now</a>
+                <a href="services.html" class="btn-secondary">Explore Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number counter" data-target="2800000">0</div>
+                    <div class="stat-label">Delivered Packages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">190+</div>
+                    <div class="stat-label">Countries Served</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.97%</div>
+                    <div class="stat-label">On-Time Precision</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Elite Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES PREVIEW -->
+    <section class="services-preview">
+        <div class="container">
+            <h2 class="section-title">Premium Logistics Services</h2>
+            <p class="section-subtitle">Executive logistics solutions for global enterprises</p>
+            <div class="services-grid">
+                <a href="air-freight.html" class="service-card">
+                    <div class="icon"><i class="fas fa-plane"></i></div>
+                    <h3>Air Freight</h3>
+                    <p>IATA-certified express solutions for time-critical shipments worldwide.</p>
+                </a>
+                <a href="ocean-freight.html" class="service-card">
+                    <div class="icon"><i class="fas fa-ship"></i></div>
+                    <h3>Ocean Freight</h3>
+                    <p>FCL, LCL, and consolidation with global port coverage.</p>
+                </a>
+                <a href="road-transport.html" class="service-card">
+                    <div class="icon"><i class="fas fa-truck"></i></div>
+                    <h3>Road Transport</h3>
+                    <p>Door-to-door delivery with real-time GPS tracking.</p>
+                </a>
+                <a href="warehousing.html" class="service-card">
+                    <div class="icon"><i class="fas fa-warehouse"></i></div>
+                    <h3>Warehousing</h3>
+                    <p>State-of-the-art storage with advanced inventory systems.</p>
+                </a>
+                <a href="packaging.html" class="service-card">
+                    <div class="icon"><i class="fas fa-box"></i></div>
+                    <h3>Packaging</h3>
+                    <p>Custom crating and eco-friendly packaging solutions.</p>
+                </a>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-headset"></i></div>
+                    <h3>24/7 Support</h3>
+                    <p>Dedicated logistics specialists available around the clock.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready for Elite Logistics?</h2>
+                <p>Join the world's leading enterprises trusting SwiftLogix for their global logistics needs.</p>
+                <a href="contact.html" class="btn-primary"><i class="fas fa-arrow-right"></i> Contact Our Team</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise. Delivering excellence across 190+ countries.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR Compliance</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                    <a href="#"><i class="fas fa-clock"></i> 24/7 Operations</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
