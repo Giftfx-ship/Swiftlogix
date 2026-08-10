@@ -8,24 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .legal-page { padding: 8rem 5% 4rem; max-width: 900px; margin: 0 auto; }
+        /* ==================== LEGAL PAGE ==================== */
+        .legal-page {
+            padding: 8rem 5% 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
         .legal-page h1 {
             font-size: 2.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-        .legal-page .last-updated { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .legal-page .last-updated {
+            color: #9aa8c9;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legal-page .last-updated i {
+            color: #FF6600;
+        }
         .legal-page h2 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary);
+            color: #FF6600;
             margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .legal-page h2 i {
+            color: #6C1B8C;
+            font-size: 1.2rem;
         }
         .legal-page p {
-            color: var(--text-muted);
+            color: #9aa8c9;
             line-height: 1.8;
             margin-bottom: 1rem;
         }
@@ -35,92 +57,112 @@
         }
         .legal-page ul li {
             padding: 0.5rem 0;
-            color: var(--text-muted);
+            color: #9aa8c9;
             display: flex;
             align-items: flex-start;
             gap: 0.8rem;
         }
-        .legal-page ul li i { color: var(--primary); margin-top: 0.3rem; }
+        .legal-page ul li i {
+            color: #FF6600;
+            margin-top: 0.3rem;
+            font-size: 0.9rem;
+        }
+        .legal-page .highlight-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,102,0,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255,102,0,0.15);
+        }
+        .legal-page .highlight-box p {
+            color: #9aa8c9;
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        .legal-page .highlight-box i {
+            color: #FF6600;
+            margin-right: 0.5rem;
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 0.6rem;
-            color: var(--text-muted);
+            color: #9aa8c9;
             margin-bottom: 2rem;
-            transition: all var(--transition);
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
-        .back-link:hover { color: var(--primary); gap: 1rem; }
+        .back-link:hover {
+            color: #FF6600;
+            gap: 1rem;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .legal-page { padding: 6rem 5% 3rem; }
+            .legal-page h1 { font-size: 2.2rem; }
+            .legal-page h2 { font-size: 1.3rem; }
+        }
+        @media (max-width: 480px) {
+            .legal-page h1 { font-size: 1.8rem; }
+            .legal-page h2 { font-size: 1.1rem; }
+            .legal-page { padding: 5rem 5% 2rem; }
+            .legal-page ul li { padding: 0.4rem 0; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading terms of service...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
     </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
 
-    <!-- BACKGROUND -->
+    <!-- ==================== BACKGROUND ==================== -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -134,18 +176,21 @@
         </div>
     </nav>
 
-    <!-- TERMS -->
+    <!-- ==================== TERMS OF SERVICE ==================== -->
     <div class="legal-page">
         <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        
         <h1>Terms of Service</h1>
-        <div class="last-updated">Last Updated: March 2026</div>
+        <div class="last-updated">
+            <i class="fas fa-calendar-alt"></i> Last Updated: March 2026
+        </div>
 
         <p>Welcome to SwiftLogix Logistics. By using our services, you agree to comply with and be bound by the following terms and conditions. Please read them carefully.</p>
 
-        <h2>1. Acceptance of Terms</h2>
+        <h2><i class="fas fa-check-circle"></i> 1. Acceptance of Terms</h2>
         <p>By accessing our website and using our logistics services, you agree to these Terms of Service. If you do not agree, please do not use our services.</p>
 
-        <h2>2. Our Services</h2>
+        <h2><i class="fas fa-box"></i> 2. Our Services</h2>
         <p>SwiftLogix provides logistics and shipping services including:</p>
         <ul>
             <li><i class="fas fa-check-circle"></i> Air freight and ocean freight shipping</li>
@@ -154,10 +199,10 @@
             <li><i class="fas fa-check-circle"></i> Customs clearance support</li>
         </ul>
 
-        <h2>3. User Accounts</h2>
+        <h2><i class="fas fa-user"></i> 3. User Accounts</h2>
         <p>To use certain features, you may need to create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
 
-        <h2>4. Shipment Policies</h2>
+        <h2><i class="fas fa-shipping-fast"></i> 4. Shipment Policies</h2>
         <ul>
             <li><i class="fas fa-check-circle"></i> Shipment contents must comply with applicable laws and regulations</li>
             <li><i class="fas fa-check-circle"></i> Prohibited items are not accepted for shipping</li>
@@ -165,10 +210,10 @@
             <li><i class="fas fa-check-circle"></i> Delivery times are estimates and not guaranteed</li>
         </ul>
 
-        <h2>5. Payment Terms</h2>
+        <h2><i class="fas fa-credit-card"></i> 5. Payment Terms</h2>
         <p>Payment is required at the time of booking unless otherwise agreed. We accept various payment methods including credit cards, bank transfers, and other approved payment options.</p>
 
-        <h2>6. Liability and Disclaimer</h2>
+        <h2><i class="fas fa-gavel"></i> 6. Liability and Disclaimer</h2>
         <p>SwiftLogix is not liable for:</p>
         <ul>
             <li><i class="fas fa-check-circle"></i> Delays caused by circumstances beyond our control</li>
@@ -176,25 +221,26 @@
             <li><i class="fas fa-check-circle"></i> Prohibited items that are shipped</li>
         </ul>
 
-        <h2>7. Intellectual Property</h2>
+        <h2><i class="fas fa-copyright"></i> 7. Intellectual Property</h2>
         <p>All content on this website, including text, graphics, logos, and software, is the property of SwiftLogix and is protected by copyright and intellectual property laws.</p>
 
-        <h2>8. Termination</h2>
+        <h2><i class="fas fa-ban"></i> 8. Termination</h2>
         <p>We reserve the right to terminate or suspend your access to our services at any time, without prior notice, for conduct that we believe violates these Terms or is harmful to other users.</p>
 
-        <h2>9. Changes to Terms</h2>
+        <h2><i class="fas fa-sync-alt"></i> 9. Changes to Terms</h2>
         <p>We may update these Terms from time to time. Changes will be posted on this page with an updated date. Your continued use of our services constitutes acceptance of the revised Terms.</p>
 
-        <h2>10. Contact Us</h2>
+        <h2><i class="fas fa-envelope"></i> 10. Contact Us</h2>
         <p>If you have questions about these Terms of Service, please contact us at:</p>
-        <p style="color:#fff;">📧 legal@swiftlogix.com<br>📞 +1 (888) 123-ELITE</p>
+        <p style="color:#fff;font-weight:500;">📧 <a href="mailto:legal@swiftlogix.com" style="color:#FF6600;text-decoration:none;">legal@swiftlogix.com</a><br>
+        📞 +1 (888) 123-ELITE</p>
 
-        <div style="margin-top:2rem;padding:1rem;background:rgba(0,242,254,0.05);border-radius:12px;border:1px solid var(--border);">
-            <p style="color:var(--text-muted);font-size:0.85rem;">These Terms of Service are effective as of March 2026 and may be updated periodically.</p>
+        <div class="highlight-box">
+            <p><i class="fas fa-info-circle"></i> These Terms of Service are effective as of March 2026 and may be updated periodically. Please review this page for any changes.</p>
         </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- ==================== FOOTER ==================== -->
     <footer class="footer" style="margin-top:0;">
         <div class="container">
             <div class="footer-bottom">
@@ -209,6 +255,43 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+
+        // ==================== MOBILE MENU ====================
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        console.log('🚀 Terms of Service page loaded successfully!');
+    </script>
 </body>
 </html>
