@@ -8,24 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* ==================== CAREERS HERO WITH BACKGROUND ==================== */
         .careers-hero {
             padding: 8rem 5% 4rem;
             text-align: center;
+            background: url('/images/hero-bg.jpg') center/cover no-repeat;
+            position: relative;
+        }
+        .careers-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 26, 0.8);
+            z-index: 0;
+        }
+        .careers-hero .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
         }
         .careers-hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
         .careers-hero p {
-            color: var(--text-muted);
+            color: #c8d4e8;
             font-size: 1.2rem;
             max-width: 700px;
             margin: 0 auto;
+            line-height: 1.8;
         }
+
+        /* ==================== CAREERS SECTION ==================== */
         .careers-section { padding: 3rem 0 5rem; }
         .careers-section .grid {
             display: grid;
@@ -35,24 +57,27 @@
         }
         .careers-section .job-card {
             background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
+            border-radius: 24px;
             padding: 2rem;
-            border: 1px solid var(--border);
-            transition: all var(--transition);
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
         }
         .careers-section .job-card:hover {
             transform: translateY(-5px);
-            border-color: var(--primary);
+            border-color: #FF6600;
+            background: rgba(255,255,255,0.04);
         }
         .careers-section .job-card .job-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
-        .careers-section .job-card .job-header h3 { font-size: 1.2rem; }
+        .careers-section .job-card .job-header h3 { font-size: 1.2rem; color: #fff; }
         .careers-section .job-card .job-header .location {
-            color: var(--text-muted);
+            color: #9aa8c9;
             font-size: 0.8rem;
         }
         .careers-section .job-card .job-type {
@@ -61,11 +86,11 @@
             border-radius: 50px;
             font-size: 0.65rem;
             font-weight: 600;
-            background: rgba(0,242,254,0.1);
-            color: var(--primary);
+            background: rgba(255,102,0,0.15);
+            color: #FF6600;
         }
         .careers-section .job-card p {
-            color: var(--text-muted);
+            color: #9aa8c9;
             font-size: 0.9rem;
             line-height: 1.6;
             margin: 0.8rem 0;
@@ -73,20 +98,151 @@
         .careers-section .job-card .apply-btn {
             display: inline-block;
             padding: 0.6rem 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
             border: none;
             border-radius: 60px;
-            color: var(--secondary);
+            color: #fff;
             font-weight: 600;
             font-size: 0.85rem;
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all 0.3s ease;
             text-decoration: none;
         }
         .careers-section .job-card .apply-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,242,254,0.3);
+            box-shadow: 0 8px 25px rgba(108,27,140,0.3);
         }
+
+        /* ==================== APPLICATION MODAL ==================== */
+        .apply-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: modalFadeIn 0.3s ease;
+        }
+        .apply-modal.active {
+            display: flex;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .apply-modal .modal-content {
+            background: #0a0e1a;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(108,27,140,0.2);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .apply-modal .modal-content .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .apply-modal .modal-content .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .apply-modal .modal-content .modal-header .close-modal {
+            background: none;
+            border: none;
+            color: #8899bb;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .apply-modal .modal-content .modal-header .close-modal:hover {
+            color: #ff4444;
+        }
+        .apply-modal .modal-content .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .apply-modal .modal-content .form-group label {
+            display: block;
+            color: #9aa8c9;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .apply-modal .modal-content .form-group input,
+        .apply-modal .modal-content .form-group select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        .apply-modal .modal-content .form-group input:focus,
+        .apply-modal .modal-content .form-group select:focus {
+            outline: none;
+            border-color: #FF6600;
+            background: rgba(255,255,255,0.08);
+        }
+        .apply-modal .modal-content .form-group input::placeholder {
+            color: #667799;
+        }
+        .apply-modal .modal-content .submit-apply {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border: none;
+            border-radius: 60px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        .apply-modal .modal-content .submit-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(108,27,140,0.35);
+        }
+        .apply-modal .modal-content .success-msg {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(76,175,80,0.1);
+            border: 1px solid rgba(76,175,80,0.3);
+            border-radius: 12px;
+            color: #4CAF50;
+            margin-top: 1rem;
+        }
+        .apply-modal .modal-content .success-msg i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .apply-modal .modal-content .job-title-display {
+            color: #FF6600;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        /* ==================== BENEFITS ==================== */
         .careers-section .benefits {
             display: grid;
             grid-template-columns: repeat(4,1fr);
@@ -97,95 +253,93 @@
             text-align: center;
             padding: 1.5rem;
             background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
+            border-radius: 24px;
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
+        }
+        .careers-section .benefits .benefit:hover {
+            transform: translateY(-3px);
+            border-color: #FF6600;
         }
         .careers-section .benefits .benefit i {
             font-size: 2rem;
-            color: var(--primary);
+            color: #FF6600;
             margin-bottom: 0.8rem;
         }
-        .careers-section .benefits .benefit h4 { font-size: 1rem; }
-        .careers-section .benefits .benefit p { color: var(--text-muted); font-size: 0.85rem; }
+        .careers-section .benefits .benefit h4 { font-size: 1rem; color: #fff; }
+        .careers-section .benefits .benefit p { color: #9aa8c9; font-size: 0.85rem; }
+
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 992px) {
             .careers-section .grid { grid-template-columns: 1fr; }
             .careers-section .benefits { grid-template-columns: repeat(2,1fr); }
+            .careers-hero h1 { font-size: 2.8rem; }
+        }
+        @media (max-width: 768px) {
+            .careers-hero { padding: 6rem 5% 3rem; }
+            .careers-hero h1 { font-size: 2.2rem; }
+            .careers-hero p { font-size: 1rem; }
+            .apply-modal .modal-content { padding: 1.5rem; }
         }
         @media (max-width: 480px) {
-            .careers-hero h1 { font-size: 2.2rem; }
+            .careers-hero h1 { font-size: 1.8rem; }
             .careers-section .benefits { grid-template-columns: 1fr; }
+            .careers-section .job-card .job-header { flex-direction: column; align-items: flex-start; }
+            .apply-modal .modal-content { padding: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading careers...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
     </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
 
-    <!-- BACKGROUND -->
+    <!-- ==================== BACKGROUND ==================== -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -194,24 +348,28 @@
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
                 <a href="blog.html">Blog</a>
+                <a href="careers.html" class="active">Careers</a>
                 <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
             </div>
         </div>
     </nav>
 
-    <!-- CAREERS HERO -->
+    <!-- ==================== CAREERS HERO ==================== -->
     <section class="careers-hero">
-        <h1>Join Our Team</h1>
-        <p>Build your career with a global logistics leader. We're looking for passionate professionals to join our mission.</p>
+        <div class="content">
+            <h1>Join Our Team</h1>
+            <p>Build your career with a global logistics leader. We're looking for passionate professionals to join our mission.</p>
+        </div>
     </section>
 
-    <!-- CAREERS SECTION -->
+    <!-- ==================== CAREERS SECTION ==================== -->
     <section class="careers-section">
         <div class="container">
-            <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Open Positions</h2>
-            <p style="color:var(--text-muted);margin-bottom:1rem;">Join a team that's shaping the future of global logistics.</p>
+            <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Open Positions</h2>
+            <p style="color:#9aa8c9;margin-bottom:1rem;">Join a team that's shaping the future of global logistics.</p>
 
             <div class="grid">
+                <!-- Job 1 -->
                 <div class="job-card">
                     <div class="job-header">
                         <h3>Logistics Operations Manager</h3>
@@ -219,8 +377,10 @@
                     </div>
                     <span class="job-type">Full-Time</span>
                     <p>Lead our logistics operations team, overseeing global shipments and ensuring on-time delivery excellence.</p>
-                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                    <button class="apply-btn" onclick="openApplication('Logistics Operations Manager')">Apply Now</button>
                 </div>
+
+                <!-- Job 2 -->
                 <div class="job-card">
                     <div class="job-header">
                         <h3>Senior Software Engineer</h3>
@@ -228,8 +388,10 @@
                     </div>
                     <span class="job-type">Full-Time</span>
                     <p>Build and maintain our tracking platform, working with modern technologies to enhance user experience.</p>
-                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                    <button class="apply-btn" onclick="openApplication('Senior Software Engineer')">Apply Now</button>
                 </div>
+
+                <!-- Job 3 -->
                 <div class="job-card">
                     <div class="job-header">
                         <h3>Customer Success Specialist</h3>
@@ -237,8 +399,10 @@
                     </div>
                     <span class="job-type">Full-Time</span>
                     <p>Deliver exceptional customer experiences, resolving issues and ensuring client satisfaction.</p>
-                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                    <button class="apply-btn" onclick="openApplication('Customer Success Specialist')">Apply Now</button>
                 </div>
+
+                <!-- Job 4 -->
                 <div class="job-card">
                     <div class="job-header">
                         <h3>Supply Chain Analyst</h3>
@@ -246,12 +410,12 @@
                     </div>
                     <span class="job-type">Full-Time</span>
                     <p>Analyze supply chain data to optimize routes, reduce costs, and improve delivery efficiency.</p>
-                    <button class="apply-btn" onclick="alert('Application submitted! We\'ll contact you soon.')">Apply Now</button>
+                    <button class="apply-btn" onclick="openApplication('Supply Chain Analyst')">Apply Now</button>
                 </div>
             </div>
 
             <!-- BENEFITS -->
-            <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:3rem;">Why Join SwiftLogix</h2>
+            <h2 style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:3rem;">Why Join SwiftLogix</h2>
             <div class="benefits">
                 <div class="benefit">
                     <i class="fas fa-globe"></i>
@@ -277,7 +441,49 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- ==================== APPLICATION MODAL ==================== -->
+    <div class="apply-modal" id="applyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Apply Now</h3>
+                <button class="close-modal" onclick="closeApplication()">&times;</button>
+            </div>
+            <div class="job-title-display" id="jobTitleDisplay">Position: <span id="selectedJob"></span></div>
+            <form id="applicationForm" onsubmit="submitApplication(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="applicantName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="applicantEmail" placeholder="Enter your email address" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="applicantPhone" placeholder="Enter your phone number">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-file-alt"></i> Experience Level</label>
+                    <select id="applicantExperience">
+                        <option value="Entry Level">Entry Level (0-2 years)</option>
+                        <option value="Mid Level">Mid Level (3-5 years)</option>
+                        <option value="Senior Level">Senior Level (5-10 years)</option>
+                        <option value="Executive">Executive (10+ years)</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-apply" id="submitApplyBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+                <div class="success-msg" id="successMsg">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Application Submitted!</strong>
+                    <p style="color:#9aa8c9;font-size:0.9rem;margin-top:4px;">We'll contact you at <span id="successEmail"></span> within 48 hours.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -331,6 +537,107 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+
+        // ==================== APPLICATION MODAL ====================
+        function openApplication(jobTitle) {
+            document.getElementById('selectedJob').textContent = jobTitle;
+            document.getElementById('applyModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            // Reset form
+            document.getElementById('applicationForm').reset();
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('submitApplyBtn').style.display = 'flex';
+        }
+
+        function closeApplication() {
+            document.getElementById('applyModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on click outside
+        document.getElementById('applyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeApplication();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeApplication();
+            }
+        });
+
+        // ==================== SUBMIT APPLICATION ====================
+        function submitApplication(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('applicantName').value.trim();
+            const email = document.getElementById('applicantEmail').value.trim();
+            const phone = document.getElementById('applicantPhone').value.trim();
+            const experience = document.getElementById('applicantExperience').value;
+            const jobTitle = document.getElementById('selectedJob').textContent;
+
+            if (!name || !email) {
+                alert('Please fill in your name and email');
+                return;
+            }
+
+            // Show success message
+            document.getElementById('successEmail').textContent = email;
+            document.getElementById('successMsg').style.display = 'block';
+            document.getElementById('submitApplyBtn').style.display = 'none';
+
+            // Log application (in production, send to server)
+            console.log('📋 New Application:');
+            console.log('  Job:', jobTitle);
+            console.log('  Name:', name);
+            console.log('  Email:', email);
+            console.log('  Phone:', phone || 'Not provided');
+            console.log('  Experience:', experience);
+
+            // Auto close after 4 seconds
+            setTimeout(function() {
+                closeApplication();
+            }, 4000);
+        }
+
+        // ==================== MOBILE MENU ====================
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        console.log('🚀 Careers page loaded successfully!');
+    </script>
 </body>
 </html>
