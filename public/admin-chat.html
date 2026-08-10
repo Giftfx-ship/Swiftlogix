@@ -1,415 +1,461 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Chat Support - SwiftLogix</title>
+    <title>Admin Chat - SwiftLogix</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <style>
-        .chat-admin-page {
-            padding: 8rem 5% 4rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#0a0a12;color:#fff;min-height:100vh}
 
-        .chat-admin-header {
+        /* ==================== TRUCK LOADER ==================== */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a12;
+            z-index: 99999;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .chat-admin-header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .chat-admin-header .back-btn {
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            background: rgba(255,255,255,0.05);
-            color: var(--text);
-            border: 1px solid var(--border);
-            text-decoration: none;
-            transition: all var(--transition);
-        }
-
-        .chat-admin-header .back-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .chat-admin-grid {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 2rem;
-            min-height: 500px;
-        }
-
-        /* Conversations List */
-        .conversations-list {
-            background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            max-height: 600px;
-            display: flex;
             flex-direction: column;
-        }
-
-        .conversations-list .list-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .conversations-list .list-header h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .conversations-list .list-header .unread-badge {
-            background: #ff4444;
-            color: #fff;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 50px;
-        }
-
-        .conversations-list .list-body {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .conversation-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-
-        .conversation-item:hover {
-            background: rgba(255,255,255,0.05);
-        }
-
-        .conversation-item.active {
-            background: rgba(0,242,254,0.08);
-            border-left: 3px solid var(--primary);
-        }
-
-        .conversation-item .conv-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .conversation-item .conv-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .conversation-item .conv-time {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .conversation-item .conv-email {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .conversation-item .conv-last-msg {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            white-space: nowrap;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
             overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: 4px;
         }
-
-        .conversation-item .conv-status {
-            display: inline-block;
-            font-size: 0.6rem;
-            padding: 0.15rem 0.6rem;
-            border-radius: 50px;
-            margin-top: 4px;
+        .loader-wrapper.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
-
-        .conv-status.open { background: rgba(0,242,254,0.2); color: #00f2fe; }
-        .conv-status.in_progress { background: rgba(255,165,0,0.2); color: #ffa500; }
-        .conv-status.resolved { background: rgba(0,255,0,0.2); color: #0f0; }
-        .conv-status.closed { background: rgba(255,255,255,0.1); color: #666; }
-
-        .conv-unread {
-            background: #ff4444;
-            color: #fff;
-            font-size: 0.6rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 50px;
-        }
-
-        /* Chat Area */
-        .chat-area {
-            background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            max-height: 600px;
-        }
-
-        .chat-area .chat-area-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-area .chat-area-header .user-info h4 {
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .chat-area .chat-area-header .user-info .user-email {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .chat-area .chat-area-header .resolve-btn {
-            padding: 0.4rem 1.2rem;
-            border-radius: 50px;
-            background: rgba(0,255,0,0.1);
-            color: #0f0;
-            border: 1px solid rgba(0,255,0,0.2);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-size: 0.8rem;
-        }
-
-        .chat-area .chat-area-header .resolve-btn:hover {
-            background: rgba(0,255,0,0.2);
-        }
-
-        .chat-area .chat-messages {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            min-height: 350px;
-        }
-
-        .chat-area .chat-messages .message {
-            margin-bottom: 1rem;
-            max-width: 80%;
-        }
-
-        .chat-area .chat-messages .message.user {
-            margin-right: auto;
-        }
-
-        .chat-area .chat-messages .message.admin {
-            margin-left: auto;
-        }
-
-        .chat-area .chat-messages .message .bubble {
-            padding: 0.8rem 1.2rem;
-            border-radius: 16px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .chat-area .chat-messages .message.user .bubble {
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-area .chat-messages .message.admin .bubble {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--secondary);
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-area .chat-messages .message .time {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            display: block;
-            margin-top: 4px;
-        }
-
-        .chat-area .chat-messages .message .sender-name {
-            font-size: 0.7rem;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .chat-area .chat-input-area {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 0.8rem;
-        }
-
-        .chat-area .chat-input-area input {
-            flex: 1;
-            padding: 0.8rem 1.2rem;
+        .loader-road {
+            position: absolute;
+            bottom: 22%;
+            left: 0;
+            width: 100%;
+            height: 4px;
             background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            color: #fff;
-            font-size: 0.9rem;
         }
-
-        .chat-area .chat-input-area input:focus {
-            outline: none;
-            border-color: var(--primary);
+        .loader-road::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(0,242,254,0.3) 15px, rgba(0,242,254,0.3) 20px);
+            animation: roadMove 2s linear infinite;
         }
-
-        .chat-area .chat-input-area .send-btn {
-            padding: 0.8rem 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: none;
-            border-radius: 60px;
-            color: var(--secondary);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all var(--transition);
+        @keyframes roadMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-40px); }
         }
-
-        .chat-area .chat-input-area .send-btn:hover {
-            transform: scale(1.02);
+        .loader-truck-container {
+            position: relative;
+            animation: truckDrive 3s ease-in-out infinite;
+            z-index: 2;
         }
-
-        .empty-chat {
+        @keyframes truckDrive {
+            0% { transform: translateX(-60vw) scale(1); }
+            50% { transform: translateX(5vw) scale(1.02); }
+            100% { transform: translateX(60vw) scale(1); }
+        }
+        .loader-truck {
+            position: relative;
+            width: 280px;
+            height: 130px;
+        }
+        .loader-truck .cargo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100px;
+            background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
+            border-radius: 8px 12px 8px 8px;
+            border: 2px solid rgba(0,242,254,0.25);
+            z-index: 2;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
+        }
+        .loader-truck .cargo .brand {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: 3;
+        }
+        .loader-truck .cargo .brand span {
+            -webkit-text-fill-color: #00f2fe;
+        }
+        .loader-truck .cargo .door-line {
+            position: absolute;
+            top: 10%;
+            width: 2px;
+            height: 80%;
+            background: rgba(0,242,254,0.08);
+        }
+        .loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
+        .loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
+        .loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
+        .loader-truck .cabin {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            width: 85px;
+            height: 75px;
+            background: linear-gradient(180deg, #1a2a4a, #0a1628);
+            border-radius: 12px 20px 8px 8px;
+            border: 2px solid rgba(0,242,254,0.3);
+            z-index: 3;
+        }
+        .loader-truck .cabin .window {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 35px;
+            height: 28px;
+            background: rgba(0,242,254,0.12);
+            border-radius: 8px 8px 0 0;
+            border: 1px solid rgba(0,242,254,0.2);
+            overflow: hidden;
+        }
+        .loader-truck .cabin .window::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
             height: 100%;
-            color: var(--text-muted);
+            background: linear-gradient(90deg, transparent, rgba(0,242,254,0.3), transparent);
+            animation: windowGlow 2s ease-in-out infinite;
         }
-
-        .empty-chat i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.3;
+        @keyframes windowGlow {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
         }
-
-        .no-conversations {
+        .loader-truck .cabin .door {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            width: 22px;
+            height: 28px;
+            background: rgba(0,242,254,0.06);
+            border-radius: 4px 4px 0 0;
+            border: 1px solid rgba(0,242,254,0.12);
+        }
+        .loader-truck .cabin .door::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: rgba(0,242,254,0.3);
+            border-radius: 50%;
+        }
+        .loader-truck .cabin .headlight {
+            position: absolute;
+            bottom: 8px;
+            width: 10px;
+            height: 5px;
+            background: rgba(0,242,254,0.5);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 15px rgba(0,242,254,0.2);
+        }
+        .loader-truck .cabin .headlight.left { left: -8px; }
+        .loader-truck .cabin .headlight.right { left: 15px; }
+        .loader-truck .wheel {
+            position: absolute;
+            bottom: -12px;
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 40% 35%, #2a2a3a, #0a0a12);
+            border-radius: 50%;
+            border: 3px solid #1a1a2a;
+            z-index: 4;
+            animation: wheelSpin 1s linear infinite;
+        }
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loader-truck .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(0,242,254,0.15);
+            border-radius: 50%;
+            border: 1px solid rgba(0,242,254,0.08);
+        }
+        .loader-truck .wheel.front { right: 15px; }
+        .loader-truck .wheel.rear { left: 25px; }
+        .loader-truck .wheel.rear2 { left: 50px; }
+        .loader-truck .exhaust {
+            position: absolute;
+            bottom: 25px;
+            right: -6px;
+            width: 5px;
+            height: 12px;
+            background: #2a2a3a;
+            border-radius: 0 0 4px 4px;
+            z-index: 1;
+        }
+        .loader-truck .exhaust::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: -4px;
+            width: 14px;
+            height: 8px;
+            background: radial-gradient(ellipse, rgba(0,242,254,0.15), transparent);
+            border-radius: 50%;
+            animation: exhaustPuff 1s ease-out infinite;
+        }
+        @keyframes exhaustPuff {
+            0% { transform: scale(0.5); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .loader-text-container {
+            position: absolute;
+            bottom: 32%;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
+            z-index: 5;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+        }
+        .loader-text-container .loader-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 5px;
+            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loader-text-container .loader-sub {
+            color: #888;
+            font-size: 11px;
+            letter-spacing: 3px;
+            margin-top: 4px;
+        }
+        .loader-progress-container {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            z-index: 5;
+        }
+        .loader-progress-container .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .loader-progress-container .progress-bar .fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00f2fe, #00d4ff);
+            border-radius: 3px;
+            animation: progressFill 1.8s ease-out forwards;
+        }
+        @keyframes progressFill {
+            0% { width: 0%; }
+            20% { width: 25%; }
+            50% { width: 55%; }
+            80% { width: 85%; }
+            100% { width: 100%; }
+        }
+        .loader-progress-container .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 10px;
+            color: #666;
+            letter-spacing: 1px;
         }
 
-        .no-conversations i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
+        /* ==================== NAVBAR ==================== */
+        .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,242,254,0.2)}
+        .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
+        .logo span{color:#00f2fe}
+        .navbar .admin-info{display:flex;align-items:center;gap:1rem}
+        .navbar .admin-info span{color:#888;font-size:0.8rem}
+        .navbar .admin-info .logout-btn{background:rgba(255,68,68,0.1);padding:0.5rem 1.5rem;border-radius:50px;color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all 0.3s;font-weight:600}
+        .navbar .admin-info .logout-btn:hover{background:rgba(255,68,68,0.2)}
 
-        @media (max-width: 768px) {
-            .chat-admin-grid {
-                grid-template-columns: 1fr;
+        /* ==================== CHAT ADMIN PAGE ==================== */
+        .chat-admin-page{padding:2rem 5% 4rem;max-width:1400px;margin:0 auto}
+        .chat-admin-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:2rem}
+        .chat-admin-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .chat-admin-header .back-btn{padding:0.5rem 1.5rem;border-radius:50px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);text-decoration:none;transition:all 0.3s}
+        .chat-admin-header .back-btn:hover{border-color:#00f2fe;color:#00f2fe}
+
+        .chat-admin-grid{display:grid;grid-template-columns:350px 1fr;gap:2rem;min-height:500px}
+
+        /* Conversations List */
+        .conversations-list{background:rgba(255,255,255,0.02);border-radius:24px;border:1px solid rgba(255,255,255,0.05);overflow:hidden;max-height:600px;display:flex;flex-direction:column}
+        .conversations-list .list-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center}
+        .conversations-list .list-header h3{font-size:1rem;font-weight:700;color:#00f2fe}
+        .conversations-list .list-header .unread-badge{background:#ff4444;color:#fff;font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:50px}
+        .conversations-list .list-body{flex:1;overflow-y:auto}
+
+        .conversation-item{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all 0.3s}
+        .conversation-item:hover{background:rgba(255,255,255,0.05)}
+        .conversation-item.active{background:rgba(0,242,254,0.08);border-left:3px solid #00f2fe}
+        .conversation-item .conv-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+        .conversation-item .conv-name{font-weight:600;font-size:0.95rem}
+        .conversation-item .conv-time{font-size:0.7rem;color:#888}
+        .conversation-item .conv-email{font-size:0.75rem;color:#888}
+        .conversation-item .conv-last-msg{font-size:0.8rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+        .conversation-item .conv-status{display:inline-block;font-size:0.6rem;padding:0.15rem 0.6rem;border-radius:50px;margin-top:4px}
+        .conv-status.open{background:rgba(0,242,254,0.2);color:#00f2fe}
+        .conv-status.in_progress{background:rgba(255,165,0,0.2);color:#ffa500}
+        .conv-status.resolved{background:rgba(0,255,0,0.2);color:#0f0}
+        .conv-status.closed{background:rgba(255,255,255,0.1);color:#666}
+        .conv-unread{background:#ff4444;color:#fff;font-size:0.6rem;padding:0.1rem 0.5rem;border-radius:50px}
+
+        /* Chat Area */
+        .chat-area{background:rgba(255,255,255,0.02);border-radius:24px;border:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;max-height:600px}
+        .chat-area .chat-area-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center}
+        .chat-area .chat-area-header .user-info h4{font-size:1rem;font-weight:700}
+        .chat-area .chat-area-header .user-info .user-email{font-size:0.8rem;color:#888}
+        .chat-area .chat-area-header .resolve-btn{padding:0.4rem 1.2rem;border-radius:50px;background:rgba(0,255,0,0.1);color:#0f0;border:1px solid rgba(0,255,0,0.2);cursor:pointer;transition:all 0.3s;font-size:0.8rem}
+        .chat-area .chat-area-header .resolve-btn:hover{background:rgba(0,255,0,0.2)}
+
+        .chat-area .chat-messages{flex:1;padding:1.5rem;overflow-y:auto;min-height:350px}
+        .chat-area .chat-messages .message{margin-bottom:1rem;max-width:80%}
+        .chat-area .chat-messages .message.user{margin-right:auto}
+        .chat-area .chat-messages .message.admin{margin-left:auto}
+        .chat-area .chat-messages .message .bubble{padding:0.8rem 1.2rem;border-radius:16px;font-size:0.9rem;line-height:1.5}
+        .chat-area .chat-messages .message.user .bubble{background:rgba(255,255,255,0.08);color:#fff;border-bottom-left-radius:4px}
+        .chat-area .chat-messages .message.admin .bubble{background:linear-gradient(135deg,#00f2fe,#00d4ff);color:#0a0a12;border-bottom-right-radius:4px}
+        .chat-area .chat-messages .message .time{font-size:0.65rem;color:#888;display:block;margin-top:4px}
+        .chat-area .chat-messages .message .sender-name{font-size:0.7rem;font-weight:600;display:block;margin-bottom:2px}
+
+        .chat-area .chat-input-area{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:0.8rem}
+        .chat-area .chat-input-area input{flex:1;padding:0.8rem 1.2rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:60px;color:#fff;font-size:0.9rem}
+        .chat-area .chat-input-area input:focus{outline:none;border-color:#00f2fe}
+        .chat-area .chat-input-area .send-btn{padding:0.8rem 1.5rem;background:linear-gradient(135deg,#00f2fe,#00d4ff);border:none;border-radius:60px;color:#0a0a12;font-weight:700;cursor:pointer;transition:all 0.3s}
+        .chat-area .chat-input-area .send-btn:hover{transform:scale(1.02)}
+
+        .empty-chat{display:flex;align-items:center;justify-content:center;flex-direction:column;height:100%;color:#888}
+        .empty-chat i{font-size:3rem;margin-bottom:1rem;opacity:0.3}
+        .no-conversations{text-align:center;padding:2rem;color:#888}
+        .no-conversations i{font-size:2rem;margin-bottom:1rem;opacity:0.3}
+
+        /* Footer */
+        .footer{background:#050508;padding:2rem 5%;text-align:center;color:#666;margin-top:4rem;border-top:1px solid rgba(0,242,254,0.1)}
+        .footer .footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .footer .footer-bottom p{color:#555;font-size:13px}
+        .footer .footer-bottom .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+        .footer .footer-bottom .footer-links a{color:#555;font-size:13px;transition:color 0.3s;text-decoration:none}
+        .footer .footer-bottom .footer-links a:hover{color:#00f2fe}
+
+        /* Responsive */
+        @media(max-width:768px){
+            .loader-truck-container{transform:scale(0.7)}
+            .loader-truck{width:200px;height:100px}
+            .loader-truck .cargo{width:140px;height:75px}
+            .loader-truck .cargo .brand{font-size:18px}
+            .loader-truck .cabin{width:65px;height:55px;top:8px}
+            .loader-truck .cabin .window{width:25px;height:20px;top:8px;left:8px}
+            .loader-truck .wheel{width:20px;height:20px;bottom:-8px}
+            .loader-truck .wheel::before{width:6px;height:6px}
+            .loader-truck .wheel.front{right:10px}
+            .loader-truck .wheel.rear{left:18px}
+            .loader-truck .wheel.rear2{left:35px}
+            .loader-truck .exhaust{display:none}
+            @keyframes truckDrive {
+                0% { transform: translateX(-80vw) scale(0.7); }
+                50% { transform: translateX(0vw) scale(0.75); }
+                100% { transform: translateX(80vw) scale(0.7); }
             }
-            .conversations-list {
-                max-height: 300px;
-            }
-            .chat-area {
-                max-height: 500px;
+            .loader-progress-container{width:200px}
+            .loader-text-container .loader-title{font-size:18px}
+            .chat-admin-grid{grid-template-columns:1fr}
+            .conversations-list{max-height:300px}
+            .chat-area{max-height:500px}
+        }
+        @media(max-width:480px){
+            .loader-truck-container{transform:scale(0.5)}
+            .loader-progress-container{width:150px}
+            .loader-text-container .loader-title{font-size:14px}
+            @keyframes truckDrive {
+                0% { transform: translateX(-90vw) scale(0.5); }
+                50% { transform: translateX(0vw) scale(0.55); }
+                100% { transform: translateX(90vw) scale(0.5); }
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span>Logix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
-            </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
-    </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading Chat Support...</div>
         </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text"><span>Loading</span><span id="progressPercent">0%</span></div>
         </div>
-    </div>
-</div>
-
-    <!-- BACKGROUND -->
-    <div class="bg-glow">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">Swift<span>Logix</span></a>
-            <div style="display:flex;align-items:center;gap:1rem;">
-                <span style="color:var(--text-muted);font-size:0.8rem;"><i class="fas fa-user-shield"></i> Admin</span>
-                <button onclick="logout()" style="background:rgba(255,68,68,0.1);padding:0.5rem 1.5rem;border-radius:50px;color:#ff4444;border:1px solid rgba(255,68,68,0.2);cursor:pointer;transition:all var(--transition);font-weight:600;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+            <div class="admin-info">
+                <span><i class="fas fa-user-shield"></i> <span id="adminName">Admin</span></span>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </div>
     </nav>
 
-    <!-- CHAT ADMIN PAGE -->
+    <!-- ==================== CHAT ADMIN PAGE ==================== -->
     <div class="chat-admin-page">
         <div class="chat-admin-header">
             <h1><i class="fas fa-comment-dots"></i> Chat Support</h1>
@@ -456,14 +502,16 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="footer" style="margin-top:0;">
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
         <div class="container">
             <div class="footer-bottom">
                 <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
                 <div class="footer-links">
                     <a href="privacy.html">Privacy Policy</a>
                     <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
                 </div>
             </div>
         </div>
@@ -475,9 +523,39 @@
         let conversations = [];
         let pollInterval = null;
 
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 10 + 5;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 200);
+
+        // ==================== AUTH CHECK ====================
         function checkAuth() {
             const token = localStorage.getItem('adminToken');
-            if (!token) { window.location.href = 'admin-login.html'; return false; }
+            if (!token) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            const username = localStorage.getItem('adminUsername') || 'Admin';
+            document.getElementById('adminName').textContent = username;
             return true;
         }
 
@@ -487,6 +565,7 @@
             window.location.href = 'admin-login.html';
         }
 
+        // ==================== LOAD CONVERSATIONS ====================
         async function loadConversations() {
             if (!checkAuth()) return;
             try {
@@ -504,6 +583,7 @@
             }
         }
 
+        // ==================== RENDER CONVERSATIONS ====================
         function renderConversations() {
             const list = document.getElementById('conversationsList');
             if (!conversations || conversations.length === 0) {
@@ -532,11 +612,13 @@
             }).join('');
         }
 
+        // ==================== UPDATE UNREAD COUNT ====================
         function updateUnreadCount() {
             const total = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
             document.getElementById('unreadCount').textContent = total;
         }
 
+        // ==================== SELECT CONVERSATION ====================
         async function selectConversation(conversationId) {
             currentConversationId = conversationId;
             renderConversations();
@@ -565,6 +647,7 @@
             }
         }
 
+        // ==================== RENDER MESSAGES ====================
         function renderMessages(messages) {
             const container = document.getElementById('chatMessages');
             if (!messages || messages.length === 0) {
@@ -586,6 +669,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        // ==================== SEND ADMIN MESSAGE ====================
         async function sendAdminMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
@@ -608,7 +692,6 @@
                 if (!response.ok) throw new Error('Failed to send');
                 const data = await response.json();
                 if (data.success) {
-                    // Add message to UI
                     const container = document.getElementById('chatMessages');
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'message admin';
@@ -629,6 +712,7 @@
             }
         }
 
+        // ==================== RESOLVE CONVERSATION ====================
         async function resolveConversation() {
             if (!currentConversationId) return;
             if (!confirm('Mark this conversation as resolved?')) return;
@@ -640,7 +724,6 @@
                 if (!response.ok) throw new Error('Failed to resolve');
                 document.getElementById('resolveBtn').style.display = 'none';
                 loadConversations();
-                // Reload messages to show system message
                 selectConversation(currentConversationId);
             } catch (error) {
                 console.error('Resolve error:', error);
@@ -648,7 +731,7 @@
             }
         }
 
-        // Poll for new messages
+        // ==================== POLL FOR NEW MESSAGES ====================
         function startPolling() {
             if (pollInterval) clearInterval(pollInterval);
             pollInterval = setInterval(() => {
@@ -659,15 +742,16 @@
             }, 10000);
         }
 
-        // Check auth and load
+        // ==================== INIT ====================
         checkAuth();
         loadConversations();
         startPolling();
 
-        // Clean up interval on page unload
         window.addEventListener('beforeunload', () => {
             if (pollInterval) clearInterval(pollInterval);
         });
+
+        console.log('🚀 Admin Chat loaded successfully!');
     </script>
 </body>
 </html>
