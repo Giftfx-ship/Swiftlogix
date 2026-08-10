@@ -8,24 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* ==================== BLOG HERO WITH BACKGROUND ==================== */
         .blog-hero {
             padding: 8rem 5% 4rem;
             text-align: center;
+            background: url('/images/hero-bg.jpg') center/cover no-repeat;
+            position: relative;
+        }
+        .blog-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 26, 0.8);
+            z-index: 0;
+        }
+        .blog-hero .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
         }
         .blog-hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
         .blog-hero p {
-            color: var(--text-muted);
+            color: #c8d4e8;
             font-size: 1.2rem;
             max-width: 700px;
             margin: 0 auto;
+            line-height: 1.8;
         }
+
+        /* ==================== BLOG GRID ==================== */
         .blog-grid-page { padding: 3rem 0 5rem; }
         .blog-grid-page .grid {
             display: grid;
@@ -34,26 +56,43 @@
         }
         .blog-grid-page .blog-card {
             background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
+            border-radius: 24px;
             overflow: hidden;
-            border: 1px solid var(--border);
-            transition: all var(--transition);
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
         }
         .blog-grid-page .blog-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 50px rgba(0,242,254,0.08);
+            transform: translateY(-8px);
+            border-color: #FF6600;
+            box-shadow: 0 20px 50px rgba(108,27,140,0.12);
         }
+
         .blog-grid-page .blog-card .blog-image {
             height: 200px;
-            background: var(--card);
+            background: linear-gradient(135deg, rgba(108,27,140,0.15), rgba(255,102,0,0.05));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            color: var(--primary);
-            opacity: 0.3;
+            font-size: 4rem;
+            color: #FF6600;
+            opacity: 0.9;
+            position: relative;
+            overflow: hidden;
         }
+        .blog-grid-page .blog-card .blog-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.3));
+        }
+        .blog-grid-page .blog-card .blog-image i {
+            position: relative;
+            z-index: 1;
+        }
+
         .blog-grid-page .blog-card .blog-content {
             padding: 1.5rem;
         }
@@ -63,16 +102,24 @@
             border-radius: 50px;
             font-size: 0.65rem;
             font-weight: 600;
-            background: rgba(0,242,254,0.1);
-            color: var(--primary);
+            background: rgba(255,102,0,0.15);
+            color: #FF6600;
             margin-bottom: 0.8rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .blog-grid-page .blog-card .blog-content h3 {
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
+            color: #fff;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+        .blog-grid-page .blog-card:hover .blog-content h3 {
+            color: #FF6600;
         }
         .blog-grid-page .blog-card .blog-content p {
-            color: var(--text-muted);
+            color: #9aa8c9;
             font-size: 0.9rem;
             line-height: 1.6;
         }
@@ -81,87 +128,85 @@
             align-items: center;
             gap: 1rem;
             margin-top: 1rem;
-            color: var(--text-muted);
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #667799;
             font-size: 0.8rem;
         }
+        .blog-grid-page .blog-card .blog-content .meta i {
+            color: #FF6600;
+            font-size: 0.7rem;
+            margin-right: 4px;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 992px) {
             .blog-grid-page .grid { grid-template-columns: repeat(2,1fr); }
+            .blog-hero h1 { font-size: 2.8rem; }
+        }
+        @media (max-width: 768px) {
+            .blog-hero { padding: 6rem 5% 3rem; }
+            .blog-hero h1 { font-size: 2.2rem; }
+            .blog-hero p { font-size: 1rem; }
         }
         @media (max-width: 480px) {
-            .blog-hero h1 { font-size: 2.2rem; }
+            .blog-hero h1 { font-size: 1.8rem; }
             .blog-grid-page .grid { grid-template-columns: 1fr; }
+            .blog-grid-page .blog-card .blog-image { height: 160px; font-size: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading blog...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
     </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
 
-    <!-- BACKGROUND -->
+    <!-- ==================== BACKGROUND ==================== -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -175,16 +220,20 @@
         </div>
     </nav>
 
-    <!-- BLOG HERO -->
+    <!-- ==================== BLOG HERO ==================== -->
     <section class="blog-hero">
-        <h1>Blog & Insights</h1>
-        <p>Stay updated with the latest news, insights, and trends in global logistics and supply chain management.</p>
+        <div class="content">
+            <h1>Blog & Insights</h1>
+            <p>Stay updated with the latest news, insights, and trends in global logistics and supply chain management.</p>
+        </div>
     </section>
 
-    <!-- BLOG GRID -->
+    <!-- ==================== BLOG GRID ==================== -->
     <section class="blog-grid-page">
         <div class="container">
             <div class="grid">
+
+                <!-- Blog Card 1 -->
                 <div class="blog-card">
                     <div class="blog-image"><i class="fas fa-ship"></i></div>
                     <div class="blog-content">
@@ -197,6 +246,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Blog Card 2 -->
                 <div class="blog-card">
                     <div class="blog-image"><i class="fas fa-box"></i></div>
                     <div class="blog-content">
@@ -209,6 +260,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Blog Card 3 -->
                 <div class="blog-card">
                     <div class="blog-image"><i class="fas fa-robot"></i></div>
                     <div class="blog-content">
@@ -221,6 +274,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Blog Card 4 -->
                 <div class="blog-card">
                     <div class="blog-image"><i class="fas fa-leaf"></i></div>
                     <div class="blog-content">
@@ -233,6 +288,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Blog Card 5 -->
                 <div class="blog-card">
                     <div class="blog-image"><i class="fas fa-truck"></i></div>
                     <div class="blog-content">
@@ -245,6 +302,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Blog Card 6 -->
                 <div class="blog-card">
                     <div class="blog-image"><i class="fas fa-globe"></i></div>
                     <div class="blog-content">
@@ -257,11 +316,12 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -315,6 +375,43 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+
+        // ==================== MOBILE MENU ====================
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        console.log('🚀 Blog page loaded successfully!');
+    </script>
 </body>
 </html>
