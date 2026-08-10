@@ -346,13 +346,11 @@ const getTrackingEmailHTML = (shipment, userEmail, trackingLink) => {
                     </tr>
                     <tr>
                         <td style="padding:24px 30px 20px;text-align:center;">
-                            <a href="${trackingLink}" style="display:inline-block;padding:12px 32px;background:#0f172a;color:#ffffff;font-size:14px;font-weight:600;border-radius:50px;text-decoration:none;">Track Package →</a>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding:16px 30px;text-align:center;border-top:1px solid #e2e8f0;">
                             <div style="font-size:12px;color:#94a3b8;">© 2026 SwiftLogix Logistics</div>
-                            <div style="font-size:11px;color:#cbd5e1;margin-top:2px;">Sent to ${userEmail}</div>
                         </td>
                     </tr>
                 </table>
