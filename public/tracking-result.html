@@ -143,7 +143,7 @@
             color: #00f2fe;
         }
         
-        .track-btn {
+        .track-btn-nav {
             background: linear-gradient(135deg, #6C1B8C, #FF6600);
             padding: 0.7rem 1.8rem;
             border-radius: 50px;
@@ -152,11 +152,11 @@
             transition: all 0.3s !important;
         }
         
-        .track-btn::after {
+        .track-btn-nav::after {
             display: none !important;
         }
         
-        .track-btn:hover {
+        .track-btn-nav:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(108, 27, 140, 0.4);
         }
@@ -204,17 +204,7 @@
             margin-bottom: 2rem;
             border: 1px solid rgba(108, 27, 140, 0.2);
             animation: fadeUp 0.6s ease forwards;
-        }
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            opacity: 0;
         }
         
         .result-header .tracking-number-box {
@@ -261,6 +251,12 @@
             border-radius: 60px;
             font-weight: 600;
             font-size: 0.9rem;
+            animation: pulseBadge 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseBadge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
         
         .status-order_confirmed {
@@ -315,12 +311,23 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s;
             animation: fadeUp 0.6s ease forwards;
-            animation-delay: 0.2s;
             opacity: 0;
         }
         
-        .info-card:nth-child(2) {
-            animation-delay: 0.3s;
+        .info-card:nth-child(1) { animation-delay: 0.2s; }
+        .info-card:nth-child(2) { animation-delay: 0.3s; }
+        .info-card:nth-child(3) { animation-delay: 0.4s; }
+        .info-card:nth-child(4) { animation-delay: 0.5s; }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
         
         .info-card:hover {
@@ -344,6 +351,14 @@
             justify-content: space-between;
             padding: 0.8rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s;
+        }
+        
+        .info-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            border-radius: 8px;
         }
         
         .info-row:last-child {
@@ -360,8 +375,10 @@
             font-size: 0.9rem;
             text-align: right;
             max-width: 60%;
+            transition: all 0.3s;
         }
         
+        /* Timeline */
         .timeline-section {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 20px;
@@ -369,7 +386,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 2rem;
             animation: fadeUp 0.6s ease forwards;
-            animation-delay: 0.4s;
+            animation-delay: 0.6s;
             opacity: 0;
         }
         
@@ -393,6 +410,25 @@
             padding-left: 1.5rem;
             border-left: 2px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s;
+            animation: slideInLeft 0.5s ease forwards;
+            opacity: 0;
+        }
+        
+        .timeline-item:nth-child(1) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(4) { animation-delay: 1.0s; }
+        .timeline-item:nth-child(5) { animation-delay: 1.1s; }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         
         .timeline-item::before {
@@ -448,6 +484,7 @@
             color: rgba(255, 255, 255, 0.4);
         }
         
+        /* Map */
         .map-container {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 20px;
@@ -455,7 +492,7 @@
             margin-bottom: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.05);
             animation: fadeUp 0.6s ease forwards;
-            animation-delay: 0.5s;
+            animation-delay: 1.2s;
             opacity: 0;
         }
         
@@ -473,12 +510,13 @@
             background: rgba(0, 0, 0, 0.4);
         }
         
+        /* Action Buttons */
         .action-buttons {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
             animation: fadeUp 0.6s ease forwards;
-            animation-delay: 0.6s;
+            animation-delay: 1.4s;
             opacity: 0;
         }
         
@@ -499,6 +537,23 @@
             justify-content: center;
             gap: 0.6rem;
             font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
         }
         
         .btn-primary:hover {
@@ -528,14 +583,17 @@
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
         }
         
+        /* Not Found */
         .not-found {
             text-align: center;
             padding: 5rem 2rem;
             background: rgba(255, 255, 255, 0.02);
             border-radius: 24px;
             border: 1px solid rgba(255, 68, 68, 0.2);
+            animation: fadeUp 0.6s ease forwards;
         }
         
         .not-found i {
@@ -560,6 +618,37 @@
             padding: 0.8rem 2.5rem;
         }
         
+        /* Confetti Animation for Delivered */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall linear forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Footer */
         .footer {
             background: rgba(6, 10, 22, 0.95);
             padding: 2rem 5%;
@@ -574,7 +663,7 @@
             font-size: 13px;
         }
         
-        /* PDF Loading Overlay */
+        /* PDF Loading */
         .pdf-loading {
             display: none;
             position: fixed;
@@ -629,11 +718,7 @@
             transition: width 0.3s;
         }
         
-        /* PDF Content (hidden) */
-        #pdfContent {
-            display: none;
-        }
-        
+        /* Responsive */
         @media (max-width: 768px) {
             .menu-toggle {
                 display: block;
@@ -757,7 +842,7 @@
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
                 <a href="blog.html">Blog</a>
-                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+                <a href="tracking.html" class="track-btn-nav"><i class="fas fa-search"></i> Track</a>
             </div>
         </div>
     </nav>
@@ -791,6 +876,33 @@
             });
         });
 
+        // ===== CONFETTI ANIMATION =====
+        function launchConfetti() {
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+            
+            const colors = ['#00f2fe', '#6C1B8C', '#FF6600', '#ffd700', '#4CAF50', '#ff4444', '#0ff', '#fff'];
+            
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 8 + 4) + 'px';
+                confetti.style.height = (Math.random() * 8 + 4) + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetti.style.animationDelay = (Math.random() * 2) + 's';
+                container.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                container.remove();
+            }, 5000);
+        }
+
+        // ===== TRACKING RESULT LOGIC =====
         const API_URL = window.location.origin;
         let shipmentData = null;
         let trackingNumber = localStorage.getItem('trackingNumber');
@@ -1194,6 +1306,11 @@
             const dutyStatus = shipment.parcel?.dutyFeesStatus || 'N/A';
             const dutyDisplay = dutyAmount !== 'N/A' ? dutyAmount : dutyStatus;
 
+            // Check if delivered for confetti
+            if (shipment.status === 'delivered') {
+                setTimeout(launchConfetti, 800);
+            }
+
             let timelineHTML = shipment.timeline.map(item => `
                 <div class="timeline-item ${item.completed ? 'completed' : ''} ${item.active ? 'active' : ''}">
                     <div class="timeline-date">${item.date}</div>
@@ -1312,7 +1429,7 @@
                             .bindPopup(`<b>${shipment.destination}</b><br>${shipment.receiver?.name || 'Receiver'}`);
                     }
                 }
-            }, 300);
+            }, 500);
         }
 
         async function loadTracking() {
@@ -1352,10 +1469,8 @@
             const progress = document.getElementById('pdfProgress');
             loading.classList.add('active');
 
-            // Generate PDF HTML
             const pdfHTML = generatePDFHTML(shipment);
             
-            // Create a temporary container for PDF generation
             const container = document.createElement('div');
             container.innerHTML = pdfHTML;
             container.style.position = 'absolute';
@@ -1366,10 +1481,8 @@
             container.style.padding = '40px';
             document.body.appendChild(container);
 
-            // Update progress
             progress.style.width = '30%';
 
-            // Generate PDF
             const opt = {
                 margin: [0.5, 0.5, 0.5, 0.5],
                 filename: `SwiftLogix_Invoice_${shipment.trackingCode}.pdf`,
