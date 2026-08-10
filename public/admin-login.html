@@ -6,192 +6,679 @@
     <title>Admin Login - SwiftLogix</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <style>
-        .login-page {
-            min-height: 100vh;
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#0a0a12;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
+
+        /* ==================== TRUCK LOADER ==================== */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a12;
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            overflow: hidden;
+        }
+        .loader-wrapper.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Road */
+        .loader-road {
+            position: absolute;
+            bottom: 22%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+        }
+        .loader-road::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(0,242,254,0.3) 15px, rgba(0,242,254,0.3) 20px);
+            animation: roadMove 2s linear infinite;
+        }
+        @keyframes roadMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-40px); }
+        }
+
+        /* Truck Container */
+        .loader-truck-container {
+            position: relative;
+            animation: truckDrive 3s ease-in-out infinite;
+            z-index: 2;
+        }
+        @keyframes truckDrive {
+            0% { transform: translateX(-60vw) scale(1); }
+            50% { transform: translateX(5vw) scale(1.02); }
+            100% { transform: translateX(60vw) scale(1); }
+        }
+
+        /* Truck */
+        .loader-truck {
+            position: relative;
+            width: 280px;
+            height: 130px;
+        }
+
+        /* Cargo */
+        .loader-truck .cargo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100px;
+            background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
+            border-radius: 8px 12px 8px 8px;
+            border: 2px solid rgba(0,242,254,0.25);
+            z-index: 2;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4rem 5%;
         }
-        .login-card {
-            max-width: 440px;
+        .loader-truck .cargo .brand {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: 3;
+        }
+        .loader-truck .cargo .brand span {
+            -webkit-text-fill-color: #00f2fe;
+        }
+        .loader-truck .cargo .door-line {
+            position: absolute;
+            top: 10%;
+            width: 2px;
+            height: 80%;
+            background: rgba(0,242,254,0.08);
+        }
+        .loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
+        .loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
+        .loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
+
+        /* Cabin */
+        .loader-truck .cabin {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            width: 85px;
+            height: 75px;
+            background: linear-gradient(180deg, #1a2a4a, #0a1628);
+            border-radius: 12px 20px 8px 8px;
+            border: 2px solid rgba(0,242,254,0.3);
+            z-index: 3;
+        }
+        .loader-truck .cabin .window {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 35px;
+            height: 28px;
+            background: rgba(0,242,254,0.12);
+            border-radius: 8px 8px 0 0;
+            border: 1px solid rgba(0,242,254,0.2);
+            overflow: hidden;
+        }
+        .loader-truck .cabin .window::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
-            background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,242,254,0.3), transparent);
+            animation: windowGlow 2s ease-in-out infinite;
+        }
+        @keyframes windowGlow {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .loader-truck .cabin .door {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            width: 22px;
+            height: 28px;
+            background: rgba(0,242,254,0.06);
+            border-radius: 4px 4px 0 0;
+            border: 1px solid rgba(0,242,254,0.12);
+        }
+        .loader-truck .cabin .door::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: rgba(0,242,254,0.3);
+            border-radius: 50%;
+        }
+        .loader-truck .cabin .headlight {
+            position: absolute;
+            bottom: 8px;
+            width: 10px;
+            height: 5px;
+            background: rgba(0,242,254,0.5);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 15px rgba(0,242,254,0.2);
+        }
+        .loader-truck .cabin .headlight.left { left: -8px; }
+        .loader-truck .cabin .headlight.right { left: 15px; }
+
+        /* Wheels */
+        .loader-truck .wheel {
+            position: absolute;
+            bottom: -12px;
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 40% 35%, #2a2a3a, #0a0a12);
+            border-radius: 50%;
+            border: 3px solid #1a1a2a;
+            z-index: 4;
+            animation: wheelSpin 1s linear infinite;
+        }
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loader-truck .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(0,242,254,0.15);
+            border-radius: 50%;
+            border: 1px solid rgba(0,242,254,0.08);
+        }
+        .loader-truck .wheel.front { right: 15px; }
+        .loader-truck .wheel.rear { left: 25px; }
+        .loader-truck .wheel.rear2 { left: 50px; }
+
+        /* Exhaust */
+        .loader-truck .exhaust {
+            position: absolute;
+            bottom: 25px;
+            right: -6px;
+            width: 5px;
+            height: 12px;
+            background: #2a2a3a;
+            border-radius: 0 0 4px 4px;
+            z-index: 1;
+        }
+        .loader-truck .exhaust::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: -4px;
+            width: 14px;
+            height: 8px;
+            background: radial-gradient(ellipse, rgba(0,242,254,0.15), transparent);
+            border-radius: 50%;
+            animation: exhaustPuff 1s ease-out infinite;
+        }
+        @keyframes exhaustPuff {
+            0% { transform: scale(0.5); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Loader Text */
+        .loader-text-container {
+            position: absolute;
+            bottom: 32%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 5;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+        }
+        .loader-text-container .loader-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 5px;
+            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loader-text-container .loader-sub {
+            color: #888;
+            font-size: 11px;
+            letter-spacing: 3px;
+            margin-top: 4px;
+        }
+
+        /* Progress Bar */
+        .loader-progress-container {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            z-index: 5;
+        }
+        .loader-progress-container .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .loader-progress-container .progress-bar .fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00f2fe, #00d4ff);
+            border-radius: 3px;
+            animation: progressFill 1.8s ease-out forwards;
+        }
+        @keyframes progressFill {
+            0% { width: 0%; }
+            20% { width: 25%; }
+            50% { width: 55%; }
+            80% { width: 85%; }
+            100% { width: 100%; }
+        }
+        .loader-progress-container .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 10px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        /* ==================== LOGIN CARD ==================== */
+        .login-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
             padding: 3rem;
-            border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-            animation: fadeUp 0.8s ease;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            animation: fadeUp 0.6s ease;
             position: relative;
             overflow: hidden;
         }
-        .login-card::before {
+        .login-container::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary));
+            background: linear-gradient(90deg, #00f2fe, #00d4ff, #00f2fe);
             background-size: 200% 100%;
             animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         @keyframes shimmer {
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
         }
-        .login-card .lock-icon { text-align: center; font-size: 48px; color: var(--primary); margin-bottom: 1rem; }
-        .login-card .logo-text { text-align: center; font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.3rem; }
-        .login-card .badge { text-align: center; color: var(--text-muted); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; }
-        .login-card h2 { text-align: center; font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
-        .login-card .sub { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; }
-        .login-card .form-group { margin-bottom: 1.5rem; position: relative; }
-        .login-card .form-group label { display: block; color: var(--text-muted); font-size: 12px; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.5px; text-transform: uppercase; }
-        .login-card .form-group .input-wrap { position: relative; }
-        .login-card .form-group .input-wrap i { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 16px; }
-        .login-card .form-group input { width: 100%; padding: 1rem 1rem 1rem 3.2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 60px; color: var(--text); font-size: 1rem; transition: all var(--transition); }
-        .login-card .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0,242,254,0.1); background: rgba(255,255,255,0.08); }
-        .login-card .form-group input::placeholder { color: #555; }
-        .login-card .login-btn { width: 100%; padding: 1.1rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: 60px; color: var(--secondary); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-top: 0.5rem; }
-        .login-card .login-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(0,242,254,0.35); }
-        .login-card .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .login-card .error-msg { color: #ff4444; font-size: 13px; text-align: center; margin-top: 1rem; display: none; }
-        .login-card .back-link { display: block; text-align: center; margin-top: 1.5rem; color: var(--text-muted); font-size: 13px; transition: color var(--transition); }
-        .login-card .back-link:hover { color: var(--primary); }
-        .login-card .admin-hint { text-align: center; color: #555; font-size: 12px; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px dashed var(--border); }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container .lock-icon {
+            text-align: center;
+            font-size: 48px;
+            color: #00f2fe;
+            margin-bottom: 1rem;
+        }
+        .login-container .logo-text {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
+        }
+        .login-container .badge {
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+        .login-container h2 {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+        .login-container .sub {
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-container .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .login-container .form-group label {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .login-container .form-group .input-wrap {
+            position: relative;
+        }
+        .login-container .form-group .input-wrap i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00f2fe;
+            font-size: 16px;
+        }
+        .login-container .form-group input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 60px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .login-container .form-group input:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .login-container .form-group input::placeholder {
+            color: #555;
+        }
+
+        .login-container .login-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, #00f2fe, #00d4ff);
+            border: none;
+            border-radius: 60px;
+            color: #0a0a12;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .login-container .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 242, 254, 0.35);
+        }
+        .login-container .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-container .error-msg {
+            color: #ff4444;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+        .login-container .success-msg {
+            color: #4CAF50;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .login-container .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #888;
+            font-size: 13px;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+        .login-container .back-link:hover {
+            color: #00f2fe;
+        }
+
+        .login-container .admin-hint {
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px dashed rgba(0, 242, 254, 0.15);
+        }
+        .login-container .admin-hint i {
+            color: #00f2fe;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media(max-width:768px){
+            .loader-truck-container{transform:scale(0.7)}
+            .loader-truck{width:200px;height:100px}
+            .loader-truck .cargo{width:140px;height:75px}
+            .loader-truck .cargo .brand{font-size:18px}
+            .loader-truck .cabin{width:65px;height:55px;top:8px}
+            .loader-truck .cabin .window{width:25px;height:20px;top:8px;left:8px}
+            .loader-truck .wheel{width:20px;height:20px;bottom:-8px}
+            .loader-truck .wheel::before{width:6px;height:6px}
+            .loader-truck .wheel.front{right:10px}
+            .loader-truck .wheel.rear{left:18px}
+            .loader-truck .wheel.rear2{left:35px}
+            .loader-truck .exhaust{display:none}
+            @keyframes truckDrive {
+                0% { transform: translateX(-80vw) scale(0.7); }
+                50% { transform: translateX(0vw) scale(0.75); }
+                100% { transform: translateX(80vw) scale(0.7); }
+            }
+            .loader-progress-container{width:200px}
+            .loader-text-container .loader-title{font-size:18px}
+            .login-container{padding:2rem 1.5rem}
+        }
+        @media(max-width:480px){
+            .loader-truck-container{transform:scale(0.5)}
+            .loader-progress-container{width:150px}
+            .loader-text-container .loader-title{font-size:14px}
+            @keyframes truckDrive {
+                0% { transform: translateX(-90vw) scale(0.5); }
+                50% { transform: translateX(0vw) scale(0.55); }
+                100% { transform: translateX(90vw) scale(0.5); }
+            }
+            .login-container{padding:1.5rem 1rem}
+        }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-            </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
-            </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
-        </div>
-    </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <!-- Road -->
+        <div class="loader-road"></div>
 
-    <!-- BACKGROUND -->
-    <div class="bg-glow">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-
-    <!-- LOGIN PAGE -->
-    <section class="login-page">
-        <div class="login-card">
-            <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
-            <div class="logo-text">Swift<span style="-webkit-text-fill-color:var(--primary);">Logix</span></div>
-            <div class="badge">✦ Administrator Portal ✦</div>
-            <h2>Secure Login</h2>
-            <p class="sub">Enter your credentials to access the admin dashboard</p>
-
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Username</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="username" placeholder="Enter your username" required>
-                    </div>
+        <!-- Truck -->
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <!-- Cargo -->
+                <div class="cargo">
+                    <div class="brand">Swift<span>Logix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
                 </div>
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="Enter your password" required>
-                    </div>
+                <!-- Cabin -->
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
                 </div>
-                <button type="submit" class="login-btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-                <div id="errorMsg" class="error-msg"></div>
-            </form>
-
-            <div class="admin-hint">
-                <i class="fas fa-key" style="color:var(--primary);"></i>
-                Default: <strong>igwe</strong> / <strong>dev</strong>
+                <!-- Exhaust -->
+                <div class="exhaust"></div>
+                <!-- Wheels -->
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-
-            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
         </div>
-    </section>
+
+        <!-- Text -->
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Securing Admin Access...</div>
+        </div>
+
+        <!-- Progress -->
+        <div class="loader-progress-container">
+            <div class="progress-bar">
+                <div class="fill"></div>
+            </div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span id="progressPercent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LOGIN CARD ==================== -->
+    <div class="login-container">
+        <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="logo-text">Swift<span style="-webkit-text-fill-color:#00f2fe">Logix</span></div>
+        <div class="badge">✦ Administrator Portal ✦</div>
+        <h2>Secure Login</h2>
+        <p class="sub">Enter your credentials to access the admin dashboard</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <div class="input-wrap">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <div class="input-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <div id="errorMsg" class="error-msg"></div>
+            <div id="successMsg" class="success-msg"></div>
+        </form>
+
+        <div class="admin-hint">
+            <i class="fas fa-key"></i>
+            Default: <strong>igwe</strong> / <strong>dev</strong>
+        </div>
+
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    </div>
 
     <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 10 + 5;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 200);
+
+        // ==================== LOGIN FUNCTION ====================
         const API_URL = window.location.origin;
-        async function handleLogin(event) {
-            event.preventDefault();
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('loginBtn');
             const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+
+            // Hide previous messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
             if (!username || !password) {
                 errorMsg.style.display = 'block';
                 errorMsg.textContent = '❌ Please fill in all fields';
                 return;
             }
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-            errorMsg.style.display = 'none';
+
             try {
                 const response = await fetch(`${API_URL}/api/admin/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
+
                 const data = await response.json();
+
                 if (!response.ok || !data.success) {
                     errorMsg.style.display = 'block';
                     errorMsg.textContent = '❌ Invalid credentials. Access denied.';
@@ -199,16 +686,28 @@
                     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                     return;
                 }
+
+                // SUCCESS - Store token and redirect
                 localStorage.setItem('adminToken', data.token);
                 localStorage.setItem('adminUsername', data.admin.username);
-                window.location.href = 'admin.html';
+
+                successMsg.style.display = 'block';
+                successMsg.textContent = '✅ Login successful! Redirecting...';
+
+                setTimeout(function() {
+                    window.location.href = 'admin.html';
+                }, 1500);
+
             } catch (error) {
+                console.error('Login error:', error);
                 errorMsg.style.display = 'block';
                 errorMsg.textContent = '❌ Network error. Please try again.';
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
             }
-        }
+        });
+
+        console.log('🚀 Admin Login page loaded successfully!');
     </script>
 </body>
 </html>
