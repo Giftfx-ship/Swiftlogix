@@ -169,22 +169,630 @@
             background: rgba(0,0,0,0.4);
         }
 
+        /* ==================== FLOATING CHAT WIDGET ==================== */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99999;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chat-toggle {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(108, 27, 140, 0.4);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            border: none;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(108, 27, 140, 0.6);
+        }
+
+        .chat-toggle .chat-icon {
+            font-size: 28px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .chat-toggle .chat-icon i {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* Status Indicator on Toggle Button */
+        .chat-toggle .status-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #1a1a2e;
+            border: 3px solid #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-toggle .status-indicator .status-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+
+        /* Status States */
+        .status-dot.online {
+            background: #4CAF50;
+            animation: pulseGreen 2s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+        }
+
+        .status-dot.offline {
+            background: #ff4444;
+            animation: pulseRed 1.5s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+        }
+
+        .status-dot.checking {
+            background: #ffa500;
+            animation: pulseOrange 1s ease-in-out infinite;
+        }
+
+        @keyframes pulseGreen {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(76, 175, 80, 0.6); }
+            50% { transform: scale(1.3); box-shadow: 0 0 30px rgba(76, 175, 80, 0.8); }
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 68, 68, 0.4); }
+            50% { transform: scale(1.2); box-shadow: 0 0 25px rgba(255, 68, 68, 0.6); }
+        }
+
+        @keyframes pulseOrange {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
+        }
+
+        /* Status Tooltip */
+        .status-tooltip {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            min-width: 180px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .chat-toggle:hover .status-tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .status-tooltip span {
+            display: block;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-tooltip .status-sub {
+            color: #9aa8c9;
+            font-size: 0.7rem;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #1a1a2e;
+            animation: bounceBadge 0.5s ease;
+        }
+
+        @keyframes bounceBadge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            position: absolute;
+            bottom: 85px;
+            right: 0;
+            width: 380px;
+            height: 550px;
+            background: #12121f;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chat-panel.open {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(108,27,140,0.1);
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .chat-header-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .chat-header-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: #9aa8c9;
+        }
+
+        .status-dot-small {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot-small.online {
+            background: #4CAF50;
+            animation: pulseGreen 2s ease-in-out infinite;
+        }
+
+        .status-dot-small.offline {
+            background: #ff4444;
+            animation: pulseRed 1.5s ease-in-out infinite;
+        }
+
+        .status-dot-small.checking {
+            background: #ffa500;
+            animation: pulseOrange 1s ease-in-out infinite;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: #9aa8c9;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+
+        .chat-close:hover {
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* Chat Body */
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-body::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(108,27,140,0.3);
+            border-radius: 10px;
+        }
+
+        /* Welcome Screen */
+        .chat-welcome {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .welcome-icon {
+            font-size: 3rem;
+            color: #6C1B8C;
+            margin-bottom: 1rem;
+        }
+
+        .chat-welcome h4 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-welcome p {
+            color: #9aa8c9;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .quick-replies {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-reply {
+            padding: 0.7rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #c8d4e8;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .quick-reply:hover {
+            background: rgba(108,27,140,0.2);
+            border-color: #6C1B8C;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .quick-reply i {
+            margin-right: 4px;
+            color: #FF6600;
+        }
+
+        .chat-email-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .chat-email-input input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .chat-email-input input:focus {
+            outline: none;
+            border-color: #6C1B8C;
+        }
+
+        .chat-email-input input::placeholder {
+            color: #667799;
+        }
+
+        .start-chat-btn {
+            padding: 0.7rem 1.2rem;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .start-chat-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(108,27,140,0.3);
+        }
+
+        .chat-security-note {
+            color: #667799;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .chat-security-note i {
+            color: #4CAF50;
+        }
+
+        /* Chat Messages */
+        .chat-messages-container {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages-container.active {
+            display: flex;
+        }
+
+        .chat-messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .chat-messages-list::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .chat-messages-list::-webkit-scrollbar-thumb {
+            background: rgba(108,27,140,0.3);
+            border-radius: 10px;
+        }
+
+        .message-bubble {
+            margin-bottom: 1rem;
+            max-width: 85%;
+            animation: messageIn 0.3s ease;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-bubble.user {
+            margin-left: auto;
+        }
+
+        .message-bubble.admin {
+            margin-right: auto;
+        }
+
+        .message-bubble .bubble {
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message-bubble.user .bubble {
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.admin .bubble {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-bubble .sender-name {
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+            color: #9aa8c9;
+        }
+
+        .message-bubble.user .sender-name {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .message-bubble .time {
+            font-size: 0.6rem;
+            color: #667799;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .message-bubble.user .time {
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem 0;
+            color: #667799;
+            font-size: 0.8rem;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #667799;
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Chat Footer */
+        .chat-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 60px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .chat-input-area input:focus {
+            outline: none;
+            border-color: #6C1B8C;
+        }
+
+        .chat-input-area input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-send-btn {
+            padding: 0.7rem 1.2rem;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border: none;
+            border-radius: 60px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .chat-send-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(108,27,140,0.3);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-footer-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: #667799;
+        }
+
+        .chat-footer-info strong {
+            color: #4CAF50;
+        }
+
+        .chat-footer-info i {
+            margin-right: 3px;
+        }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 992px) {
             .contact-grid { grid-template-columns: 1fr; }
             .contact-hero h1 { font-size: 2.8rem; }
         }
+
         @media (max-width: 768px) {
             .contact-hero { padding: 6rem 5% 3rem; }
             .contact-hero h1 { font-size: 2.2rem; }
             .contact-hero p { font-size: 1rem; }
             .contact-section { padding: 2rem 0 3rem; }
             .contact-form { padding: 1.5rem; }
+            
+            .chat-widget { bottom: 20px; right: 20px; }
+            .chat-toggle { width: 60px; height: 60px; }
+            .chat-toggle .chat-icon { font-size: 24px; }
+            .chat-panel { 
+                width: calc(100vw - 40px); 
+                height: 500px;
+                right: 0;
+                bottom: 75px;
+            }
+            .chat-toggle .status-indicator { width: 18px; height: 18px; }
+            .chat-toggle .status-indicator .status-dot { width: 12px; height: 12px; }
         }
+
         @media (max-width: 480px) {
             .contact-hero h1 { font-size: 1.8rem; }
             .contact-form { padding: 1.2rem; }
             .contact-info .info-card { padding: 1.2rem; }
+            .quick-replies { grid-template-columns: 1fr 1fr; }
+            .chat-panel { height: 450px; }
+            .chat-header { padding: 1rem; }
+            .chat-body { padding: 1rem; }
+            .chat-footer { padding: 0.8rem 1rem; }
         }
     </style>
 </head>
@@ -389,7 +997,108 @@
         </div>
     </footer>
 
+    <!-- ==================== FLOATING CHAT WIDGET ==================== -->
+    <div class="chat-widget" id="chatWidget">
+        <!-- Chat Toggle Button -->
+        <button class="chat-toggle" id="chatToggle">
+            <div class="chat-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot checking" id="statusDot"></div>
+            </div>
+            <div class="status-tooltip" id="statusTooltip">
+                <span id="statusText">Checking availability...</span>
+                <span class="status-sub">Usually replies in 2-5 minutes</span>
+            </div>
+            <div class="notification-badge" id="notificationBadge" style="display:none;">1</div>
+        </button>
+
+        <!-- Chat Panel -->
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <div class="chat-avatar">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div>
+                        <div class="chat-header-title">SwiftLogix Support</div>
+                        <div class="chat-header-status">
+                            <span class="status-dot-small checking" id="statusDotSmall"></span>
+                            <span id="statusTextHeader">Checking availability...</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="chat-close" id="chatClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-body" id="chatBody">
+                <!-- Welcome Screen -->
+                <div class="chat-welcome" id="chatWelcome">
+                    <div class="welcome-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h4>How can we help you?</h4>
+                    <p>Our support team is here to assist you with any questions about your shipment.</p>
+                    <div class="quick-replies">
+                        <button class="quick-reply" onclick="quickReply('Track my shipment')">
+                            <i class="fas fa-search"></i> Tracking
+                        </button>
+                        <button class="quick-reply" onclick="quickReply('Shipping rates')">
+                            <i class="fas fa-dollar-sign"></i> Rates
+                        </button>
+                        <button class="quick-reply" onclick="quickReply('Delivery time')">
+                            <i class="fas fa-clock"></i> Delivery
+                        </button>
+                        <button class="quick-reply" onclick="quickReply('Customs clearance')">
+                            <i class="fas fa-file-alt"></i> Customs
+                        </button>
+                    </div>
+                    <div class="chat-email-input">
+                        <input type="email" id="userEmailInput" placeholder="Your email address" required>
+                        <button onclick="startChat()" class="start-chat-btn">
+                            <i class="fas fa-paper-plane"></i> Start Chat
+                        </button>
+                    </div>
+                    <div class="chat-security-note">
+                        <i class="fas fa-lock"></i> Your information is secure and encrypted
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="chat-messages-container" id="chatMessagesContainer">
+                    <div class="chat-messages-list" id="chatMessagesList"></div>
+                    <div class="typing-indicator" id="typingIndicator">
+                        <span>Support is typing</span>
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-footer">
+                <div class="chat-input-area">
+                    <input type="text" id="chatMessageInput" placeholder="Type your message..." 
+                           onkeypress="if(event.key==='Enter') sendChatMessage()" disabled>
+                    <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="chat-footer-info">
+                    <span><i class="fas fa-lock"></i> Encrypted</span>
+                    <span>Usually replies in <strong>2-5 minutes</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
         // ==================== HIDE LOADER ====================
         window.addEventListener('load', function() {
@@ -452,7 +1161,298 @@
             });
         });
 
-        console.log('🚀 Contact page loaded successfully!');
+        // ==================== CHAT WIDGET LOGIC ====================
+        
+        // DOM Elements
+        const chatToggle = document.getElementById('chatToggle');
+        const chatPanel = document.getElementById('chatPanel');
+        const chatClose = document.getElementById('chatClose');
+        const chatWelcome = document.getElementById('chatWelcome');
+        const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+        const chatMessagesList = document.getElementById('chatMessagesList');
+        const chatMessageInput = document.getElementById('chatMessageInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
+        const userEmailInput = document.getElementById('userEmailInput');
+        const statusDot = document.getElementById('statusDot');
+        const statusDotSmall = document.getElementById('statusDotSmall');
+        const statusText = document.getElementById('statusText');
+        const statusTextHeader = document.getElementById('statusTextHeader');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const notificationBadge = document.getElementById('notificationBadge');
+
+        // State
+        let socket = null;
+        let conversationId = null;
+        let userEmail = null;
+        let userName = 'Guest';
+        let isChatActive = false;
+        let unreadCount = 0;
+
+        // ==================== SOCKET.IO CONNECTION ====================
+        function connectSocket() {
+            try {
+                socket = io(window.location.origin, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionAttempts: 5
+                });
+
+                socket.on('connect', () => {
+                    console.log('🔌 Socket connected');
+                    checkAdminStatus();
+                });
+
+                socket.on('admin-status', (data) => {
+                    updateAdminStatus(data.online);
+                });
+
+                socket.on('admin-message-received', (data) => {
+                    if (data.conversationId === conversationId) {
+                        addMessage('admin', 'Support Team', data.message.message);
+                    }
+                });
+
+                socket.on('admin-typing-status', (data) => {
+                    if (data.conversationId === conversationId) {
+                        if (data.isTyping) {
+                            typingIndicator.classList.add('active');
+                        } else {
+                            typingIndicator.classList.remove('active');
+                        }
+                    }
+                });
+
+                socket.on('disconnect', () => {
+                    console.log('🔌 Socket disconnected');
+                    updateAdminStatus(false);
+                });
+
+                socket.on('connect_error', (error) => {
+                    console.error('Socket connection error:', error);
+                    updateAdminStatus(false);
+                });
+
+            } catch (error) {
+                console.error('Socket init error:', error);
+                updateAdminStatus(false);
+            }
+        }
+
+        // ==================== ADMIN STATUS ====================
+        function checkAdminStatus() {
+            if (socket && socket.connected) {
+                socket.emit('check-admin-status');
+            }
+        }
+
+        function updateAdminStatus(online) {
+            const statusClasses = ['online', 'offline', 'checking'];
+            
+            if (online) {
+                // Admin is ONLINE - Green pulse
+                statusDot.className = 'status-dot online';
+                statusDotSmall.className = 'status-dot-small online';
+                statusText.textContent = '🟢 Online - Reply in minutes';
+                statusTextHeader.textContent = 'Online - Usually replies in 2-5 minutes';
+            } else {
+                // Admin is OFFLINE - Red pulse
+                statusDot.className = 'status-dot offline';
+                statusDotSmall.className = 'status-dot-small offline';
+                statusText.textContent = '🔴 Offline - We\'ll reply within 24h';
+                statusTextHeader.textContent = 'Offline - We\'ll reply within 24 hours';
+            }
+        }
+
+        // ==================== CHAT UI FUNCTIONS ====================
+        function toggleChat() {
+            if (chatPanel.classList.contains('open')) {
+                closeChat();
+            } else {
+                openChat();
+            }
+        }
+
+        function openChat() {
+            chatPanel.classList.add('open');
+            if (notificationBadge.style.display !== 'none') {
+                notificationBadge.style.display = 'none';
+                unreadCount = 0;
+            }
+        }
+
+        function closeChat() {
+            chatPanel.classList.remove('open');
+        }
+
+        function startChat() {
+            const email = userEmailInput.value.trim();
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            userEmail = email;
+            userName = email.split('@')[0] || 'Guest';
+
+            // Send initial message via API
+            const message = document.getElementById('chatMessageInput')?.value || 'Hello, I need help with my shipment.';
+
+            fetch('/api/chat/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userEmail: userEmail,
+                    userName: userName,
+                    message: message
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    conversationId = data.conversationId;
+                    isChatActive = true;
+                    
+                    // Switch to chat view
+                    chatWelcome.style.display = 'none';
+                    chatMessagesContainer.classList.add('active');
+                    
+                    // Enable input
+                    chatMessageInput.disabled = false;
+                    chatSendBtn.disabled = false;
+                    chatMessageInput.focus();
+
+                    // Add initial message
+                    addMessage('user', userName, message);
+                    
+                    // Load existing messages
+                    loadMessages(conversationId);
+                } else {
+                    alert('Failed to start chat. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Start chat error:', error);
+                alert('Failed to start chat. Please try again.');
+            });
+        }
+
+        function loadMessages(convId) {
+            fetch(`/api/chat/${convId}/messages`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.messages) {
+                        chatMessagesList.innerHTML = '';
+                        data.messages.forEach(msg => {
+                            addMessage(msg.sender, msg.senderName, msg.message, msg.timestamp);
+                        });
+                        scrollToBottom();
+                    }
+                })
+                .catch(error => console.error('Load messages error:', error));
+        }
+
+        function sendChatMessage() {
+            const message = chatMessageInput.value.trim();
+            if (!message || !conversationId) return;
+
+            // Add to UI immediately
+            addMessage('user', userName, message);
+            chatMessageInput.value = '';
+            scrollToBottom();
+
+            // Send via API
+            fetch(`/api/chat/${conversationId}/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    sender: 'user',
+                    senderName: userName
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to send message');
+                }
+            })
+            .catch(error => console.error('Send message error:', error));
+
+            // Send via WebSocket for real-time
+            if (socket && socket.connected) {
+                socket.emit('user-message', {
+                    conversationId,
+                    message,
+                    userEmail,
+                    userName
+                });
+            }
+        }
+
+        function addMessage(sender, senderName, message, timestamp) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-bubble ${sender}`;
+            
+            const time = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+            
+            messageDiv.innerHTML = `
+                <div class="bubble">
+                    <span class="sender-name">${sender === 'admin' ? 'Support Team' : senderName}</span>
+                    ${message}
+                    <span class="time">${time}</span>
+                </div>
+            `;
+            
+            chatMessagesList.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function quickReply(message) {
+            const input = document.getElementById('chatMessageInput');
+            if (input) {
+                input.value = message;
+                if (isChatActive && conversationId) {
+                    sendChatMessage();
+                } else {
+                    // If chat not started, set message and focus email
+                    userEmailInput.focus();
+                }
+            }
+        }
+
+        function scrollToBottom() {
+            const container = chatMessagesList.parentElement;
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        chatToggle.addEventListener('click', toggleChat);
+        chatClose.addEventListener('click', closeChat);
+
+        // Close chat on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatPanel.classList.contains('open')) {
+                closeChat();
+            }
+        });
+
+        // Send message on Enter
+        chatMessageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && isChatActive) {
+                sendChatMessage();
+            }
+        });
+
+        // ==================== INITIALIZATION ====================
+        connectSocket();
+
+        // Check admin status every 30 seconds
+        setInterval(checkAdminStatus, 30000);
+
+        console.log('🚀 Contact page with live chat loaded successfully!');
+        console.log('💬 Chat widget is ready. Admin status will update automatically.');
     </script>
 </body>
 </html>
