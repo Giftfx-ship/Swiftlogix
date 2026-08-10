@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#0a0a12;color:#fff;min-height:100vh}
-        
+        body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#fff;min-height:100vh}
+
         /* ==================== TRUCK LOADER ==================== */
         .loader-wrapper {
             position: fixed;
@@ -17,7 +17,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0a12;
+            background: #0a0e1a;
             z-index: 99999;
             display: flex;
             justify-content: center;
@@ -31,15 +31,14 @@
             visibility: hidden;
             pointer-events: none;
         }
-
-        /* Road */
         .loader-road {
             position: absolute;
             bottom: 22%;
-            left: 0;
-            width: 100%;
+            left: 5%;
+            width: 90%;
             height: 4px;
             background: rgba(255,255,255,0.05);
+            border-radius: 2px;
         }
         .loader-road::before {
             content: '';
@@ -48,43 +47,33 @@
             left: 0;
             width: 200%;
             height: 100%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(0,242,254,0.3) 15px, rgba(0,242,254,0.3) 20px);
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 15px, rgba(108,27,140,0.3) 15px, rgba(108,27,140,0.3) 20px);
             animation: roadMove 2s linear infinite;
         }
         @keyframes roadMove {
             0% { transform: translateX(0); }
             100% { transform: translateX(-40px); }
         }
-
-        /* Truck Container */
         .loader-truck-container {
             position: relative;
-            animation: truckDrive 3s ease-in-out infinite;
             z-index: 2;
+            margin-bottom: 40px;
         }
-        @keyframes truckDrive {
-            0% { transform: translateX(-60vw) scale(1); }
-            50% { transform: translateX(5vw) scale(1.02); }
-            100% { transform: translateX(60vw) scale(1); }
-        }
-
-        /* Truck */
         .loader-truck {
             position: relative;
-            width: 280px;
-            height: 130px;
+            width: 320px;
+            height: 150px;
+            margin: 0 auto;
         }
-
-        /* Cargo Area */
         .loader-truck .cargo {
             position: absolute;
             left: 0;
             top: 0;
-            width: 200px;
-            height: 100px;
+            width: 230px;
+            height: 115px;
             background: linear-gradient(180deg, #1a2a4a, #0e1a2e);
             border-radius: 8px 12px 8px 8px;
-            border: 2px solid rgba(0,242,254,0.25);
+            border: 2px solid rgba(108,27,140,0.3);
             z-index: 2;
             overflow: hidden;
             display: flex;
@@ -92,49 +81,59 @@
             justify-content: center;
         }
         .loader-truck .cargo .brand {
-            font-size: 26px;
+            font-size: 30px;
             font-weight: 900;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             z-index: 3;
         }
-        .loader-truck .cargo .brand span {
-            -webkit-text-fill-color: #00f2fe;
+        .loader-truck .cargo .brand .purple {
+            -webkit-text-fill-color: #6C1B8C;
+        }
+        .loader-truck .cargo .brand .orange {
+            -webkit-text-fill-color: #FF6600;
         }
         .loader-truck .cargo .door-line {
             position: absolute;
             top: 10%;
             width: 2px;
             height: 80%;
-            background: rgba(0,242,254,0.08);
+            background: rgba(108,27,140,0.1);
         }
         .loader-truck .cargo .door-line:nth-child(3) { left: 45%; }
         .loader-truck .cargo .door-line:nth-child(4) { left: 55%; }
         .loader-truck .cargo .door-line:nth-child(5) { left: 65%; }
-
-        /* Cabin */
+        .loader-truck .cargo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 30px, rgba(108,27,140,0.05) 30px, rgba(108,27,140,0.05) 31px);
+        }
         .loader-truck .cabin {
             position: absolute;
             right: 0;
-            top: 10px;
-            width: 85px;
-            height: 75px;
+            top: 12px;
+            width: 95px;
+            height: 85px;
             background: linear-gradient(180deg, #1a2a4a, #0a1628);
             border-radius: 12px 20px 8px 8px;
-            border: 2px solid rgba(0,242,254,0.3);
+            border: 2px solid rgba(108,27,140,0.3);
             z-index: 3;
         }
         .loader-truck .cabin .window {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 35px;
-            height: 28px;
-            background: rgba(0,242,254,0.12);
+            top: 14px;
+            left: 14px;
+            width: 40px;
+            height: 32px;
+            background: rgba(108,27,140,0.15);
             border-radius: 8px 8px 0 0;
-            border: 1px solid rgba(0,242,254,0.2);
+            border: 1px solid rgba(108,27,140,0.2);
             overflow: hidden;
         }
         .loader-truck .cabin .window::before {
@@ -144,7 +143,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,242,254,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(108,27,140,0.3), transparent);
             animation: windowGlow 2s ease-in-out infinite;
         }
         @keyframes windowGlow {
@@ -154,13 +153,13 @@
         }
         .loader-truck .cabin .door {
             position: absolute;
-            bottom: 8px;
-            right: 12px;
-            width: 22px;
-            height: 28px;
-            background: rgba(0,242,254,0.06);
+            bottom: 10px;
+            right: 14px;
+            width: 24px;
+            height: 32px;
+            background: rgba(108,27,140,0.08);
             border-radius: 4px 4px 0 0;
-            border: 1px solid rgba(0,242,254,0.12);
+            border: 1px solid rgba(108,27,140,0.12);
         }
         .loader-truck .cabin .door::before {
             content: '';
@@ -170,27 +169,25 @@
             transform: translate(-50%, -50%);
             width: 4px;
             height: 4px;
-            background: rgba(0,242,254,0.3);
+            background: rgba(108,27,140,0.3);
             border-radius: 50%;
         }
         .loader-truck .cabin .headlight {
             position: absolute;
             bottom: 8px;
-            width: 10px;
-            height: 5px;
-            background: rgba(0,242,254,0.5);
+            width: 12px;
+            height: 6px;
+            background: rgba(255,102,0,0.6);
             border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 15px rgba(0,242,254,0.2);
+            box-shadow: 0 0 15px rgba(255,102,0,0.3);
         }
-        .loader-truck .cabin .headlight.left { left: -8px; }
-        .loader-truck .cabin .headlight.right { left: 15px; }
-
-        /* Wheels */
+        .loader-truck .cabin .headlight.left { left: -10px; }
+        .loader-truck .cabin .headlight.right { left: 18px; }
         .loader-truck .wheel {
             position: absolute;
             bottom: -12px;
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             background: radial-gradient(circle at 40% 35%, #2a2a3a, #0a0a12);
             border-radius: 50%;
             border: 3px solid #1a1a2a;
@@ -209,21 +206,19 @@
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background: rgba(0,242,254,0.15);
+            background: rgba(108,27,140,0.2);
             border-radius: 50%;
-            border: 1px solid rgba(0,242,254,0.08);
+            border: 1px solid rgba(108,27,140,0.1);
         }
         .loader-truck .wheel.front { right: 15px; }
-        .loader-truck .wheel.rear { left: 25px; }
-        .loader-truck .wheel.rear2 { left: 50px; }
-
-        /* Exhaust */
+        .loader-truck .wheel.rear { left: 30px; }
+        .loader-truck .wheel.rear2 { left: 55px; }
         .loader-truck .exhaust {
             position: absolute;
-            bottom: 25px;
+            bottom: 28px;
             right: -6px;
-            width: 5px;
-            height: 12px;
+            width: 6px;
+            height: 14px;
             background: #2a2a3a;
             border-radius: 0 0 4px 4px;
             z-index: 1;
@@ -235,7 +230,7 @@
             left: -4px;
             width: 14px;
             height: 8px;
-            background: radial-gradient(ellipse, rgba(0,242,254,0.15), transparent);
+            background: radial-gradient(ellipse, rgba(255,102,0,0.2), transparent);
             border-radius: 50%;
             animation: exhaustPuff 1s ease-out infinite;
         }
@@ -243,152 +238,149 @@
             0% { transform: scale(0.5); opacity: 0.8; }
             100% { transform: scale(2); opacity: 0; }
         }
-
-        /* Loader Text */
         .loader-text-container {
-            position: absolute;
-            bottom: 32%;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
             text-align: center;
             z-index: 5;
-            animation: textPulse 2s ease-in-out infinite;
-        }
-        @keyframes textPulse {
-            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+            margin-top: 20px;
         }
         .loader-text-container .loader-title {
             font-size: 22px;
             font-weight: 800;
             letter-spacing: 5px;
-            background: linear-gradient(135deg, #ffffff, #00f2fe);
+            background: linear-gradient(135deg, #ffffff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .loader-text-container .loader-sub {
-            color: #888;
-            font-size: 11px;
+            color: #9aa8c9;
+            font-size: 12px;
             letter-spacing: 3px;
-            margin-top: 4px;
+            margin-top: 6px;
         }
-
-        /* Progress Bar */
         .loader-progress-container {
-            position: absolute;
-            bottom: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 280px;
+            position: relative;
+            width: 320px;
             z-index: 5;
+            margin-top: 25px;
         }
         .loader-progress-container .progress-bar {
             width: 100%;
-            height: 3px;
+            height: 4px;
             background: rgba(255,255,255,0.06);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
         }
         .loader-progress-container .progress-bar .fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #00f2fe, #00d4ff);
-            border-radius: 3px;
-            animation: progressFill 1.8s ease-out forwards;
+            background: linear-gradient(90deg, #6C1B8C, #FF6600, #6C1B8C);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            animation: progressFill 2s ease-in-out forwards, progressShine 1.5s ease-in-out infinite;
         }
         @keyframes progressFill {
             0% { width: 0%; }
-            20% { width: 25%; }
-            50% { width: 55%; }
-            80% { width: 85%; }
+            10% { width: 8%; }
+            25% { width: 22%; }
+            40% { width: 38%; }
+            55% { width: 52%; }
+            70% { width: 68%; }
+            85% { width: 85%; }
             100% { width: 100%; }
+        }
+        @keyframes progressShine {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
         .loader-progress-container .progress-text {
             display: flex;
             justify-content: space-between;
-            margin-top: 6px;
-            font-size: 10px;
-            color: #666;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #667799;
             letter-spacing: 1px;
+        }
+        .loader-progress-container .progress-text .percentage {
+            font-weight: 700;
+            font-size: 14px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* ==================== NAVBAR ==================== */
-        .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,242,254,0.2)}
+        .navbar{position:sticky;top:0;z-index:1000;padding:1rem 5%;background:rgba(10,14,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,27,140,0.2)}
         .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-        .logo span{color:#00f2fe}
+        .logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
+        .logo .purple{color:#6C1B8C}
+        .logo .orange{color:#FF6600}
         .nav-links{display:flex;gap:2rem;align-items:center}
         .nav-links a{color:#fff;text-decoration:none;transition:0.3s;font-size:14px}
-        .nav-links a:hover{color:#00f2fe}
-        .nav-links a.active{color:#00f2fe}
-        .track-btn{background:linear-gradient(135deg,#00f2fe,#00e0ff);padding:0.6rem 1.5rem;border-radius:50px;color:#0a0a12!important;font-weight:600!important}
+        .nav-links a:hover{color:#8B3AB8}
+        .nav-links a.active{color:#FF6600}
+        .track-btn{background:linear-gradient(135deg,#6C1B8C,#FF6600);padding:0.6rem 1.5rem;border-radius:50px;color:#fff!important;font-weight:600!important}
+        .track-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(108,27,140,0.4)}
         .menu-toggle{display:none;font-size:1.5rem;cursor:pointer}
 
         /* ==================== TRACKING CARD ==================== */
         .track-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 5% 4rem}
-        .track-card{max-width:650px;width:100%;background:rgba(255,255,255,0.02);border-radius:24px;padding:3rem;border:1px solid rgba(0,242,254,0.2);backdrop-filter:blur(10px)}
-        .track-card .icon-top{text-align:center;font-size:48px;color:#00f2fe;margin-bottom:1.5rem}
-        .track-card h1{text-align:center;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#fff,#00f2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
-        .track-card .subtitle{text-align:center;color:#888;margin-bottom:2rem;font-size:0.95rem}
+        .track-card{max-width:650px;width:100%;background:rgba(255,255,255,0.03);border-radius:24px;padding:3rem;border:1px solid rgba(108,27,140,0.2);backdrop-filter:blur(10px)}
+        .track-card .icon-top{text-align:center;font-size:48px;color:#FF6600;margin-bottom:1.5rem}
+        .track-card h1{text-align:center;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#fff,#6C1B8C,#FF6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
+        .track-card .subtitle{text-align:center;color:#9aa8c9;margin-bottom:2rem;font-size:0.95rem}
         .track-card .form-group{margin-bottom:1.5rem}
-        .track-card .form-group label{display:block;color:#888;font-size:13px;font-weight:600;margin-bottom:0.5rem;letter-spacing:0.5px}
-        .track-card .form-group input{width:100%;padding:1rem 1.5rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:60px;color:#fff;font-size:1rem;transition:all 0.3s}
-        .track-card .form-group input:focus{outline:none;border-color:#00f2fe;box-shadow:0 0 0 4px rgba(0,242,254,0.1)}
-        .track-card .form-group input::placeholder{color:#555}
-        .track-card .email-hint{display:flex;align-items:center;gap:0.6rem;color:#888;font-size:12px;margin-top:0.5rem}
-        .track-card .email-hint i{color:#00f2fe}
-        .track-card .track-btn{width:100%;padding:1.1rem;background:linear-gradient(135deg,#00f2fe,#00e0ff);border:none;border-radius:60px;color:#0a0a12;font-weight:700;font-size:1.05rem;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:0.8rem}
-        .track-card .track-btn:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,242,254,0.35)}
+        .track-card .form-group label{display:block;color:#9aa8c9;font-size:13px;font-weight:600;margin-bottom:0.5rem;letter-spacing:0.5px}
+        .track-card .form-group input{width:100%;padding:1rem 1.5rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:60px;color:#fff;font-size:1rem;transition:all 0.3s}
+        .track-card .form-group input:focus{outline:none;border-color:#6C1B8C;box-shadow:0 0 0 4px rgba(108,27,140,0.15)}
+        .track-card .form-group input::placeholder{color:#667799}
+        .track-card .email-hint{display:flex;align-items:center;gap:0.6rem;color:#9aa8c9;font-size:12px;margin-top:0.5rem}
+        .track-card .email-hint i{color:#FF6600}
+        .track-card .track-btn{width:100%;padding:1.1rem;background:linear-gradient(135deg,#6C1B8C,#FF6600);border:none;border-radius:60px;color:#fff;font-weight:700;font-size:1.05rem;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:0.8rem}
+        .track-card .track-btn:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(108,27,140,0.4)}
         .track-card .track-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
         .track-card .result-box{margin-top:1.5rem;padding:1rem 1.5rem;border-radius:16px;display:none;align-items:center;gap:0.8rem}
         .track-card .result-box.success{display:flex;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);color:#4CAF50}
         .track-card .result-box.error{display:flex;background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);color:#ff4444}
-        .track-card .result-box.info{display:flex;background:rgba(0,242,254,0.08);border:1px solid rgba(0,242,254,0.2);color:#00f2fe}
+        .track-card .result-box.info{display:flex;background:rgba(108,27,140,0.1);border:1px solid rgba(108,27,140,0.2);color:#8B3AB8}
         .track-card .result-box i{font-size:20px;flex-shrink:0}
         .track-card .result-box .result-content{flex:1}
         .track-card .result-box .result-content strong{display:block;font-size:14px}
         .track-card .result-box .result-content .small{font-size:13px;opacity:0.8;margin-top:2px}
 
         /* ==================== FOOTER ==================== */
-        .footer{background:#050508;padding:2rem 5%;text-align:center;color:#666;margin-top:4rem;border-top:1px solid rgba(0,242,254,0.1)}
+        .footer{background:#060a16;padding:2rem 5%;text-align:center;border-top:1px solid rgba(108,27,140,0.2);margin-top:4rem}
+        .footer p{color:#667799;font-size:13px}
 
         /* ==================== RESPONSIVE ==================== */
         @media(max-width:768px){
             .menu-toggle{display:block}
-            .nav-links{position:fixed;top:70px;left:-100%;width:100%;background:rgba(10,10,15,0.98);flex-direction:column;padding:2rem;transition:left 0.3s;gap:1.5rem}
+            .nav-links{position:fixed;top:70px;left:-100%;width:100%;background:rgba(10,14,26,0.98);flex-direction:column;padding:2rem;transition:left 0.3s;gap:1.5rem}
             .nav-links.active{left:0}
             .track-card{padding:2rem 1.5rem}
             .track-card h1{font-size:1.8rem}
-            .loader-truck-container{transform:scale(0.7)}
-            .loader-truck{width:200px;height:100px}
-            .loader-truck .cargo{width:140px;height:75px}
-            .loader-truck .cargo .brand{font-size:18px}
-            .loader-truck .cabin{width:65px;height:55px;top:8px}
-            .loader-truck .cabin .window{width:25px;height:20px;top:8px;left:8px}
-            .loader-truck .wheel{width:20px;height:20px;bottom:-8px}
-            .loader-truck .wheel::before{width:6px;height:6px}
-            .loader-truck .wheel.front{right:10px}
-            .loader-truck .wheel.rear{left:18px}
-            .loader-truck .wheel.rear2{left:35px}
-            .loader-truck .exhaust{display:none}
-            @keyframes truckDrive {
-                0% { transform: translateX(-80vw) scale(0.7); }
-                50% { transform: translateX(0vw) scale(0.75); }
-                100% { transform: translateX(80vw) scale(0.7); }
-            }
-            .loader-progress-container{width:200px}
-            .loader-text-container .loader-title{font-size:18px}
+            .loader-truck{width:260px;height:130px}
+            .loader-truck .cargo{width:190px;height:95px}
+            .loader-truck .cargo .brand{font-size:22px}
+            .loader-truck .cabin{width:80px;height:70px}
+            .loader-progress-container{width:260px}
         }
         @media(max-width:480px){
             .track-card{padding:1.5rem 1rem}
-            .loader-truck-container{transform:scale(0.5)}
-            .loader-progress-container{width:150px}
-            .loader-text-container .loader-title{font-size:14px}
-            @keyframes truckDrive {
-                0% { transform: translateX(-90vw) scale(0.5); }
-                50% { transform: translateX(0vw) scale(0.55); }
-                100% { transform: translateX(90vw) scale(0.5); }
-            }
+            .track-card h1{font-size:1.5rem}
+            .loader-truck{width:200px;height:100px}
+            .loader-truck .cargo{width:140px;height:75px}
+            .loader-truck .cargo .brand{font-size:16px;letter-spacing:1px}
+            .loader-truck .cabin{width:60px;height:55px}
+            .loader-truck .cabin .window{width:22px;height:18px}
+            .loader-truck .wheel{width:20px;height:20px}
+            .loader-truck .wheel.front{right:10px}
+            .loader-truck .wheel.rear{left:18px}
+            .loader-truck .wheel.rear2{left:32px}
+            .loader-progress-container{width:200px}
+            .loader-text-container .loader-title{font-size:16px}
+            .loader-progress-container .progress-text{font-size:9px}
+            .loader-progress-container .progress-text .percentage{font-size:12px}
         }
     </style>
 </head>
@@ -396,49 +388,36 @@
 
     <!-- ==================== TRUCK LOADER ==================== -->
     <div class="loader-wrapper" id="loader">
-        <!-- Road -->
         <div class="loader-road"></div>
-
-        <!-- Truck -->
         <div class="loader-truck-container">
             <div class="loader-truck">
-                <!-- Cargo -->
                 <div class="cargo">
-                    <div class="brand">Swift<span>Logix</span></div>
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
                     <div class="door-line"></div>
                     <div class="door-line"></div>
                     <div class="door-line"></div>
                 </div>
-                <!-- Cabin -->
                 <div class="cabin">
                     <div class="window"></div>
                     <div class="door"></div>
                     <div class="headlight left"></div>
                     <div class="headlight right"></div>
                 </div>
-                <!-- Exhaust -->
                 <div class="exhaust"></div>
-                <!-- Wheels -->
                 <div class="wheel rear"></div>
                 <div class="wheel rear2"></div>
                 <div class="wheel front"></div>
             </div>
         </div>
-
-        <!-- Text -->
         <div class="loader-text-container">
             <div class="loader-title">SWIFTLOGIX</div>
-            <div class="loader-sub">Delivering Excellence Worldwide</div>
+            <div class="loader-sub">Loading tracking system...</div>
         </div>
-
-        <!-- Progress -->
         <div class="loader-progress-container">
-            <div class="progress-bar">
-                <div class="fill"></div>
-            </div>
+            <div class="progress-bar"><div class="fill"></div></div>
             <div class="progress-text">
                 <span>Loading</span>
-                <span id="progressPercent">0%</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
         </div>
     </div>
@@ -446,7 +425,7 @@
     <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <a href="index.html" class="logo">Swift<span class="purple">Log</span><span class="orange">ix</span></a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -496,7 +475,7 @@
     </footer>
 
     <script>
-        // ==================== HIDE LOADER AFTER PAGE LOAD ====================
+        // ==================== HIDE LOADER ====================
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader');
             if (loader) {
@@ -509,7 +488,7 @@
         // ==================== PROGRESS PERCENTAGE ====================
         let progress = 0;
         const progressInterval = setInterval(function() {
-            progress += Math.random() * 10 + 5;
+            progress += Math.random() * 8 + 3;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(progressInterval);
@@ -518,7 +497,7 @@
             if (percentEl) {
                 percentEl.textContent = Math.floor(progress) + '%';
             }
-        }, 200);
+        }, 150);
 
         // ==================== MOBILE MENU ====================
         document.querySelector('.menu-toggle')?.addEventListener('click', function() {
@@ -601,7 +580,7 @@
                         <div class="small">
                             📧 Tracking sent to you: ${toUserStatus} &nbsp;|&nbsp; 📄 Invoice sent to receiver: ${toReceiverStatus}
                         </div>
-                        <div class="small" style="margin-top:4px; color:#888;">
+                        <div class="small" style="margin-top:4px; color:#667799;">
                             Redirecting to tracking details...
                         </div>
                     </div>
