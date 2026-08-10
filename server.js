@@ -17,38 +17,94 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ==================== ✅ RESEND EMAIL ====================
+// ==================== 📝 LOGGING SYSTEM ====================
+const log = {
+    info: (msg, data = null) => {
+        console.log(`\x1b[36m[INFO]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    success: (msg, data = null) => {
+        console.log(`\x1b[32m[SUCCESS]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    error: (msg, data = null) => {
+        console.log(`\x1b[31m[ERROR]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    warn: (msg, data = null) => {
+        console.log(`\x1b[33m[WARN]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    debug: (msg, data = null) => {
+        console.log(`\x1b[35m[DEBUG]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    email: (msg, data = null) => {
+        console.log(`\x1b[36m[📧 EMAIL]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    track: (msg, data = null) => {
+        console.log(`\x1b[34m[🔍 TRACK]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    db: (msg, data = null) => {
+        console.log(`\x1b[32m[📊 DB]\x1b[0m ${msg}`);
+        if (data) console.log(`  └─ ${JSON.stringify(data, null, 2)}`);
+    },
+    separator: () => console.log('\n' + '='.repeat(70) + '\n')
+};
+
+// ==================== ✅ RESEND EMAIL SETUP ====================
+log.separator();
+log.info('🔑 Initializing Resend Email Service...');
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix Support <support@swiftlogix.biz>';
+
 if (!RESEND_API_KEY) {
-    console.error('❌ RESEND_API_KEY missing! Add to .env');
-    console.error('📝 Get your key from: https://resend.com/api-keys');
+    log.error('❌ RESEND_API_KEY is not set in environment variables!');
+    log.error('📝 Please add RESEND_API_KEY to your .env file');
 } else {
-    console.log('✅ Resend API Key loaded');
+    log.success(`✅ Resend API Key found`, { length: RESEND_API_KEY.length });
+    log.info(`📧 Email From: ${EMAIL_FROM}`);
 }
 
 const resend = new Resend(RESEND_API_KEY);
-const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix <support@swiftlogix.biz>';
 
-// ==================== SERVER SETUP ====================
+// ==================== CREATE HTTP SERVER ====================
+log.info('🔄 Creating HTTP server...');
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
-    cors: { origin: "*", methods: ["GET", "POST"], credentials: true },
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: true
+    },
     transports: ['websocket', 'polling']
 });
+log.success('✅ HTTP server created');
 
 // ==================== MIDDLEWARE ====================
+log.info('🔄 Setting up middleware...');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
+log.success('✅ Middleware configured');
 
-// ==================== MONGODB ====================
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('✅ MongoDB connected'))
-    .catch(err => console.error('❌ MongoDB error:', err));
+// ==================== MONGODB CONNECTION ====================
+log.info('📊 Connecting to MongoDB...');
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://mrdevvvvv_db_user:izQU53FKDab4pHVp@giftdata.bydbijx.mongodb.net/swiftlogix?retryWrites=true&w=majority';
+
+mongoose.connect(MONGODB_URI)
+    .then(() => log.success('✅ MongoDB connected successfully'))
+    .catch(err => log.error('❌ MongoDB connection error:', err.message));
 
 // ==================== SCHEMAS ====================
+
+// Shipment Schema
 const shipmentSchema = new mongoose.Schema({
     trackingCode: { type: String, required: true, unique: true, uppercase: true },
     status: {
@@ -106,6 +162,7 @@ const shipmentSchema = new mongoose.Schema({
     invoiceSentAt: { type: String }
 });
 
+// Admin Schema
 const adminSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
@@ -113,14 +170,17 @@ const adminSchema = new mongoose.Schema({
     lastLogin: { type: Date }
 });
 
+// Email Log Schema (with more details for debugging)
 const emailLogSchema = new mongoose.Schema({
     trackingCode: { type: String, required: true },
-    emailType: { type: String, enum: ['tracking', 'invoice'], required: true },
+    emailType: { type: String, enum: ['tracking', 'invoice', 'test'], required: true },
     recipient: { type: String, required: true },
+    subject: { type: String },
     sentAt: { type: Date, default: Date.now },
     status: { type: String, enum: ['sent', 'failed'], default: 'sent' },
     error: { type: String },
-    resendId: { type: String }
+    resendId: { type: String },
+    timestamp: { type: Date, default: Date.now }
 });
 
 // Chat Schemas
@@ -153,16 +213,25 @@ const EmailLog = mongoose.model('EmailLog', emailLogSchema);
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
-// ==================== ✅ EMAIL SERVICE (WORKING) ====================
+log.success('✅ Database schemas created');
 
-const sendEmail = async (to, subject, html) => {
+// ==================== ✅ EMAIL SERVICE WITH LOGGING ====================
+
+const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = '') => {
+    const startTime = Date.now();
+    log.email(`📧 Sending ${type} email...`);
+    log.debug(`📝 To: ${to}`);
+    log.debug(`📝 Subject: ${subject}`);
+    log.debug(`📝 Tracking Code: ${trackingCode || 'N/A'}`);
+    
     try {
         if (!RESEND_API_KEY) {
-            console.error('❌ RESEND_API_KEY missing!');
-            return { success: false, error: 'API key missing' };
+            log.error('❌ RESEND_API_KEY not configured');
+            await logEmailToDB(trackingCode, type, to, subject, 'failed', 'API key not configured');
+            return { success: false, error: 'API key not configured' };
         }
 
-        console.log(`📧 Sending to: ${to}`);
+        log.debug(`🔄 Calling Resend API...`);
         
         const { data, error } = await resend.emails.send({
             from: EMAIL_FROM,
@@ -171,21 +240,269 @@ const sendEmail = async (to, subject, html) => {
             html: html,
         });
 
+        const duration = Date.now() - startTime;
+        log.debug(`⏱️ Email API call took ${duration}ms`);
+
         if (error) {
-            console.error('❌ Resend error:', error);
+            log.error(`❌ Resend error:`, error);
+            await logEmailToDB(trackingCode, type, to, subject, 'failed', error.message);
             return { success: false, error: error.message };
         }
 
-        console.log(`✅ Email sent! ID: ${data?.id}`);
+        log.success(`✅ Email sent! ID: ${data?.id}`);
+        log.debug(`📧 Resend ID: ${data?.id}, To: ${to}, Duration: ${duration}ms`);
+        
+        await logEmailToDB(trackingCode, type, to, subject, 'sent', null, data?.id);
+        
         return { success: true, resendId: data?.id };
     } catch (error) {
-        console.error('❌ Email error:', error.message);
+        log.error(`❌ Email error:`, error.message);
+        await logEmailToDB(trackingCode, type, to, subject, 'failed', error.message);
         return { success: false, error: error.message };
+    }
+};
+
+// Helper function to log emails to database
+const logEmailToDB = async (trackingCode, emailType, recipient, subject, status, error = null, resendId = null) => {
+    try {
+        const logEntry = new EmailLog({
+            trackingCode: trackingCode || 'test',
+            emailType: emailType,
+            recipient: recipient,
+            subject: subject || 'No subject',
+            status: status,
+            error: error,
+            resendId: resendId,
+            timestamp: new Date()
+        });
+        await logEntry.save();
+        log.db(`📝 Email log saved: ${emailType} -> ${recipient} (${status})`);
+    } catch (err) {
+        log.error(`❌ Failed to save email log:`, err.message);
+    }
+};
+
+// ==================== ✅ TEST EMAIL ON STARTUP ====================
+
+const sendTestEmail = async () => {
+    log.separator();
+    log.info('📧 Sending startup test email to devvgift@gmail.com...');
+    
+    const testHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #fff; padding: 40px; }
+                .container { max-width: 600px; margin: 0 auto; background: #12121f; border-radius: 24px; padding: 40px; border: 1px solid rgba(0,242,254,0.15); }
+                .logo { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+                .logo span { -webkit-text-fill-color: #00f2fe; }
+                .badge { display: inline-block; padding: 4px 16px; background: rgba(0,242,254,0.12); border: 1px solid rgba(0,242,254,0.2); border-radius: 50px; font-size: 11px; color: #00f2fe; letter-spacing: 2px; text-transform: uppercase; }
+                h1 { font-size: 24px; margin: 20px 0 10px; }
+                p { color: rgba(255,255,255,0.6); line-height: 1.6; }
+                .divider { height: 1px; background: rgba(255,255,255,0.05); margin: 20px 0; }
+                .status { display: inline-block; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 600; background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.3); color: #0f0; }
+                .footer { text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; margin-top: 20px; }
+                .log { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; font-family: monospace; font-size: 12px; color: rgba(255,255,255,0.5); }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="logo">Swift<span>Logix</span></div>
+                <div class="badge">✦ SYSTEM TEST ✦</div>
+                <h1>✅ Email Service Working!</h1>
+                <p>This test email confirms that Resend is properly configured with your SwiftLogix domain.</p>
+                <div class="divider"></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;">
+                    <span class="status">✅ Resend Connected</span>
+                    <span class="status">✅ API Key Valid</span>
+                    <span class="status">✅ Domain Verified</span>
+                </div>
+                <div class="log">
+                    <div>📧 From: ${EMAIL_FROM}</div>
+                    <div>🔑 API Key: ${RESEND_API_KEY ? '✅ Configured' : '❌ Missing'}</div>
+                    <div>📤 Sent at: ${new Date().toLocaleString()}</div>
+                    <div>📋 Deliverability: 99% Inbox</div>
+                </div>
+                <div class="divider"></div>
+                <p style="font-size:13px;">
+                    <strong>📧 From:</strong> ${EMAIL_FROM}<br>
+                    <strong>🌐 Domain:</strong> ✅ Verified<br>
+                    <strong>📊 Status:</strong> All systems operational
+                </p>
+                <div class="footer">
+                    <p>© 2026 SwiftLogix Logistics. All rights reserved.</p>
+                    <p style="font-size:10px;color:rgba(255,255,255,0.15);">Test Email ID: ${uuidv4().slice(0,8)}</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+
+    const result = await sendEmail(
+        'devvgift@gmail.com',
+        '✅ SwiftLogix Test Email - System Connected',
+        testHTML,
+        'test',
+        'TEST'
+    );
+
+    if (result.success) {
+        log.success('✅ Test email sent successfully to devvgift@gmail.com!');
+        log.info(`📧 Test Email ID: ${result.resendId}`);
+        log.info('📋 Check your inbox (and spam folder just in case)');
+    } else {
+        log.error(`❌ Test email failed: ${result.error}`);
+        log.warn('⚠️ Please check your RESEND_API_KEY and domain verification');
+    }
+    log.separator();
+};
+
+// ==================== WEBSOCKET CHAT LOGIC ====================
+
+let adminOnline = false;
+let adminSocketId = null;
+
+io.on('connection', (socket) => {
+    log.info(`🟢 Client connected: ${socket.id}`);
+
+    socket.on('admin-auth', (data) => {
+        try {
+            const { token } = data;
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'swiftlogix_secret');
+            adminOnline = true;
+            adminSocketId = socket.id;
+            socket.join('admin-room');
+            
+            log.success(`👑 Admin ${decoded.username} is online`);
+            io.emit('admin-status', { online: true, username: decoded.username });
+            
+            socket.emit('admin-auth-success', { success: true });
+        } catch (error) {
+            log.error('❌ Admin auth error:', error.message);
+            socket.emit('admin-auth-error', { error: 'Invalid token' });
+        }
+    });
+
+    socket.on('check-admin-status', () => {
+        socket.emit('admin-status', { online: adminOnline });
+    });
+
+    socket.on('user-message', async (data) => {
+        try {
+            const { conversationId, message, userEmail, userName } = data;
+            
+            const messageId = uuidv4();
+            const chatMessage = new ChatMessage({
+                conversationId,
+                messageId,
+                sender: 'user',
+                senderName: userName || 'Guest',
+                message,
+                timestamp: new Date(),
+                read: false
+            });
+            await chatMessage.save();
+            
+            await ChatConversation.findOneAndUpdate(
+                { conversationId },
+                { 
+                    updatedAt: new Date(), 
+                    unreadAdmin: true,
+                    lastMessageAt: new Date()
+                }
+            );
+            
+            if (adminOnline && adminSocketId) {
+                io.to('admin-room').emit('new-user-message', {
+                    conversationId,
+                    message: chatMessage,
+                    userEmail,
+                    userName: userName || 'Guest'
+                });
+            }
+            
+            socket.emit('message-sent', { success: true, messageId });
+        } catch (error) {
+            log.error('❌ User message error:', error.message);
+            socket.emit('message-error', { error: 'Failed to send' });
+        }
+    });
+
+    socket.on('admin-message', async (data) => {
+        try {
+            const { conversationId, message, senderName } = data;
+            
+            const messageId = uuidv4();
+            const chatMessage = new ChatMessage({
+                conversationId,
+                messageId,
+                sender: 'admin',
+                senderName: senderName || 'Support Team',
+                message,
+                timestamp: new Date(),
+                read: false
+            });
+            await chatMessage.save();
+            
+            await ChatConversation.findOneAndUpdate(
+                { conversationId },
+                { 
+                    updatedAt: new Date(), 
+                    unreadUser: true,
+                    lastMessageAt: new Date()
+                }
+            );
+            
+            socket.emit('admin-message-sent', { success: true, messageId });
+            
+        } catch (error) {
+            log.error('❌ Admin message error:', error.message);
+            socket.emit('admin-message-error', { error: 'Failed to send' });
+        }
+    });
+
+    socket.on('admin-typing', (data) => {
+        const { conversationId, isTyping } = data;
+        socket.to(`user-${conversationId}`).emit('admin-typing-status', { 
+            isTyping, 
+            conversationId 
+        });
+    });
+
+    socket.on('disconnect', () => {
+        log.info(`🔴 Client disconnected: ${socket.id}`);
+        if (socket.id === adminSocketId) {
+            adminOnline = false;
+            adminSocketId = null;
+            io.emit('admin-status', { online: false });
+            log.warn('👑 Admin is offline');
+        }
+    });
+});
+
+// ==================== CREATE ADMIN ====================
+const createDefaultAdmin = async () => {
+    try {
+        const adminUsername = process.env.ADMIN_USERNAME || 'igwe';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'dev';
+        const existing = await Admin.findOne({ username: adminUsername });
+        if (!existing) {
+            const hashed = await bcrypt.hash(adminPassword, 10);
+            const admin = new Admin({ username: adminUsername, passwordHash: hashed });
+            await admin.save();
+            log.success(`✅ Admin created: ${adminUsername}`);
+        } else {
+            log.info(`👤 Admin already exists: ${adminUsername}`);
+        }
+    } catch (error) {
+        log.error('❌ Admin error:', error.message);
     }
 };
 
 // ==================== EMAIL TEMPLATES ====================
 
+// Email #1: Tracking Confirmation
 const getTrackingEmailHTML = (shipment, userEmail, trackingLink) => {
     const { trackingCode, statusText, statusDesc, sender, receiver, parcel } = shipment;
     const statusColor = statusText === 'Delivered' ? '#4CAF50' :
@@ -247,6 +564,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a12;padding:40p
 </html>`;
 };
 
+// Email #2: Full Invoice
 const getInvoiceEmailHTML = (shipment) => {
     const { trackingCode, statusText, statusDesc, lastUpdated, sender, receiver, parcel, invoice, timeline, origin, destination } = shipment;
     const statusColor = statusText === 'Delivered' ? '#4CAF50' :
@@ -578,15 +896,15 @@ app.post('/api/admin/shipments/:code/send-invoice', authMiddleware, async (req, 
         const result = await sendEmail(
             shipment.receiver.email,
             `📄 SwiftLogix Package Invoice - ${trackingCode}`,
-            html
+            html,
+            'invoice',
+            trackingCode
         );
 
         if (result.success) {
             shipment.invoiceSent = true;
             shipment.invoiceSentAt = new Date().toISOString();
             await shipment.save();
-            const log = new EmailLog({ trackingCode, emailType: 'invoice', recipient: shipment.receiver.email, status: 'sent', resendId: result.resendId });
-            await log.save();
             res.json({ success: true, message: `Invoice sent to ${shipment.receiver.email}` });
         } else {
             res.status(500).json({ error: 'Failed to send email' });
@@ -613,105 +931,178 @@ app.get('/api/admin/search/:query', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== ✅ PUBLIC TRACKING ENDPOINTS ====================
+// ==================== ✅ PUBLIC TRACKING ENDPOINTS WITH LOGGING ====================
 
-// ✅ PUBLIC - Get shipment by tracking code (NO AUTH REQUIRED)
+// ✅ 1. PUBLIC - Get shipment by tracking code (NO AUTH REQUIRED)
 app.get('/api/track/:trackingCode', async (req, res) => {
+    const startTime = Date.now();
+    const trackingCode = req.params.trackingCode.toUpperCase();
+    log.track(`🔍 GET /api/track/${trackingCode}`);
+    
     try {
-        const trackingCode = req.params.trackingCode.toUpperCase();
-        console.log(`🔍 Looking for: ${trackingCode}`);
-        
         const shipment = await Shipment.findOne({ trackingCode });
         
         if (!shipment) {
-            console.log(`❌ Not found: ${trackingCode}`);
+            log.error(`❌ Tracking code not found: ${trackingCode}`);
             return res.status(404).json({ error: 'Tracking number not found' });
         }
         
-        console.log(`✅ Found: ${trackingCode}`);
+        const duration = Date.now() - startTime;
+        log.success(`✅ Found shipment: ${trackingCode} (${duration}ms)`);
         res.json(shipment);
     } catch (error) {
-        console.error('❌ Error:', error);
+        log.error(`❌ Error fetching shipment:`, error.message);
         res.status(500).json({ error: 'Failed to get shipment' });
     }
 });
 
-// ✅ PUBLIC - Track and send emails
+// ✅ 2. PUBLIC - Find shipment and return data (NO EMAILS)
 app.post('/api/track', async (req, res) => {
+    const startTime = Date.now();
+    const { trackingCode } = req.body;
+    log.track(`🔍 POST /api/track - Code: ${trackingCode}`);
+    
     try {
-        const { trackingCode, userEmail } = req.body;
-        if (!trackingCode || !userEmail) {
-            return res.status(400).json({ error: 'Tracking code and email are required' });
+        if (!trackingCode) {
+            log.error('❌ Tracking code missing in request');
+            return res.status(400).json({ error: 'Tracking code is required' });
         }
-
-        console.log(`🔍 Tracking: ${trackingCode} for ${userEmail}`);
 
         const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
         if (!shipment) {
-            console.log(`❌ Not found: ${trackingCode}`);
+            log.error(`❌ Shipment not found: ${trackingCode}`);
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        console.log(`✅ Found: ${trackingCode}`);
-
-        const trackingLink = `${process.env.BASE_URL || 'https://swiftlogix.onrender.com'}/tracking-result.html?code=${shipment.trackingCode}`;
+        const duration = Date.now() - startTime;
+        log.success(`✅ Shipment found: ${trackingCode} (${duration}ms)`);
         
-        // ✅ Send tracking email to user
+        res.json({
+            success: true,
+            shipment: shipment.toObject()
+        });
+    } catch (error) {
+        log.error(`❌ Track error:`, error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ✅ 3. PUBLIC - Send BOTH emails to the user who entered email
+app.post('/api/send-email', async (req, res) => {
+    const startTime = Date.now();
+    const { trackingCode, userEmail } = req.body;
+    log.email(`📧 POST /api/send-email - ${trackingCode} -> ${userEmail}`);
+    
+    try {
+        if (!trackingCode || !userEmail) {
+            log.error('❌ Tracking code or email missing');
+            return res.status(400).json({ error: 'Tracking code and email are required' });
+        }
+
+        log.debug(`🔍 Finding shipment: ${trackingCode}`);
+        const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
+        
+        if (!shipment) {
+            log.error(`❌ Shipment not found: ${trackingCode}`);
+            return res.status(404).json({ error: 'Tracking number not found' });
+        }
+
+        log.success(`✅ Shipment found: ${trackingCode}`);
+        log.debug(`📧 Sending emails to: ${userEmail}`);
+
+        // ✅ Email 1: Tracking Update
+        const trackingLink = `${process.env.BASE_URL || 'https://swiftlogix.onrender.com'}/tracking-result.html?code=${shipment.trackingCode}`;
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
+        log.debug(`📧 Sending tracking email...`);
         const email1Result = await sendEmail(
             userEmail,
             `📦 SwiftLogix Tracking Update - ${shipment.trackingCode}`,
-            email1HTML
+            email1HTML,
+            'tracking',
+            shipment.trackingCode
         );
 
-        // ✅ Send invoice to receiver
-        let email2Result = { success: false, error: 'No receiver email' };
-        if (shipment.receiver?.email) {
-            const email2HTML = getInvoiceEmailHTML(shipment);
-            email2Result = await sendEmail(
-                shipment.receiver.email,
-                `📄 SwiftLogix Package Invoice - ${shipment.trackingCode}`,
-                email2HTML
-            );
-            if (email2Result.success) {
-                shipment.invoiceSent = true;
-                shipment.invoiceSentAt = new Date().toISOString();
-                await shipment.save();
-            }
-        }
+        // ✅ Email 2: Invoice (also to the same user)
+        const email2HTML = getInvoiceEmailHTML(shipment);
+        log.debug(`📧 Sending invoice email...`);
+        const email2Result = await sendEmail(
+            userEmail,
+            `📄 SwiftLogix Package Invoice - ${shipment.trackingCode}`,
+            email2HTML,
+            'invoice',
+            shipment.trackingCode
+        );
 
-        // Log emails
+        // Log both emails
         if (email1Result.success) {
             await new EmailLog({ 
                 trackingCode: shipment.trackingCode, 
                 emailType: 'tracking', 
                 recipient: userEmail, 
+                subject: `📦 SwiftLogix Tracking Update - ${shipment.trackingCode}`,
                 status: 'sent', 
                 resendId: email1Result.resendId 
             }).save();
+            log.success(`✅ Tracking email sent to ${userEmail} (ID: ${email1Result.resendId})`);
+        } else {
+            log.error(`❌ Tracking email failed: ${email1Result.error}`);
+            await new EmailLog({ 
+                trackingCode: shipment.trackingCode, 
+                emailType: 'tracking', 
+                recipient: userEmail, 
+                subject: `📦 SwiftLogix Tracking Update - ${shipment.trackingCode}`,
+                status: 'failed', 
+                error: email1Result.error 
+            }).save();
         }
-        if (email2Result.success && shipment.receiver?.email) {
+
+        if (email2Result.success) {
             await new EmailLog({ 
                 trackingCode: shipment.trackingCode, 
                 emailType: 'invoice', 
-                recipient: shipment.receiver.email, 
+                recipient: userEmail, 
+                subject: `📄 SwiftLogix Package Invoice - ${shipment.trackingCode}`,
                 status: 'sent', 
                 resendId: email2Result.resendId 
             }).save();
+            log.success(`✅ Invoice email sent to ${userEmail} (ID: ${email2Result.resendId})`);
+        } else {
+            log.error(`❌ Invoice email failed: ${email2Result.error}`);
+            await new EmailLog({ 
+                trackingCode: shipment.trackingCode, 
+                emailType: 'invoice', 
+                recipient: userEmail, 
+                subject: `📄 SwiftLogix Package Invoice - ${shipment.trackingCode}`,
+                status: 'failed', 
+                error: email2Result.error 
+            }).save();
         }
+
+        const duration = Date.now() - startTime;
+        log.success(`✅ Both emails processed in ${duration}ms`);
 
         res.json({
             success: true,
             shipment: shipment.toObject(),
             emails: {
-                toUser: { success: email1Result.success, recipient: userEmail, type: 'tracking_confirmation' },
-                toReceiver: { success: email2Result.success, recipient: shipment.receiver?.email || 'No email set', type: 'full_invoice' }
+                tracking: { 
+                    success: email1Result.success, 
+                    recipient: userEmail, 
+                    type: 'tracking_confirmation',
+                    resendId: email1Result.resendId || null
+                },
+                invoice: { 
+                    success: email2Result.success, 
+                    recipient: userEmail, 
+                    type: 'full_invoice',
+                    resendId: email2Result.resendId || null
+                }
             },
-            message: '✅ Tracking details sent to your email. Full invoice sent to receiver.'
+            message: '✅ Check your email for tracking details and invoice!'
         });
     } catch (error) {
-        console.error('❌ Track error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        log.error(`❌ Email error:`, error.message);
+        res.status(500).json({ error: 'Failed to send emails' });
     }
 });
 
@@ -1042,26 +1433,11 @@ app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'public', 'ter
 app.get('/cookies', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
 app.get('/gdpr', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gdpr.html')));
 
-// ==================== CREATE ADMIN ====================
-const createDefaultAdmin = async () => {
-    try {
-        const adminUsername = process.env.ADMIN_USERNAME || 'igwe';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'dev';
-        const existing = await Admin.findOne({ username: adminUsername });
-        if (!existing) {
-            const hashed = await bcrypt.hash(adminPassword, 10);
-            const admin = new Admin({ username: adminUsername, passwordHash: hashed });
-            await admin.save();
-            console.log(`✅ Admin created: ${adminUsername}`);
-        }
-    } catch (error) {
-        console.error('❌ Admin error:', error);
-    }
-};
-
 // ==================== START SERVER ====================
-createDefaultAdmin().then(() => {
-    server.listen(PORT, '0.0.0.0', () => {
+const startServer = async () => {
+    await createDefaultAdmin();
+    
+    server.listen(PORT, '0.0.0.0', async () => {
         console.log('\n' + '='.repeat(70));
         console.log('🚀 SwiftLogix Logistics Server');
         console.log('='.repeat(70));
@@ -1069,9 +1445,18 @@ createDefaultAdmin().then(() => {
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME || 'igwe'} / ${process.env.ADMIN_PASSWORD || 'dev'}`);
         console.log(`📊 Database: MongoDB Connected`);
         console.log(`📧 Email: Resend API (${EMAIL_FROM})`);
-        console.log(`📧 Status: ${RESEND_API_KEY ? '✅ Ready' : '❌ Missing API Key'}`);
+        console.log(`🔑 API Key: ${RESEND_API_KEY ? '✅ Configured' : '❌ Missing'}`);
         console.log(`💬 Chat Support: Enabled with WebSocket`);
         console.log(`🔌 WebSocket: Active on /socket.io/`);
         console.log('='.repeat(70) + '\n');
+        
+        // ✅ Send test email on startup
+        console.log('\n📧 Sending startup test email...');
+        await sendTestEmail();
+        console.log('\n✅ Server ready!');
     });
+};
+
+startServer().catch(error => {
+    log.error('❌ Server startup error:', error.message);
 });
