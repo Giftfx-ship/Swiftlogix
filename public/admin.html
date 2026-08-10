@@ -77,26 +77,59 @@
 </head>
 <body>
 
-    <!-- LOADER -->
-    <div class="loader-wrapper" id="loader">
-        <div class="loader-cube">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-        </div>
-        <div class="loader-text">SWIFTLOGIX</div>
-        <div class="loader-sub">Loading admin dashboard...</div>
-        <div class="loader-progress"><div class="fill"></div></div>
-        <div class="loader-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
+<div class="loader-wrapper" id="loader">
+    <!-- Road -->
+    <div class="loader-road"></div>
+    
+    <!-- Truck Container -->
+    <div class="loader-truck-container">
+        <div class="loader-truck">
+            <!-- Cargo Area -->
+            <div class="cargo">
+                <!-- Brand Name on Truck -->
+                <div class="brand">Swift<span>Logix</span></div>
+                <!-- Door Lines -->
+                <div class="door-line"></div>
+                <div class="door-line"></div>
+                <div class="door-line"></div>
+            </div>
+            
+            <!-- Cabin -->
+            <div class="cabin">
+                <div class="window"></div>
+                <div class="door"></div>
+                <div class="headlight left"></div>
+                <div class="headlight right"></div>
+            </div>
+            
+            <!-- Exhaust -->
+            <div class="exhaust"></div>
+            
+            <!-- Wheels -->
+            <div class="wheel rear"></div>
+            <div class="wheel rear2"></div>
+            <div class="wheel front"></div>
         </div>
     </div>
-
+    
+    <!-- Text Below Truck -->
+    <div class="loader-text-container">
+        <div class="loader-title">SWIFTLOGIX</div>
+        <div class="loader-sub">Delivering Excellence Worldwide</div>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div class="loader-progress-container">
+        <div class="progress-bar">
+            <div class="fill"></div>
+        </div>
+        <div class="progress-text">
+            <span>Loading</span>
+            <span id="progressPercent">0%</span>
+        </div>
+    </div>
+</div>
     <!-- BACKGROUND -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
