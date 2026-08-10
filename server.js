@@ -162,7 +162,9 @@ const sendEmail = async (to, subject, html) => {
     }
 };
 
-// ==================== EMAIL #1: TRACKING CONFIRMATION ====================
+// ==================== EMAIL TEMPLATES ====================
+
+// Email #1: Tracking Confirmation
 const getTrackingEmailHTML = (shipment, userEmail, trackingLink) => {
     const { trackingCode, statusText, statusDesc, sender, receiver, parcel } = shipment;
     const statusColor = statusText === 'Delivered' ? '#4CAF50' :
@@ -224,7 +226,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a12;padding:40p
 </html>`;
 };
 
-// ==================== EMAIL #2: FULL INVOICE ====================
+// Email #2: Full Invoice
 const getInvoiceEmailHTML = (shipment) => {
     const { trackingCode, statusText, statusDesc, lastUpdated, sender, receiver, parcel, invoice, timeline, origin, destination } = shipment;
     const statusColor = statusText === 'Delivered' ? '#4CAF50' :
@@ -591,7 +593,7 @@ app.get('/api/admin/search/:query', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== PUBLIC TRACKING (SENDS BOTH EMAILS) ====================
+// ==================== PUBLIC TRACKING ====================
 app.post('/api/track', async (req, res) => {
     try {
         const { trackingCode, userEmail } = req.body;
@@ -901,6 +903,50 @@ app.get('/api/admin/chats/unread', authMiddleware, async (req, res) => {
     }
 });
 
+// ==================== CHAT DELETE ENDPOINTS ====================
+
+// DELETE individual message
+app.delete('/api/admin/chat/message/:messageId', authMiddleware, async (req, res) => {
+    try {
+        const result = await ChatMessage.deleteOne({ messageId: req.params.messageId });
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: 'Message not found' });
+        }
+        res.json({ success: true, message: 'Message deleted successfully' });
+    } catch (error) {
+        console.error('Delete message error:', error);
+        res.status(500).json({ error: 'Failed to delete message' });
+    }
+});
+
+// DELETE all messages in a conversation
+app.delete('/api/admin/chat/:conversationId/messages', authMiddleware, async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+        
+        // Check if conversation exists
+        const conversation = await ChatConversation.findOne({ conversationId });
+        if (!conversation) {
+            return res.status(404).json({ error: 'Conversation not found' });
+        }
+
+        const result = await ChatMessage.deleteMany({ conversationId });
+        
+        // Update conversation status
+        conversation.updatedAt = new Date();
+        await conversation.save();
+
+        res.json({ 
+            success: true, 
+            deletedCount: result.deletedCount,
+            message: `Deleted ${result.deletedCount} messages`
+        });
+    } catch (error) {
+        console.error('Delete all messages error:', error);
+        res.status(500).json({ error: 'Failed to delete messages' });
+    }
+});
+
 // ==================== SERVE PAGES ====================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/tracking', (req, res) => res.sendFile(path.join(__dirname, 'public', 'tracking.html')));
@@ -933,7 +979,7 @@ createDefaultAdmin().then(() => {
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME} / ${process.env.ADMIN_PASSWORD}`);
         console.log(`📊 Database: MongoDB Connected`);
         console.log(`📧 Email: Netlify Function`);
-        console.log(`💬 Chat Support: Enabled`);
+        console.log(`💬 Chat Support: Enabled with Delete functionality`);
         console.log('='.repeat(70) + '\n');
     });
 });
