@@ -3,183 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warehousing - SwiftLogix</title>
+    <title>Warehousing Solutions - SwiftLogix</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .service-detail-hero {
+        .service-hero {
             padding: 8rem 5% 4rem;
             text-align: center;
+            background: url('/images/hero-bg.jpg') center/cover no-repeat;
+            position: relative;
         }
-        .service-detail-hero h1 {
+        .service-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,14,26,0.8);
+            z-index: 0;
+        }
+        .service-hero .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .service-hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
-        .service-detail-hero p {
-            color: var(--text-muted);
+        .service-hero p {
+            color: #c8d4e8;
             font-size: 1.2rem;
-            max-width: 700px;
+            line-height: 1.8;
+        }
+        .service-content {
+            padding: 4rem 5%;
+            max-width: 1200px;
             margin: 0 auto;
         }
-        .service-detail-section { padding: 3rem 0 5rem; }
-        .service-detail-section .content-grid {
+        .service-content .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: center;
+            margin-bottom: 3rem;
         }
-        .service-detail-section .content-grid.reverse { direction: rtl; }
-        .service-detail-section .content-grid.reverse > * { direction: ltr; }
-        .service-detail-section .text h2 {
+        .service-content .grid.reverse {
+            direction: rtl;
+        }
+        .service-content .grid.reverse > * {
+            direction: ltr;
+        }
+        .service-content .text h2 {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .service-detail-section .text p {
-            color: var(--text-muted);
+        .service-content .text p {
+            color: #9aa8c9;
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .service-detail-section .text ul {
+        .service-content .text ul {
             list-style: none;
             padding: 0;
         }
-        .service-detail-section .text ul li {
+        .service-content .text ul li {
             padding: 0.5rem 0;
-            color: var(--text-muted);
+            color: #9aa8c9;
             display: flex;
             align-items: center;
             gap: 0.8rem;
         }
-        .service-detail-section .text ul li i { color: var(--primary); }
-        .service-detail-section .image {
-            border-radius: var(--radius);
-            overflow: hidden;
-            border: 1px solid var(--border);
+        .service-content .text ul li i {
+            color: #FF6600;
+            font-size: 1.1rem;
+            width: 20px;
         }
-        .service-detail-section .image img {
+        .service-content .image {
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(108,27,140,0.2);
+        }
+        .service-content .image img {
             width: 100%;
             height: 350px;
             object-fit: cover;
+            display: block;
         }
         .service-features {
             display: grid;
-            grid-template-columns: repeat(3,1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            margin-top: 3rem;
+            margin: 3rem 0;
         }
         .service-features .feature {
-            background: rgba(255,255,255,0.02);
-            border-radius: var(--radius);
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
             padding: 2rem;
             text-align: center;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(108,27,140,0.15);
+            transition: all 0.3s ease;
+        }
+        .service-features .feature:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,102,0,0.3);
+            background: rgba(255,255,255,0.05);
         }
         .service-features .feature i {
             font-size: 2.5rem;
-            color: var(--primary);
+            color: #FF6600;
             margin-bottom: 1rem;
         }
-        .service-features .feature h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .service-features .feature p { color: var(--text-muted); font-size: 0.9rem; }
-        .cta-box-service {
-            background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(0,242,254,0.02));
-            border-radius: var(--radius);
+        .service-features .feature h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        .service-features .feature p {
+            color: #9aa8c9;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .service-cta {
+            background: linear-gradient(135deg, rgba(108,27,140,0.1), rgba(255,102,0,0.05));
+            border-radius: 24px;
             padding: 3rem;
             text-align: center;
-            border: 1px solid var(--border);
-            margin-top: 3rem;
+            border: 1px solid rgba(108,27,140,0.2);
+            margin-top: 2rem;
         }
-        .cta-box-service h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-        .cta-box-service p { color: var(--text-muted); margin-bottom: 1.5rem; }
-        @media (max-width: 992px) {
-            .service-detail-section .content-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .service-detail-section .content-grid.reverse { direction: ltr; }
-            .service-features { grid-template-columns: repeat(2,1fr); }
+        .service-cta h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        @media (max-width: 480px) {
-            .service-detail-hero h1 { font-size: 2.2rem; }
-            .service-features { grid-template-columns: 1fr; }
+        .service-cta p {
+            color: #9aa8c9;
+            margin-bottom: 1.5rem;
+        }
+        .btn-primary {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            border: none;
+            border-radius: 60px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(108,27,140,0.4);
+        }
+        .footer {
+            background: #060a16;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(108,27,140,0.2);
+            margin-top: 4rem;
+        }
+        .footer p {
+            color: #667799;
+            font-size: 13px;
+        }
+        @media(max-width:992px){
+            .service-content .grid { grid-template-columns: 1fr; gap: 2rem; }
+            .service-content .grid.reverse { direction: ltr; }
+            .service-features { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media(max-width:768px){
+            .service-hero { padding: 6rem 5% 3rem; }
+            .service-hero h1 { font-size: 2.2rem; }
+            .service-content { padding: 2rem 5%; }
+            .service-content .text h2 { font-size: 1.6rem; }
+            .service-features { grid-template-columns: 1fr; gap: 1rem; }
+            .service-content .image img { height: 250px; }
+            .service-cta { padding: 2rem 1.5rem; }
+        }
+        @media(max-width:480px){
+            .service-hero h1 { font-size: 1.8rem; }
+            .service-content .text h2 { font-size: 1.3rem; }
+            .service-content .image img { height: 200px; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- TRUCK LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading service details...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
-    </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
-
-    <!-- BACKGROUND -->
-    <div class="bg-glow">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
     </div>
 
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -187,121 +254,102 @@
                 <a href="services.html" class="active">Services</a>
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
-                <a href="blog.html">Blog</a>
                 <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
             </div>
         </div>
     </nav>
 
-    <!-- SERVICE HERO -->
-    <section class="service-detail-hero">
-        <h1>Warehousing Solutions</h1>
-        <p>State-of-the-art warehousing with inventory management systems. Secure, scalable storage for all your business needs.</p>
+    <!-- HERO -->
+    <section class="service-hero">
+        <div class="content">
+            <h1>Warehousing Solutions</h1>
+            <p>State-of-the-art warehousing with advanced inventory management systems. Secure, scalable storage for all your business needs.</p>
+        </div>
     </section>
 
-    <!-- SERVICE DETAIL -->
-    <section class="service-detail-section">
-        <div class="container">
-            <div class="content-grid">
-                <div class="text">
-                    <h2>Secure Warehousing & Distribution</h2>
-                    <p>Our warehousing facilities are equipped with advanced inventory management systems and security features. We offer flexible storage solutions for businesses of all sizes, from small parcels to large-scale inventory.</p>
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> Flexible storage options for all cargo types</li>
-                        <li><i class="fas fa-check-circle"></i> Real-time inventory management system</li>
-                        <li><i class="fas fa-check-circle"></i> 24/7 security surveillance</li>
-                        <li><i class="fas fa-check-circle"></i> Climate-controlled storage available</li>
-                        <li><i class="fas fa-check-circle"></i> Distribution and order fulfillment services</li>
-                    </ul>
-                    <a href="contact.html" class="btn-primary" style="margin-top:1rem;">Request a Quote</a>
-                </div>
-                <div class="image">
-                    <img src="images/warehousing.jpg.PNG" alt="Warehousing" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'background:var(--card);height:350px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);\'><i class=\'fas fa-warehouse\' style=\'font-size:4rem;opacity:0.3;\'></i></div>'">
-                </div>
+    <!-- CONTENT -->
+    <section class="service-content">
+        <div class="grid">
+            <div class="text">
+                <h2>Secure Warehousing & Distribution</h2>
+                <p>SwiftLogix provides world-class warehousing facilities equipped with advanced inventory management systems. Our strategically located warehouses are designed to optimize your supply chain, offering flexible storage solutions that scale with your business growth.</p>
+                <p>Our facilities feature temperature-controlled zones, secure storage areas, and automated inventory tracking systems. We handle everything from receiving and storage to order fulfillment and distribution, ensuring your products are always available when needed.</p>
+                <p>With our integrated warehousing solutions, you can reduce operational costs, improve inventory accuracy, and speed up order processing. Our team manages the entire logistics process, allowing you to focus on core business activities.</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Flexible storage options for all cargo types</li>
+                    <li><i class="fas fa-check-circle"></i> Real-time inventory management system</li>
+                    <li><i class="fas fa-check-circle"></i> 24/7 security surveillance</li>
+                    <li><i class="fas fa-check-circle"></i> Climate-controlled storage available</li>
+                    <li><i class="fas fa-check-circle"></i> Distribution and order fulfillment services</li>
+                    <li><i class="fas fa-check-circle"></i> Scalable solutions for growing businesses</li>
+                </ul>
+                <a href="contact.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Request a Quote</a>
             </div>
+            <div class="image">
+                <img src="/images/warehousing.jpg.PNG" alt="Warehousing">
+            </div>
+        </div>
 
-            <!-- FEATURES -->
-            <div class="service-features">
-                <div class="feature">
-                    <i class="fas fa-database"></i>
-                    <h4>Storage</h4>
-                    <p>Flexible storage options for all cargo types</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-clipboard-list"></i>
-                    <h4>Inventory</h4>
-                    <p>Real-time inventory management system</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-shield-hooded"></i>
-                    <h4>24/7 Security</h4>
-                    <p>Round-the-clock surveillance and protection</p>
-                </div>
+        <div class="service-features">
+            <div class="feature">
+                <i class="fas fa-database"></i>
+                <h4>Storage</h4>
+                <p>Flexible storage options for all cargo types with scalable capacity and secure access.</p>
             </div>
+            <div class="feature">
+                <i class="fas fa-clipboard-list"></i>
+                <h4>Inventory</h4>
+                <p>Real-time inventory management system with instant updates and reporting capabilities.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-hooded"></i>
+                <h4>24/7 Security</h4>
+                <p>Round-the-clock surveillance with advanced security systems and access control.</p>
+            </div>
+        </div>
 
-            <!-- CTA -->
-            <div class="cta-box-service">
-                <h3>Ready to Store with Us?</h3>
-                <p>Get a competitive quote for your warehousing needs today.</p>
-                <a href="contact.html" class="btn-primary">Get a Quote</a>
-            </div>
+        <div class="service-cta">
+            <h3>Ready to Store with Us?</h3>
+            <p>Get a competitive quote for your warehousing needs today. Our experts are ready to assist you.</p>
+            <a href="contact.html" class="btn-primary">Get a Quote</a>
         </div>
     </section>
 
     <!-- FOOTER -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>SwiftLogix</h4>
-                    <p>Global logistics intelligence for the modern enterprise.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <a href="about.html">About Us</a>
-                    <a href="services.html">Services</a>
-                    <a href="blog.html">Blog</a>
-                    <a href="careers.html">Careers</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Support</h4>
-                    <a href="contact.html">Contact</a>
-                    <a href="tracking.html">Track Shipment</a>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Contact</h4>
-                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
-                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
-                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-            </div>
-        </div>
+        <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+        console.log('🚀 Warehousing page loaded successfully!');
+    </script>
 </body>
 </html>
