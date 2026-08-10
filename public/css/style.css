@@ -1275,9 +1275,9 @@ img {
     margin-top: 2px;
 }
 
-/* ==================== CHAT WIDGET - FULL PAGE ==================== */
+/* ==================== CHAT WIDGET - FULL SCREEN ==================== */
 
-/* Chat Widget Container - Floating Button */
+/* Floating Chat Button */
 .chat-widget {
     position: fixed;
     bottom: 30px;
@@ -1285,7 +1285,6 @@ img {
     z-index: 9999;
 }
 
-/* Chat Toggle Button */
 .chat-widget .chat-toggle {
     width: 62px;
     height: 62px;
@@ -1324,21 +1323,21 @@ img {
     justify-content: center;
 }
 
-/* ===== FULL PAGE CHAT OVERLAY ===== */
+/* Full Screen Chat Overlay */
 .chat-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(15px);
     z-index: 10000;
     display: none;
     justify-content: center;
     align-items: center;
     padding: 20px;
-    animation: chatFadeIn 0.35s ease;
+    animation: chatFadeIn 0.4s ease;
 }
 
 .chat-overlay.active {
@@ -1348,20 +1347,20 @@ img {
 @keyframes chatFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95) translateY(10px);
+        transform: scale(0.95);
     }
     to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: scale(1);
     }
 }
 
-/* Full Page Chat Window */
+/* Full Screen Chat Window */
 .chat-overlay .chat-window-full {
     width: 100%;
-    max-width: 700px;
-    height: 85vh;
-    max-height: 700px;
+    max-width: 800px;
+    height: 90vh;
+    max-height: 750px;
     background: #0a0e1a;
     border-radius: 28px;
     border: 1px solid rgba(108, 27, 140, 0.2);
@@ -1373,7 +1372,7 @@ img {
 
 /* Chat Header */
 .chat-overlay .chat-header {
-    padding: 1.2rem 1.8rem;
+    padding: 1.5rem 2rem;
     background: linear-gradient(135deg, rgba(108, 27, 140, 0.15), rgba(255, 102, 0, 0.05));
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
@@ -1385,33 +1384,33 @@ img {
 .chat-overlay .chat-header .header-left {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
 .chat-overlay .chat-header .avatar {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: linear-gradient(135deg, #6C1B8C, #FF6600);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     color: #fff;
 }
 
 .chat-overlay .chat-header .header-info h4 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: #fff;
 }
 
 .chat-overlay .chat-header .header-info .status {
-    font-size: 12px;
+    font-size: 13px;
     color: #4CAF50;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .chat-overlay .chat-header .header-info .status::before {
@@ -1432,7 +1431,7 @@ img {
     background: none;
     border: none;
     color: #8899bb;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
@@ -1447,20 +1446,20 @@ img {
 /* Chat Body */
 .chat-overlay .chat-body {
     flex: 1;
-    padding: 1.5rem 1.8rem;
+    padding: 1.5rem 2rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     background: #0a0e1a;
 }
 
 /* Messages */
 .chat-overlay .chat-body .message {
-    max-width: 80%;
-    padding: 12px 18px;
-    border-radius: 16px;
-    font-size: 14px;
+    max-width: 75%;
+    padding: 14px 20px;
+    border-radius: 18px;
+    font-size: 15px;
     line-height: 1.6;
     animation: messageSlide 0.3s ease;
 }
@@ -1468,7 +1467,7 @@ img {
 @keyframes messageSlide {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(12px);
     }
     to {
         opacity: 1;
@@ -1491,7 +1490,7 @@ img {
 }
 
 .chat-overlay .chat-body .message .msg-time {
-    font-size: 10px;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.4);
     margin-top: 6px;
     display: block;
@@ -1511,14 +1510,14 @@ img {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 50px;
-    padding: 6px 18px;
-    font-size: 12px;
+    padding: 8px 22px;
+    font-size: 13px;
     color: #8899bb;
     max-width: 90%;
     text-align: center;
 }
 
-/* Chat Email Input (Start Screen) */
+/* Chat Start Screen */
 .chat-overlay .chat-start-screen {
     flex: 1;
     display: flex;
@@ -1530,42 +1529,43 @@ img {
 }
 
 .chat-overlay .chat-start-screen .chat-icon {
-    font-size: 4rem;
+    font-size: 4.5rem;
     color: #FF6600;
     margin-bottom: 1.5rem;
     opacity: 0.8;
 }
 
 .chat-overlay .chat-start-screen h3 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    color: #fff;
 }
 
 .chat-overlay .chat-start-screen p {
     color: #9aa8c9;
-    font-size: 0.95rem;
-    max-width: 380px;
-    margin-bottom: 1.8rem;
+    font-size: 1rem;
+    max-width: 420px;
+    margin-bottom: 2rem;
     line-height: 1.6;
 }
 
 .chat-overlay .chat-start-screen .start-form {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
 }
 
 .chat-overlay .chat-start-screen .start-form input,
 .chat-overlay .chat-start-screen .start-form textarea {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 18px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border-radius: 14px;
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     font-family: 'Inter', sans-serif;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     transition: all 0.3s ease;
 }
 
@@ -1588,24 +1588,24 @@ img {
 
 .chat-overlay .chat-start-screen .start-form .start-btn {
     width: 100%;
-    padding: 14px;
+    padding: 15px;
     background: linear-gradient(135deg, #6C1B8C, #FF6600);
     border: none;
     border-radius: 60px;
     color: #fff;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 17px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .chat-overlay .chat-start-screen .start-form .start-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(108, 27, 140, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 35px rgba(108, 27, 140, 0.3);
 }
 
 /* Chat Input */
@@ -1620,12 +1620,12 @@ img {
 
 .chat-overlay .chat-footer input {
     flex: 1;
-    padding: 12px 18px;
+    padding: 14px 20px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 60px;
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     font-family: 'Inter', sans-serif;
     transition: all 0.3s ease;
 }
@@ -1641,13 +1641,13 @@ img {
 }
 
 .chat-overlay .chat-footer .send-btn {
-    padding: 12px 24px;
+    padding: 14px 28px;
     background: linear-gradient(135deg, #6C1B8C, #FF6600);
     border: none;
     border-radius: 60px;
     color: #fff;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -1706,9 +1706,9 @@ img {
         font-size: 2.8rem;
     }
     .chat-overlay .chat-window-full {
-        max-width: 600px;
-        height: 80vh;
-        max-height: 650px;
+        max-width: 700px;
+        height: 85vh;
+        max-height: 700px;
     }
 }
 
@@ -1864,6 +1864,14 @@ img {
     .chat-overlay .chat-footer {
         padding: 0.8rem 1.2rem;
     }
+    .chat-overlay .chat-header .avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    .chat-overlay .chat-header .header-info h4 {
+        font-size: 16px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1962,8 +1970,8 @@ img {
         font-size: 20px;
     }
     .chat-overlay .chat-header .avatar {
-        width: 38px;
-        height: 38px;
+        width: 36px;
+        height: 36px;
         font-size: 16px;
     }
     .chat-overlay .chat-header .header-info h4 {
@@ -1971,11 +1979,11 @@ img {
     }
     .chat-overlay .chat-body .message {
         max-width: 95%;
-        font-size: 13px;
+        font-size: 14px;
         padding: 10px 14px;
     }
     .chat-overlay .chat-footer .send-btn {
-        padding: 10px 16px;
+        padding: 10px 18px;
         font-size: 13px;
     }
     .chat-overlay .chat-footer input {
@@ -1983,9 +1991,18 @@ img {
         padding: 10px 14px;
     }
     .chat-overlay .chat-start-screen .chat-icon {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
     .chat-overlay .chat-start-screen h3 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+    }
+    .chat-overlay .chat-start-screen .start-form input,
+    .chat-overlay .chat-start-screen .start-form textarea {
+        font-size: 14px;
+        padding: 12px 14px;
+    }
+    .chat-overlay .chat-start-screen .start-form .start-btn {
+        font-size: 15px;
+        padding: 13px;
     }
 }
