@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Transport - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .service-detail-hero {
+            padding: 8rem 5% 4rem;
+            text-align: center;
+        }
+        .service-detail-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .service-detail-hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .service-detail-section { padding: 3rem 0 5rem; }
+        .service-detail-section .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .service-detail-section .content-grid.reverse { direction: rtl; }
+        .service-detail-section .content-grid.reverse > * { direction: ltr; }
+        .service-detail-section .text h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .service-detail-section .text p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .service-detail-section .text ul {
+            list-style: none;
+            padding: 0;
+        }
+        .service-detail-section .text ul li {
+            padding: 0.5rem 0;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .service-detail-section .text ul li i { color: var(--primary); }
+        .service-detail-section .image {
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .service-detail-section .image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+        .service-features {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .service-features .feature {
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .service-features .feature i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .service-features .feature h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .service-features .feature p { color: var(--text-muted); font-size: 0.9rem; }
+        .cta-box-service {
+            background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(0,242,254,0.02));
+            border-radius: var(--radius);
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+        .cta-box-service h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .cta-box-service p { color: var(--text-muted); margin-bottom: 1.5rem; }
+        @media (max-width: 992px) {
+            .service-detail-section .content-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .service-detail-section .content-grid.reverse { direction: ltr; }
+            .service-features { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 480px) {
+            .service-detail-hero h1 { font-size: 2.2rem; }
+            .service-features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Loading service details...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tracking.html">Track</a>
+                <a href="services.html" class="active">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SERVICE HERO -->
+    <section class="service-detail-hero">
+        <h1>Road Transport Services</h1>
+        <p>Domestic and cross-border road transportation with real-time tracking. Fast, reliable delivery for all your cargo needs.</p>
+    </section>
+
+    <!-- SERVICE DETAIL -->
+    <section class="service-detail-section">
+        <div class="container">
+            <div class="content-grid">
+                <div class="text">
+                    <h2>Reliable Road Transport Solutions</h2>
+                    <p>Our road transport services provide flexible and efficient delivery solutions for domestic and cross-border shipments. With a modern fleet and experienced drivers, we ensure your cargo reaches its destination safely and on time.</p>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Door-to-door delivery service</li>
+                        <li><i class="fas fa-check-circle"></i> Real-time GPS fleet tracking</li>
+                        <li><i class="fas fa-check-circle"></i> Express and time-critical delivery options</li>
+                        <li><i class="fas fa-check-circle"></i> Temperature-controlled vehicles</li>
+                        <li><i class="fas fa-check-circle"></i> Cross-border transport expertise</li>
+                    </ul>
+                    <a href="contact.html" class="btn-primary" style="margin-top:1rem;">Request a Quote</a>
+                </div>
+                <div class="image">
+                    <img src="images/road-transport.jpg" alt="Road Transport" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'background:var(--card);height:350px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);\'><i class=\'fas fa-truck\' style=\'font-size:4rem;opacity:0.3;\'></i></div>'">
+                </div>
+            </div>
+
+            <!-- FEATURES -->
+            <div class="service-features">
+                <div class="feature">
+                    <i class="fas fa-door-open"></i>
+                    <h4>Door-to-Door</h4>
+                    <p>Direct pickup and delivery service</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-location-dot"></i>
+                    <h4>Fleet Tracking</h4>
+                    <p>Live GPS tracking of your shipment</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Express Delivery</h4>
+                    <p>Fast and time-critical delivery options</p>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-box-service">
+                <h3>Ready to Ship by Road?</h3>
+                <p>Get a competitive quote for your road transport needs today.</p>
+                <a href="contact.html" class="btn-primary">Get a Quote</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
