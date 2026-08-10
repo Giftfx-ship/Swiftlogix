@@ -1,10 +1,11 @@
-// ==================== LOADING ANIMATION ====================
+// ==================== LOADING ANIMATION - TRUCK ====================
 window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
     if (loader) {
+        // Show loader for minimum 2.5 seconds for the truck animation to complete
         setTimeout(() => {
             loader.classList.add('hidden');
-        }, 1500);
+        }, 2800);
     }
 });
 
@@ -99,10 +100,7 @@ class ChatWidget {
     }
 
     init() {
-        // Create chat widget HTML
         this.createWidget();
-
-        // Load saved conversation from localStorage
         const saved = localStorage.getItem('swiftlogix_chat');
         if (saved) {
             try {
@@ -159,10 +157,7 @@ class ChatWidget {
         if (this.isOpen) {
             window.classList.add('open');
             toggle.innerHTML = '<i class="fas fa-times"></i>';
-            // Load messages
             this.loadMessages();
-
-            // If new conversation, show email input
             if (this.isNewConversation) {
                 this.showEmailPrompt();
             }
@@ -228,15 +223,11 @@ class ChatWidget {
             if (data.success) {
                 this.conversationId = data.conversationId;
                 this.isNewConversation = false;
-
-                // Save to localStorage
                 localStorage.setItem('swiftlogix_chat', JSON.stringify({
                     conversationId: this.conversationId,
                     userEmail: this.userEmail,
                     userName: this.userName
                 }));
-
-                // Load messages
                 this.loadMessages();
             } else {
                 alert('Failed to start chat. Please try again.');
@@ -292,17 +283,7 @@ class ChatWidget {
             `;
         }).join('');
 
-        // Scroll to bottom
         body.scrollTop = body.scrollHeight;
-
-        // Show input
-        this.showChatInput();
-    }
-
-    showChatInput() {
-        const body = document.getElementById('chatBody');
-        // Remove any email prompt
-        // Just show the messages
     }
 
     async sendMessage() {
@@ -332,7 +313,6 @@ class ChatWidget {
             const data = await response.json();
 
             if (data.success) {
-                // Add message to UI
                 const body = document.getElementById('chatBody');
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'message user';
@@ -353,7 +333,6 @@ class ChatWidget {
     }
 
     checkUnread() {
-        // Poll for unread count
         setInterval(async () => {
             if (this.conversationId) {
                 try {
