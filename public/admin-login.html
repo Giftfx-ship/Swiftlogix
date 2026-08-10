@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 5%;
+        }
+        .login-card {
+            max-width: 440px;
+            width: 100%;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 3rem;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            animation: fadeUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary));
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .login-card .lock-icon { text-align: center; font-size: 48px; color: var(--primary); margin-bottom: 1rem; }
+        .login-card .logo-text { text-align: center; font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.3rem; }
+        .login-card .badge { text-align: center; color: var(--text-muted); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; }
+        .login-card h2 { text-align: center; font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+        .login-card .sub { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; }
+        .login-card .form-group { margin-bottom: 1.5rem; position: relative; }
+        .login-card .form-group label { display: block; color: var(--text-muted); font-size: 12px; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.5px; text-transform: uppercase; }
+        .login-card .form-group .input-wrap { position: relative; }
+        .login-card .form-group .input-wrap i { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 16px; }
+        .login-card .form-group input { width: 100%; padding: 1rem 1rem 1rem 3.2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 60px; color: var(--text); font-size: 1rem; transition: all var(--transition); }
+        .login-card .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0,242,254,0.1); background: rgba(255,255,255,0.08); }
+        .login-card .form-group input::placeholder { color: #555; }
+        .login-card .login-btn { width: 100%; padding: 1.1rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: 60px; color: var(--secondary); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-top: 0.5rem; }
+        .login-card .login-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(0,242,254,0.35); }
+        .login-card .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .login-card .error-msg { color: #ff4444; font-size: 13px; text-align: center; margin-top: 1rem; display: none; }
+        .login-card .back-link { display: block; text-align: center; margin-top: 1.5rem; color: var(--text-muted); font-size: 13px; transition: color var(--transition); }
+        .login-card .back-link:hover { color: var(--primary); }
+        .login-card .admin-hint { text-align: center; color: #555; font-size: 12px; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px dashed var(--border); }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Securing admin access...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- LOGIN PAGE -->
+    <section class="login-page">
+        <div class="login-card">
+            <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="logo-text">Swift<span style="-webkit-text-fill-color:var(--primary);">Logix</span></div>
+            <div class="badge">✦ Administrator Portal ✦</div>
+            <h2>Secure Login</h2>
+            <p class="sub">Enter your credentials to access the admin dashboard</p>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div id="errorMsg" class="error-msg"></div>
+            </form>
+
+            <div class="admin-hint">
+                <i class="fas fa-key" style="color:var(--primary);"></i>
+                Default: <strong>igwe</strong> / <strong>dev</strong>
+            </div>
+
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </section>
+
+    <script>
+        const API_URL = window.location.origin;
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            if (!username || !password) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = '❌ Please fill in all fields';
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+            errorMsg.style.display = 'none';
+            try {
+                const response = await fetch(`${API_URL}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    errorMsg.style.display = 'block';
+                    errorMsg.textContent = '❌ Invalid credentials. Access denied.';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                    return;
+                }
+                localStorage.setItem('adminToken', data.token);
+                localStorage.setItem('adminUsername', data.admin.username);
+                window.location.href = 'admin.html';
+            } catch (error) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = '❌ Network error. Please try again.';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            }
+        }
+    </script>
+</body>
+</html>
