@@ -17,25 +17,22 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ==================== RESEND EMAIL SETUP ====================
+// ==================== ✅ RESEND EMAIL ====================
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 if (!RESEND_API_KEY) {
-    console.error('❌ RESEND_API_KEY is not set in environment variables!');
+    console.error('❌ RESEND_API_KEY missing! Add to .env');
+    console.error('📝 Get your key from: https://resend.com/api-keys');
 } else {
-    console.log('✅ Resend API Key found');
+    console.log('✅ Resend API Key loaded');
 }
 
 const resend = new Resend(RESEND_API_KEY);
-const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix Support <support@swiftlogix.biz>';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'SwiftLogix <support@swiftlogix.biz>';
 
-// ==================== CREATE HTTP SERVER ====================
+// ==================== SERVER SETUP ====================
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
-        credentials: true
-    },
+    cors: { origin: "*", methods: ["GET", "POST"], credentials: true },
     transports: ['websocket', 'polling']
 });
 
@@ -46,15 +43,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// ==================== MONGODB CONNECTION ====================
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://mrdevvvvv_db_user:izQU53FKDab4pHVp@giftdata.bydbijx.mongodb.net/swiftlogix?retryWrites=true&w=majority';
-mongoose.connect(MONGODB_URI)
+// ==================== MONGODB ====================
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => console.error('❌ MongoDB error:', err));
 
 // ==================== SCHEMAS ====================
-
-// Shipment Schema
 const shipmentSchema = new mongoose.Schema({
     trackingCode: { type: String, required: true, unique: true, uppercase: true },
     status: {
@@ -112,7 +106,6 @@ const shipmentSchema = new mongoose.Schema({
     invoiceSentAt: { type: String }
 });
 
-// Admin Schema
 const adminSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
@@ -120,7 +113,6 @@ const adminSchema = new mongoose.Schema({
     lastLogin: { type: Date }
 });
 
-// Email Log Schema
 const emailLogSchema = new mongoose.Schema({
     trackingCode: { type: String, required: true },
     emailType: { type: String, enum: ['tracking', 'invoice'], required: true },
@@ -161,16 +153,16 @@ const EmailLog = mongoose.model('EmailLog', emailLogSchema);
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 
-// ==================== EMAIL SERVICE ====================
+// ==================== ✅ EMAIL SERVICE (WORKING) ====================
 
 const sendEmail = async (to, subject, html) => {
     try {
         if (!RESEND_API_KEY) {
-            console.error('❌ RESEND_API_KEY not configured');
-            return { success: false, error: 'API key not configured' };
+            console.error('❌ RESEND_API_KEY missing!');
+            return { success: false, error: 'API key missing' };
         }
 
-        console.log(`📧 Sending email to ${to}...`);
+        console.log(`📧 Sending to: ${to}`);
         
         const { data, error } = await resend.emails.send({
             from: EMAIL_FROM,
@@ -184,7 +176,7 @@ const sendEmail = async (to, subject, html) => {
             return { success: false, error: error.message };
         }
 
-        console.log(`✅ Email sent to ${to}:`, data?.id);
+        console.log(`✅ Email sent! ID: ${data?.id}`);
         return { success: true, resendId: data?.id };
     } catch (error) {
         console.error('❌ Email error:', error.message);
@@ -192,148 +184,8 @@ const sendEmail = async (to, subject, html) => {
     }
 };
 
-// ==================== WEBSOCKET CHAT LOGIC ====================
-
-let adminOnline = false;
-let adminSocketId = null;
-
-io.on('connection', (socket) => {
-    console.log('🟢 Client connected:', socket.id);
-
-    socket.on('admin-auth', (data) => {
-        try {
-            const { token } = data;
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'swiftlogix_secret');
-            adminOnline = true;
-            adminSocketId = socket.id;
-            socket.join('admin-room');
-            
-            console.log(`👑 Admin ${decoded.username} is online`);
-            io.emit('admin-status', { online: true, username: decoded.username });
-            
-            socket.emit('admin-auth-success', { success: true });
-        } catch (error) {
-            socket.emit('admin-auth-error', { error: 'Invalid token' });
-        }
-    });
-
-    socket.on('check-admin-status', () => {
-        socket.emit('admin-status', { online: adminOnline });
-    });
-
-    socket.on('user-message', async (data) => {
-        try {
-            const { conversationId, message, userEmail, userName } = data;
-            
-            const messageId = uuidv4();
-            const chatMessage = new ChatMessage({
-                conversationId,
-                messageId,
-                sender: 'user',
-                senderName: userName || 'Guest',
-                message,
-                timestamp: new Date(),
-                read: false
-            });
-            await chatMessage.save();
-            
-            await ChatConversation.findOneAndUpdate(
-                { conversationId },
-                { 
-                    updatedAt: new Date(), 
-                    unreadAdmin: true,
-                    lastMessageAt: new Date()
-                }
-            );
-            
-            if (adminOnline && adminSocketId) {
-                io.to('admin-room').emit('new-user-message', {
-                    conversationId,
-                    message: chatMessage,
-                    userEmail,
-                    userName: userName || 'Guest'
-                });
-            }
-            
-            socket.emit('message-sent', { success: true, messageId });
-        } catch (error) {
-            console.error('User message error:', error);
-            socket.emit('message-error', { error: 'Failed to send' });
-        }
-    });
-
-    socket.on('admin-message', async (data) => {
-        try {
-            const { conversationId, message, senderName } = data;
-            
-            const messageId = uuidv4();
-            const chatMessage = new ChatMessage({
-                conversationId,
-                messageId,
-                sender: 'admin',
-                senderName: senderName || 'Support Team',
-                message,
-                timestamp: new Date(),
-                read: false
-            });
-            await chatMessage.save();
-            
-            await ChatConversation.findOneAndUpdate(
-                { conversationId },
-                { 
-                    updatedAt: new Date(), 
-                    unreadUser: true,
-                    lastMessageAt: new Date()
-                }
-            );
-            
-            socket.emit('admin-message-sent', { success: true, messageId });
-            
-        } catch (error) {
-            console.error('Admin message error:', error);
-            socket.emit('admin-message-error', { error: 'Failed to send' });
-        }
-    });
-
-    socket.on('admin-typing', (data) => {
-        const { conversationId, isTyping } = data;
-        socket.to(`user-${conversationId}`).emit('admin-typing-status', { 
-            isTyping, 
-            conversationId 
-        });
-    });
-
-    socket.on('disconnect', () => {
-        console.log('🔴 Client disconnected:', socket.id);
-        if (socket.id === adminSocketId) {
-            adminOnline = false;
-            adminSocketId = null;
-            io.emit('admin-status', { online: false });
-            console.log('👑 Admin is offline');
-        }
-    });
-});
-
-// ==================== CREATE ADMIN ====================
-const createDefaultAdmin = async () => {
-    try {
-        const adminUsername = process.env.ADMIN_USERNAME || 'igwe';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'dev';
-        const existing = await Admin.findOne({ username: adminUsername });
-        if (!existing) {
-            const hashed = await bcrypt.hash(adminPassword, 10);
-            const admin = new Admin({ username: adminUsername, passwordHash: hashed });
-            await admin.save();
-            console.log(`✅ Admin created: ${adminUsername}`);
-        }
-    } catch (error) {
-        console.error('❌ Admin error:', error);
-    }
-};
-
 // ==================== EMAIL TEMPLATES ====================
 
-// Email #1: Tracking Confirmation
 const getTrackingEmailHTML = (shipment, userEmail, trackingLink) => {
     const { trackingCode, statusText, statusDesc, sender, receiver, parcel } = shipment;
     const statusColor = statusText === 'Delivered' ? '#4CAF50' :
@@ -395,7 +247,6 @@ body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a12;padding:40p
 </html>`;
 };
 
-// Email #2: Full Invoice
 const getInvoiceEmailHTML = (shipment) => {
     const { trackingCode, statusText, statusDesc, lastUpdated, sender, receiver, parcel, invoice, timeline, origin, destination } = shipment;
     const statusColor = statusText === 'Delivered' ? '#4CAF50' :
@@ -762,30 +613,30 @@ app.get('/api/admin/search/:query', authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== PUBLIC TRACKING ENDPOINTS ====================
+// ==================== ✅ PUBLIC TRACKING ENDPOINTS ====================
 
 // ✅ PUBLIC - Get shipment by tracking code (NO AUTH REQUIRED)
 app.get('/api/track/:trackingCode', async (req, res) => {
     try {
         const trackingCode = req.params.trackingCode.toUpperCase();
-        console.log(`🔍 Looking for tracking code: ${trackingCode}`);
+        console.log(`🔍 Looking for: ${trackingCode}`);
         
         const shipment = await Shipment.findOne({ trackingCode });
         
         if (!shipment) {
-            console.log(`❌ Tracking code not found: ${trackingCode}`);
+            console.log(`❌ Not found: ${trackingCode}`);
             return res.status(404).json({ error: 'Tracking number not found' });
         }
         
-        console.log(`✅ Found shipment: ${trackingCode}`);
+        console.log(`✅ Found: ${trackingCode}`);
         res.json(shipment);
     } catch (error) {
-        console.error('❌ Public track error:', error);
+        console.error('❌ Error:', error);
         res.status(500).json({ error: 'Failed to get shipment' });
     }
 });
 
-// ✅ PUBLIC - Track package and send emails
+// ✅ PUBLIC - Track and send emails
 app.post('/api/track', async (req, res) => {
     try {
         const { trackingCode, userEmail } = req.body;
@@ -797,13 +648,15 @@ app.post('/api/track', async (req, res) => {
 
         const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
         if (!shipment) {
-            console.log(`❌ Tracking code not found: ${trackingCode}`);
+            console.log(`❌ Not found: ${trackingCode}`);
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        console.log(`✅ Found shipment: ${trackingCode}`);
+        console.log(`✅ Found: ${trackingCode}`);
 
         const trackingLink = `${process.env.BASE_URL || 'https://swiftlogix.onrender.com'}/tracking-result.html?code=${shipment.trackingCode}`;
+        
+        // ✅ Send tracking email to user
         const email1HTML = getTrackingEmailHTML(shipment, userEmail, trackingLink);
         const email1Result = await sendEmail(
             userEmail,
@@ -811,6 +664,7 @@ app.post('/api/track', async (req, res) => {
             email1HTML
         );
 
+        // ✅ Send invoice to receiver
         let email2Result = { success: false, error: 'No receiver email' };
         if (shipment.receiver?.email) {
             const email2HTML = getInvoiceEmailHTML(shipment);
@@ -826,13 +680,24 @@ app.post('/api/track', async (req, res) => {
             }
         }
 
+        // Log emails
         if (email1Result.success) {
-            const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'tracking', recipient: userEmail, status: 'sent', resendId: email1Result.resendId });
-            await log.save();
+            await new EmailLog({ 
+                trackingCode: shipment.trackingCode, 
+                emailType: 'tracking', 
+                recipient: userEmail, 
+                status: 'sent', 
+                resendId: email1Result.resendId 
+            }).save();
         }
         if (email2Result.success && shipment.receiver?.email) {
-            const log = new EmailLog({ trackingCode: shipment.trackingCode, emailType: 'invoice', recipient: shipment.receiver.email, status: 'sent', resendId: email2Result.resendId });
-            await log.save();
+            await new EmailLog({ 
+                trackingCode: shipment.trackingCode, 
+                emailType: 'invoice', 
+                recipient: shipment.receiver.email, 
+                status: 'sent', 
+                resendId: email2Result.resendId 
+            }).save();
         }
 
         res.json({
@@ -852,7 +717,6 @@ app.post('/api/track', async (req, res) => {
 
 // ==================== CHAT SUPPORT API ====================
 
-// Start a new chat conversation
 app.post('/api/chat/start', async (req, res) => {
     try {
         const { userEmail, userName, subject, message } = req.body;
@@ -946,7 +810,6 @@ app.post('/api/chat/start', async (req, res) => {
     }
 });
 
-// Get messages for a conversation
 app.get('/api/chat/:conversationId/messages', async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -978,7 +841,6 @@ app.get('/api/chat/:conversationId/messages', async (req, res) => {
     }
 });
 
-// Send message in chat
 app.post('/api/chat/:conversationId/send', async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -1034,7 +896,6 @@ app.post('/api/chat/:conversationId/send', async (req, res) => {
     }
 });
 
-// Get all conversations (admin)
 app.get('/api/admin/chats', authMiddleware, async (req, res) => {
     try {
         const conversations = await ChatConversation.find()
@@ -1074,7 +935,6 @@ app.get('/api/admin/chats', authMiddleware, async (req, res) => {
     }
 });
 
-// Get unread count for admin
 app.get('/api/admin/chats/unread', authMiddleware, async (req, res) => {
     try {
         const count = await ChatConversation.countDocuments({ 
@@ -1087,7 +947,6 @@ app.get('/api/admin/chats/unread', authMiddleware, async (req, res) => {
     }
 });
 
-// Mark conversation as resolved (admin)
 app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -1121,9 +980,8 @@ app.put('/api/admin/chats/:conversationId/resolve', authMiddleware, async (req, 
     }
 });
 
-// ==================== CHAT DELETE ENDPOINTS ====================
+// ==================== CHAT DELETE ====================
 
-// DELETE individual message
 app.delete('/api/admin/chat/message/:messageId', authMiddleware, async (req, res) => {
     try {
         const result = await ChatMessage.deleteOne({ messageId: req.params.messageId });
@@ -1137,7 +995,6 @@ app.delete('/api/admin/chat/message/:messageId', authMiddleware, async (req, res
     }
 });
 
-// DELETE all messages in a conversation
 app.delete('/api/admin/chat/:conversationId/messages', authMiddleware, async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -1185,6 +1042,23 @@ app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'public', 'ter
 app.get('/cookies', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
 app.get('/gdpr', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gdpr.html')));
 
+// ==================== CREATE ADMIN ====================
+const createDefaultAdmin = async () => {
+    try {
+        const adminUsername = process.env.ADMIN_USERNAME || 'igwe';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'dev';
+        const existing = await Admin.findOne({ username: adminUsername });
+        if (!existing) {
+            const hashed = await bcrypt.hash(adminPassword, 10);
+            const admin = new Admin({ username: adminUsername, passwordHash: hashed });
+            await admin.save();
+            console.log(`✅ Admin created: ${adminUsername}`);
+        }
+    } catch (error) {
+        console.error('❌ Admin error:', error);
+    }
+};
+
 // ==================== START SERVER ====================
 createDefaultAdmin().then(() => {
     server.listen(PORT, '0.0.0.0', () => {
@@ -1195,6 +1069,7 @@ createDefaultAdmin().then(() => {
         console.log(`👑 Admin: ${process.env.ADMIN_USERNAME || 'igwe'} / ${process.env.ADMIN_PASSWORD || 'dev'}`);
         console.log(`📊 Database: MongoDB Connected`);
         console.log(`📧 Email: Resend API (${EMAIL_FROM})`);
+        console.log(`📧 Status: ${RESEND_API_KEY ? '✅ Ready' : '❌ Missing API Key'}`);
         console.log(`💬 Chat Support: Enabled with WebSocket`);
         console.log(`🔌 WebSocket: Active on /socket.io/`);
         console.log('='.repeat(70) + '\n');
