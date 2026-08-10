@@ -8,24 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .legal-page { padding: 8rem 5% 4rem; max-width: 900px; margin: 0 auto; }
+        /* ==================== LEGAL PAGE ==================== */
+        .legal-page {
+            padding: 8rem 5% 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
         .legal-page h1 {
             font-size: 2.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(135deg, #fff, #6C1B8C, #FF6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-        .legal-page .last-updated { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .legal-page .last-updated {
+            color: #9aa8c9;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legal-page .last-updated i {
+            color: #FF6600;
+        }
         .legal-page h2 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary);
+            color: #FF6600;
             margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .legal-page h2 i {
+            color: #6C1B8C;
+            font-size: 1.2rem;
         }
         .legal-page p {
-            color: var(--text-muted);
+            color: #9aa8c9;
             line-height: 1.8;
             margin-bottom: 1rem;
         }
@@ -35,103 +57,130 @@
         }
         .legal-page ul li {
             padding: 0.5rem 0;
-            color: var(--text-muted);
+            color: #9aa8c9;
             display: flex;
             align-items: flex-start;
             gap: 0.8rem;
         }
-        .legal-page ul li i { color: var(--primary); margin-top: 0.3rem; }
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            transition: all var(--transition);
+        .legal-page ul li i {
+            color: #FF6600;
+            margin-top: 0.3rem;
+            font-size: 0.9rem;
         }
-        .back-link:hover { color: var(--primary); gap: 1rem; }
+        .legal-page .highlight-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,102,0,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255,102,0,0.15);
+        }
+        .legal-page .highlight-box p {
+            color: #9aa8c9;
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        .legal-page .highlight-box i {
+            color: #FF6600;
+            margin-right: 0.5rem;
+        }
+
+        /* GDPR Badge */
         .gdpr-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.8rem;
             padding: 0.5rem 1.5rem;
-            background: rgba(0,242,254,0.1);
-            border: 1px solid rgba(0,242,254,0.2);
+            background: rgba(108,27,140,0.15);
+            border: 1px solid rgba(108,27,140,0.2);
             border-radius: 50px;
-            color: var(--primary);
+            color: #FF6600;
             margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .gdpr-badge i {
+            font-size: 1.2rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #9aa8c9;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #FF6600;
+            gap: 1rem;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .legal-page { padding: 6rem 5% 3rem; }
+            .legal-page h1 { font-size: 2.2rem; }
+            .legal-page h2 { font-size: 1.3rem; }
+        }
+        @media (max-width: 480px) {
+            .legal-page h1 { font-size: 1.8rem; }
+            .legal-page h2 { font-size: 1.1rem; }
+            .legal-page { padding: 5rem 5% 2rem; }
+            .legal-page ul li { padding: 0.4rem 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== LOADER - DELIVERY TRUCK ==================== -->
-<div class="loader-wrapper" id="loader">
-    <!-- Road -->
-    <div class="loader-road"></div>
-    
-    <!-- Truck Container -->
-    <div class="loader-truck-container">
-        <div class="loader-truck">
-            <!-- Cargo Area -->
-            <div class="cargo">
-                <!-- Brand Name on Truck -->
-                <div class="brand">Swift<span>Logix</span></div>
-                <!-- Door Lines -->
-                <div class="door-line"></div>
-                <div class="door-line"></div>
-                <div class="door-line"></div>
+    <!-- ==================== TRUCK LOADER ==================== -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-road"></div>
+        <div class="loader-truck-container">
+            <div class="loader-truck">
+                <div class="cargo">
+                    <div class="brand">Swift<span class="purple">Log</span><span class="orange">ix</span></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                    <div class="door-line"></div>
+                </div>
+                <div class="cabin">
+                    <div class="window"></div>
+                    <div class="door"></div>
+                    <div class="headlight left"></div>
+                    <div class="headlight right"></div>
+                </div>
+                <div class="exhaust"></div>
+                <div class="wheel rear"></div>
+                <div class="wheel rear2"></div>
+                <div class="wheel front"></div>
             </div>
-            
-            <!-- Cabin -->
-            <div class="cabin">
-                <div class="window"></div>
-                <div class="door"></div>
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
+        </div>
+        <div class="loader-text-container">
+            <div class="loader-title">SWIFTLOGIX</div>
+            <div class="loader-sub">Loading GDPR information...</div>
+        </div>
+        <div class="loader-progress-container">
+            <div class="progress-bar"><div class="fill"></div></div>
+            <div class="progress-text">
+                <span>Loading</span>
+                <span class="percentage" id="progressPercent">0%</span>
             </div>
-            
-            <!-- Exhaust -->
-            <div class="exhaust"></div>
-            
-            <!-- Wheels -->
-            <div class="wheel rear"></div>
-            <div class="wheel rear2"></div>
-            <div class="wheel front"></div>
         </div>
     </div>
-    
-    <!-- Text Below Truck -->
-    <div class="loader-text-container">
-        <div class="loader-title">SWIFTLOGIX</div>
-        <div class="loader-sub">Delivering Excellence Worldwide</div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="loader-progress-container">
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-        <div class="progress-text">
-            <span>Loading</span>
-            <span id="progressPercent">0%</span>
-        </div>
-    </div>
-</div>
 
-    <!-- BACKGROUND -->
+    <!-- ==================== BACKGROUND ==================== -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -145,7 +194,7 @@
         </div>
     </nav>
 
-    <!-- GDPR -->
+    <!-- ==================== GDPR COMPLIANCE ==================== -->
     <div class="legal-page">
         <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
 
@@ -154,11 +203,13 @@
         </div>
 
         <h1>GDPR Compliance</h1>
-        <div class="last-updated">Last Updated: March 2026</div>
+        <div class="last-updated">
+            <i class="fas fa-calendar-alt"></i> Last Updated: March 2026
+        </div>
 
         <p>SwiftLogix is committed to protecting the privacy and personal data of our customers in compliance with the General Data Protection Regulation (GDPR) (EU) 2016/679. This page outlines our approach to GDPR compliance.</p>
 
-        <h2>1. Data Protection Principles</h2>
+        <h2><i class="fas fa-gavel"></i> 1. Data Protection Principles</h2>
         <p>We adhere to the following GDPR data protection principles:</p>
         <ul>
             <li><i class="fas fa-check-circle"></i> <strong>Lawfulness, Fairness, and Transparency:</strong> We process personal data lawfully, fairly, and in a transparent manner.</li>
@@ -169,7 +220,7 @@
             <li><i class="fas fa-check-circle"></i> <strong>Integrity and Confidentiality:</strong> We protect data against unauthorized access and processing.</li>
         </ul>
 
-        <h2>2. Legal Basis for Processing</h2>
+        <h2><i class="fas fa-balance-scale"></i> 2. Legal Basis for Processing</h2>
         <p>We process personal data based on the following legal grounds:</p>
         <ul>
             <li><i class="fas fa-check-circle"></i> <strong>Consent:</strong> You have given clear consent for us to process your data</li>
@@ -178,7 +229,7 @@
             <li><i class="fas fa-check-circle"></i> <strong>Legitimate Interests:</strong> Processing is necessary for our legitimate business interests</li>
         </ul>
 
-        <h2>3. Your Rights Under GDPR</h2>
+        <h2><i class="fas fa-user-check"></i> 3. Your Rights Under GDPR</h2>
         <p>Under GDPR, you have the following rights regarding your personal data:</p>
         <ul>
             <li><i class="fas fa-check-circle"></i> <strong>Right to Access:</strong> You can request a copy of your data</li>
@@ -190,7 +241,7 @@
             <li><i class="fas fa-check-circle"></i> <strong>Right to Withdraw Consent:</strong> You can withdraw consent at any time</li>
         </ul>
 
-        <h2>4. Data Security Measures</h2>
+        <h2><i class="fas fa-lock"></i> 4. Data Security Measures</h2>
         <p>We implement the following security measures to protect your personal data:</p>
         <ul>
             <li><i class="fas fa-check-circle"></i> Encryption of data in transit and at rest</li>
@@ -200,28 +251,29 @@
             <li><i class="fas fa-check-circle"></i> Incident response procedures for data breaches</li>
         </ul>
 
-        <h2>5. Data Transfers</h2>
+        <h2><i class="fas fa-exchange-alt"></i> 5. Data Transfers</h2>
         <p>We may transfer your personal data to countries outside the European Economic Area (EEA) for shipping and logistics purposes. We ensure that appropriate safeguards are in place, such as Standard Contractual Clauses approved by the European Commission.</p>
 
-        <h2>6. Data Retention</h2>
+        <h2><i class="fas fa-clock"></i> 6. Data Retention</h2>
         <p>We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including legal, accounting, and reporting requirements. After this period, data is securely deleted or anonymized.</p>
 
-        <h2>7. Data Breach Notification</h2>
+        <h2><i class="fas fa-bell"></i> 7. Data Breach Notification</h2>
         <p>In the event of a data breach that poses a risk to your rights and freedoms, we will notify you and the relevant supervisory authority within 72 hours of becoming aware of the breach, as required by GDPR.</p>
 
-        <h2>8. Data Protection Officer (DPO)</h2>
+        <h2><i class="fas fa-user-tie"></i> 8. Data Protection Officer (DPO)</h2>
         <p>We have appointed a Data Protection Officer to oversee our data protection strategy and ensure compliance with GDPR. You can contact our DPO at:</p>
-        <p style="color:#fff;">📧 dpo@swiftlogix.com<br>📞 +1 (888) 123-ELITE</p>
+        <p style="color:#fff;font-weight:500;">📧 <a href="mailto:dpo@swiftlogix.com" style="color:#FF6600;text-decoration:none;">dpo@swiftlogix.com</a><br>
+        📞 +1 (888) 123-ELITE</p>
 
-        <h2>9. Complaints</h2>
+        <h2><i class="fas fa-file-signature"></i> 9. Complaints</h2>
         <p>If you believe we have not complied with GDPR, you have the right to lodge a complaint with your local data protection authority.</p>
 
-        <div style="margin-top:2rem;padding:1rem;background:rgba(0,242,254,0.05);border-radius:12px;border:1px solid var(--border);">
-            <p style="color:var(--text-muted);font-size:0.85rem;">SwiftLogix is committed to full GDPR compliance and protecting your personal data rights.</p>
+        <div class="highlight-box">
+            <p><i class="fas fa-info-circle"></i> SwiftLogix is committed to full GDPR compliance and protecting your personal data rights.</p>
         </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- ==================== FOOTER ==================== -->
     <footer class="footer" style="margin-top:0;">
         <div class="container">
             <div class="footer-bottom">
@@ -236,6 +288,43 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        // ==================== HIDE LOADER ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                }, 2500);
+            }
+        });
+
+        // ==================== PROGRESS PERCENTAGE ====================
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 3;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+            }
+            const percentEl = document.getElementById('progressPercent');
+            if (percentEl) {
+                percentEl.textContent = Math.floor(progress) + '%';
+            }
+        }, 150);
+
+        // ==================== MOBILE MENU ====================
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        console.log('🚀 GDPR Compliance page loaded successfully!');
+    </script>
 </body>
 </html>
