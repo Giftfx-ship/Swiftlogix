@@ -1,7 +1,7 @@
 {
   "name": "swiftlogix",
   "version": "2.0.0",
-  "description": "SwiftLogix - Premium Global Logistics Platform",
+  "description": "SwiftLogix - Premium Global Logistics Platform with Live Chat Support",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -15,8 +15,7 @@
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "axios": "^1.5.0",
-    "uuid": "^9.0.0",
-    "resend": "^3.0.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
