@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Package - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .track-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 5% 4rem;
+        }
+        .track-card {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 3rem;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        .track-card .icon-top {
+            text-align: center;
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        .track-card h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .track-card .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .track-card .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .track-card .form-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        .track-card .form-group input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all var(--transition);
+        }
+        .track-card .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0,242,254,0.1);
+        }
+        .track-card .form-group input::placeholder { color: #555; }
+        .track-card .email-hint {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 0.5rem;
+        }
+        .track-card .email-hint i { color: var(--primary); }
+        .track-card .track-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 60px;
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .track-card .track-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,242,254,0.35);
+        }
+        .track-card .track-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .track-card .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            display: none;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .track-card .result-box.success {
+            display: flex;
+            background: rgba(76,175,80,0.1);
+            border: 1px solid rgba(76,175,80,0.3);
+            color: #4CAF50;
+        }
+        .track-card .result-box.error {
+            display: flex;
+            background: rgba(255,68,68,0.1);
+            border: 1px solid rgba(255,68,68,0.3);
+            color: #ff4444;
+        }
+        .track-card .result-box.info {
+            display: flex;
+            background: rgba(0,242,254,0.08);
+            border: 1px solid rgba(0,242,254,0.2);
+            color: var(--primary);
+        }
+        .track-card .result-box i { font-size: 20px; flex-shrink: 0; }
+        .track-card .result-box .result-content { flex: 1; }
+        .track-card .result-box .result-content strong { display: block; font-size: 14px; }
+        .track-card .result-box .result-content .small { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+        @media (max-width: 480px) {
+            .track-card { padding: 2rem 1.5rem; }
+            .track-card h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Preparing tracking system...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tracking.html" class="active">Track</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TRACKING PAGE -->
+    <section class="track-page">
+        <div class="track-card">
+            <div class="icon-top"><i class="fas fa-search"></i></div>
+            <h1>Track Your Package</h1>
+            <p class="subtitle">Enter your tracking number and email to receive real-time updates</p>
+
+            <form id="trackForm" onsubmit="trackPackage(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-barcode"></i> Tracking Number</label>
+                    <input type="text" id="trackingCode" placeholder="e.g., SL-3722-TAB2NLX6" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Your Email Address</label>
+                    <input type="email" id="userEmail" placeholder="Enter your email to receive tracking updates" required>
+                    <div class="email-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>You'll receive tracking details. The receiver will get the full invoice.</span>
+                    </div>
+                </div>
+                <button type="submit" class="track-btn" id="trackBtn">
+                    <i class="fas fa-rocket"></i> Track Package
+                </button>
+            </form>
+
+            <div id="resultBox" class="result-box"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = window.location.origin;
+        async function trackPackage(event) {
+            event.preventDefault();
+            const trackingCode = document.getElementById('trackingCode').value.trim().toUpperCase();
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const btn = document.getElementById('trackBtn');
+            const resultBox = document.getElementById('resultBox');
+            if (!trackingCode || !userEmail) {
+                resultBox.className = 'result-box error';
+                resultBox.innerHTML = `<i class="fas fa-exclamation-circle"></i><div class="result-content"><strong>Please fill in both fields</strong><div class="small">Tracking number and email are required</div></div>`;
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tracking...';
+            resultBox.className = 'result-box info';
+            resultBox.innerHTML = `<i class="fas fa-spinner fa-spin"></i><div class="result-content"><strong>Checking tracking number...</strong><div class="small">Please wait while we verify your package</div></div>`;
+            try {
+                const response = await fetch(`${API_URL}/api/track`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trackingCode, userEmail })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    resultBox.className = 'result-box error';
+                    resultBox.innerHTML = `<i class="fas fa-exclamation-circle"></i><div class="result-content"><strong>${data.error || 'Tracking number not found'}</strong><div class="small">Please check the tracking number and try again</div></div>`;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
+                    return;
+                }
+                const toUserStatus = data.emails?.toUser?.success ? '✅' : '❌';
+                const toReceiverStatus = data.emails?.toReceiver?.success ? '✅' : '❌';
+                resultBox.className = 'result-box success';
+                resultBox.innerHTML = `<i class="fas fa-check-circle"></i><div class="result-content"><strong>Package Found!</strong><div class="small">📧 Tracking sent to you: ${toUserStatus} &nbsp;|&nbsp; 📄 Invoice sent to receiver: ${toReceiverStatus}</div><div class="small" style="margin-top:4px;color:var(--text-muted);">Redirecting to tracking details...</div></div>`;
+                localStorage.setItem('trackingNumber', trackingCode);
+                localStorage.setItem('trackingData', JSON.stringify(data.shipment));
+                setTimeout(() => { window.location.href = 'tracking-result.html'; }, 2500);
+            } catch (error) {
+                resultBox.className = 'result-box error';
+                resultBox.innerHTML = `<i class="fas fa-exclamation-circle"></i><div class="result-content"><strong>Network Error</strong><div class="small">Please check your connection and try again</div></div>`;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-rocket"></i> Track Package';
+            }
+        }
+    </script>
+</body>
+</html>
