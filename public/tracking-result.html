@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Result - SwiftLogix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .result-page { padding: 8rem 5% 4rem; max-width: 1200px; margin: 0 auto; }
+        .result-page .back-link { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--text-muted); margin-bottom: 2rem; transition: all var(--transition); font-size: 0.95rem; }
+        .result-page .back-link:hover { color: var(--primary); gap: 1rem; }
+        .result-header { background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(0,242,254,0.02)); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--border); }
+        .result-header .tracking-number-box { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .result-header .tracking-number { font-size: 1.8rem; font-family: monospace; letter-spacing: 2px; font-weight: 700; background: rgba(0,242,254,0.1); padding: 0.4rem 1.2rem; border-radius: 60px; border: 1px solid rgba(0,242,254,0.3); }
+        .result-header .verified-badge { background: rgba(0,255,0,0.12); padding: 0.4rem 1.2rem; border-radius: 60px; font-size: 0.8rem; color: #0f0; border: 1px solid rgba(0,255,0,0.3); }
+        .result-header .status-row { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+        .result-header .status-badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1.8rem; border-radius: 60px; font-weight: 600; font-size: 0.9rem; }
+        .status-order_confirmed { background: linear-gradient(135deg, rgba(0,242,254,0.2), rgba(0,242,254,0.05)); color: #00f2fe; border: 1px solid rgba(0,242,254,0.5); }
+        .status-picked { background: linear-gradient(135deg, rgba(255,165,0,0.2), rgba(255,165,0,0.05)); color: #ffa500; border: 1px solid rgba(255,165,0,0.5); }
+        .status-onway { background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,255,255,0.05)); color: #0ff; border: 1px solid rgba(0,255,255,0.5); }
+        .status-customs { background: linear-gradient(135deg, rgba(255,68,68,0.2), rgba(255,68,68,0.05)); color: #ff4444; border: 1px solid rgba(255,68,68,0.5); }
+        .status-delivered { background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,0,0.05)); color: #0f0; border: 1px solid rgba(0,255,0,0.5); }
+        .result-header .last-updated { color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .info-card { background: rgba(255,255,255,0.02); border-radius: var(--radius); padding: 1.8rem; border: 1px solid var(--border); transition: all var(--transition); }
+        .info-card:hover { border-color: rgba(0,242,254,0.4); transform: translateY(-3px); }
+        .info-card h3 { margin-bottom: 1.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.6rem; color: var(--primary); letter-spacing: -0.3px; }
+        .info-row { display: flex; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: var(--text-muted); font-size: 0.85rem; }
+        .info-value { font-weight: 500; font-size: 0.9rem; }
+        .timeline-section { background: rgba(255,255,255,0.02); border-radius: var(--radius); padding: 1.8rem; border: 1px solid var(--border); margin-bottom: 2rem; }
+        .timeline-section h3 { margin-bottom: 1.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.6rem; color: var(--primary); }
+        .timeline { position: relative; padding-left: 2rem; }
+        .timeline-item { position: relative; padding-bottom: 2rem; padding-left: 1.5rem; border-left: 2px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+        .timeline-item::before { content: ''; position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid var(--primary); transition: all 0.3s; }
+        .timeline-item.completed::before { background: var(--primary); box-shadow: 0 0 12px var(--primary); }
+        .timeline-item.active::before { background: var(--primary); box-shadow: 0 0 20px var(--primary); animation: pulseGlow 1.2s infinite; }
+        @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 5px var(--primary); transform: scale(1); } 50% { box-shadow: 0 0 20px var(--primary); transform: scale(1.1); } }
+        .timeline-date { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.3rem; font-family: monospace; }
+        .timeline-title { font-weight: 600; margin-bottom: 0.3rem; font-size: 0.95rem; }
+        .timeline-desc { font-size: 0.8rem; color: var(--text-muted); }
+        .map-container { background: rgba(255,255,255,0.02); border-radius: var(--radius); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); }
+        #map { height: 380px; width: 100%; background: #0f0f1a; }
+        .map-caption { padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.4); }
+        .action-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .action-buttons .btn-primary { flex: 1; min-width: 200px; }
+        .not-found { text-align: center; padding: 5rem 2rem; background: rgba(255,255,255,0.02); border-radius: var(--radius); border: 1px solid rgba(255,68,68,0.3); }
+        .not-found i { font-size: 4rem; color: #ff4444; margin-bottom: 1.5rem; }
+        .not-found h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+        .not-found p { color: var(--text-muted); margin-bottom: 2rem; }
+        @media (max-width: 768px) {
+            .result-grid { grid-template-columns: 1fr; }
+            .result-header .tracking-number-box { flex-direction: column; align-items: flex-start; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn-primary { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+        <div class="loader-text">SWIFTLOGIX</div>
+        <div class="loader-sub">Loading tracking details...</div>
+        <div class="loader-progress"><div class="fill"></div></div>
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Swift<span>Logix</span></a>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tracking.html" class="active">Track</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blog</a>
+                <a href="tracking.html" class="track-btn"><i class="fas fa-search"></i> Track</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- RESULT PAGE -->
+    <div class="result-page" id="resultPage">
+        <a href="tracking.html" class="back-link"><i class="fas fa-arrow-left"></i> New Tracking</a>
+        <div id="resultContent">
+            <div style="text-align:center;padding:4rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:var(--primary);"></i>
+                <p style="margin-top:1rem;color:var(--text-muted);">Loading package data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SwiftLogix</h4>
+                    <p>Global logistics intelligence for the modern enterprise.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="services.html">Services</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="careers.html">Careers</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="tracking.html">Track Shipment</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
+                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
+                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                    <a href="gdpr.html">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const API_URL = window.location.origin;
+        let shipmentData = null;
+        let trackingNumber = localStorage.getItem('trackingNumber');
+
+        if (!trackingNumber) {
+            trackingNumber = 'SL-3722-TAB2NLX6';
+        }
+        trackingNumber = trackingNumber.toUpperCase();
+
+        function getStatusClass(status) {
+            const map = {
+                'order_confirmed': 'status-order_confirmed',
+                'picked': 'status-picked',
+                'onway': 'status-onway',
+                'customs': 'status-customs',
+                'delivered': 'status-delivered'
+            };
+            return map[status] || 'status-order_confirmed';
+        }
+
+        function renderTracking(shipment) {
+            const container = document.getElementById('resultContent');
+            const statusClass = getStatusClass(shipment.status);
+            const inv = shipment.invoice || {};
+            const dutyAmount = shipment.parcel?.dutyFeesAmount || 'N/A';
+            const dutyStatus = shipment.parcel?.dutyFeesStatus || 'N/A';
+            const dutyDisplay = dutyAmount !== 'N/A' ? dutyAmount : dutyStatus;
+
+            let timelineHTML = shipment.timeline.map(item => `
+                <div class="timeline-item ${item.completed ? 'completed' : ''} ${item.active ? 'active' : ''}">
+                    <div class="timeline-date">${item.date}</div>
+                    <div class="timeline-title">${item.title}</div>
+                    <div class="timeline-desc">${item.desc}</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="result-header">
+                    <div class="tracking-number-box">
+                        <div class="tracking-number"><i class="fas fa-barcode"></i> ${shipment.trackingCode}</div>
+                        <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+                    </div>
+                    <div class="status-row">
+                        <div class="status-badge ${statusClass}">
+                            <i class="fas ${shipment.status === 'delivered' ? 'fa-check-circle' : shipment.status === 'customs' ? 'fa-clock' : 'fa-truck'}"></i>
+                            ${shipment.statusText || shipment.status}
+                        </div>
+                        <div class="last-updated"><i class="fas fa-clock"></i> Last Updated: ${shipment.lastUpdated}</div>
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div>
+                        <div class="info-card">
+                            <h3><i class="fas fa-user-tie"></i> Sender</h3>
+                            <div class="info-row"><span class="info-label">Name:</span><span class="info-value">${shipment.sender?.name || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Country:</span><span class="info-value">${shipment.sender?.country || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Address:</span><span class="info-value">${shipment.sender?.address || shipment.sender?.country || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${shipment.sender?.phone || 'N/A'}</span></div>
+                        </div>
+                        <div class="info-card" style="margin-top:1.5rem;">
+                            <h3><i class="fas fa-user-check"></i> Receiver</h3>
+                            <div class="info-row"><span class="info-label">Name:</span><span class="info-value">${shipment.receiver?.name || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Country:</span><span class="info-value">${shipment.receiver?.country || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Address:</span><span class="info-value">${shipment.receiver?.address || shipment.receiver?.country || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${shipment.receiver?.phone || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Email:</span><span class="info-value">${shipment.receiver?.email || 'N/A'}</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-card">
+                            <h3><i class="fas fa-cube"></i> Package Details</h3>
+                            <div class="info-row"><span class="info-label">Duty Fees:</span><span class="info-value" style="color:${dutyStatus === 'Paid' ? '#4CAF50' : '#ffa500'}"><i class="fas ${dutyStatus === 'Paid' ? 'fa-check-circle' : 'fa-clock'}"></i> ${dutyDisplay}</span></div>
+                            <div class="info-row"><span class="info-label">Weight:</span><span class="info-value">${shipment.parcel?.weight || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Type:</span><span class="info-value">${shipment.parcel?.type || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Pickup:</span><span class="info-value">${shipment.parcel?.pickupDate || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">ETA:</span><span class="info-value" style="color:var(--primary);">${shipment.parcel?.expectedDelivery || 'Pending'}</span></div>
+                        </div>
+                        <div class="info-card" style="margin-top:1.5rem;">
+                            <h3><i class="fas fa-file-invoice"></i> Invoice Details</h3>
+                            <div class="info-row"><span class="info-label">Order ID:</span><span class="info-value">${inv.orderId || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Booking Mode:</span><span class="info-value">${inv.bookingMode || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Shipping Cost:</span><span class="info-value">${inv.shipmentCost || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Clearance Cost:</span><span class="info-value">${inv.clearanceCost || 'N/A'}</span></div>
+                            <div class="info-row" style="border-bottom:2px solid rgba(255,215,0,0.3);padding-bottom:12px;">
+                                <span class="info-label" style="font-weight:700;color:#ffd700;">Total Amount:</span>
+                                <span class="info-value" style="font-weight:700;color:#ffd700;font-size:1.1rem;">${inv.totalAmount || 'N/A'}</span>
+                            </div>
+                            <div class="info-row"><span class="info-label">Payment Status:</span><span class="info-value" style="color:${inv.paymentStatus === 'Paid' ? '#4CAF50' : '#ffa500'};">${inv.paymentStatus || 'N/A'}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-section">
+                    <h3><i class="fas fa-timeline"></i> Shipment Journey</h3>
+                    <div class="timeline">${timelineHTML}</div>
+                </div>
+
+                <div class="map-container">
+                    <div id="map"></div>
+                    <div class="map-caption">
+                        <i class="fas fa-map-marker-alt"></i> Origin: ${shipment.origin || 'Unknown'} → Destination: ${shipment.destination || 'Unknown'}
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="downloadPDF()"><i class="fas fa-download"></i> Download Invoice (PDF)</button>
+                    <button class="btn-primary" onclick="copyLink()" style="background:rgba(255,255,255,0.05);color:#fff;"><i class="fas fa-share-alt"></i> Share Tracking</button>
+                </div>
+            `;
+
+            // Initialize map
+            setTimeout(() => {
+                if (typeof L !== 'undefined') {
+                    const coords = shipment.coordinates || [25.2048, 55.2708];
+                    const map = L.map('map').setView(coords, 5);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; OpenStreetMap'
+                    }).addTo(map);
+                    L.marker(coords).addTo(map)
+                        .bindPopup(`<b>${shipment.origin}</b><br>${shipment.sender?.name || 'Sender'}`)
+                        .openPopup();
+                    // Add destination marker
+                    if (shipment.destination) {
+                        const destCoords = [shipment.coordinates[0] + 10, shipment.coordinates[1] + 10];
+                        L.marker(destCoords).addTo(map)
+                            .bindPopup(`<b>${shipment.destination}</b><br>${shipment.receiver?.name || 'Receiver'}`);
+                    }
+                }
+            }, 200);
+        }
+
+        async function loadTracking() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/shipments/${trackingNumber}`);
+                if (!response.ok) {
+                    throw new Error('Not found');
+                }
+                const data = await response.json();
+                shipmentData = data;
+                renderTracking(data);
+            } catch (error) {
+                document.getElementById('resultContent').innerHTML = `
+                    <div class="not-found">
+                        <i class="fas fa-search"></i>
+                        <h2>Tracking Number Not Found</h2>
+                        <p>${trackingNumber} does not exist in our system</p>
+                        <a href="tracking.html" class="btn-primary">Try Again</a>
+                    </div>
+                `;
+            }
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('✅ Tracking link copied to clipboard!');
+        }
+
+        function downloadPDF() {
+            alert('📄 PDF download feature coming soon!');
+        }
+
+        loadTracking();
+    </script>
+</body>
+</html>
