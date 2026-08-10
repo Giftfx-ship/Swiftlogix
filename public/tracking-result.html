@@ -7,96 +7,750 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        .result-page { padding: 8rem 5% 4rem; max-width: 1200px; margin: 0 auto; }
-        .result-page .back-link { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--text-muted); margin-bottom: 2rem; transition: all var(--transition); font-size: 0.95rem; }
-        .result-page .back-link:hover { color: var(--primary); gap: 1rem; }
-        .result-header { background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(0,242,254,0.02)); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--border); }
-        .result-header .tracking-number-box { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .result-header .tracking-number { font-size: 1.8rem; font-family: monospace; letter-spacing: 2px; font-weight: 700; background: rgba(0,242,254,0.1); padding: 0.4rem 1.2rem; border-radius: 60px; border: 1px solid rgba(0,242,254,0.3); }
-        .result-header .verified-badge { background: rgba(0,255,0,0.12); padding: 0.4rem 1.2rem; border-radius: 60px; font-size: 0.8rem; color: #0f0; border: 1px solid rgba(0,255,0,0.3); }
-        .result-header .status-row { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
-        .result-header .status-badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1.8rem; border-radius: 60px; font-weight: 600; font-size: 0.9rem; }
-        .status-order_confirmed { background: linear-gradient(135deg, rgba(0,242,254,0.2), rgba(0,242,254,0.05)); color: #00f2fe; border: 1px solid rgba(0,242,254,0.5); }
-        .status-picked { background: linear-gradient(135deg, rgba(255,165,0,0.2), rgba(255,165,0,0.05)); color: #ffa500; border: 1px solid rgba(255,165,0,0.5); }
-        .status-onway { background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,255,255,0.05)); color: #0ff; border: 1px solid rgba(0,255,255,0.5); }
-        .status-customs { background: linear-gradient(135deg, rgba(255,68,68,0.2), rgba(255,68,68,0.05)); color: #ff4444; border: 1px solid rgba(255,68,68,0.5); }
-        .status-delivered { background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,0,0.05)); color: #0f0; border: 1px solid rgba(0,255,0,0.5); }
-        .result-header .last-updated { color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
-        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-        .info-card { background: rgba(255,255,255,0.02); border-radius: var(--radius); padding: 1.8rem; border: 1px solid var(--border); transition: all var(--transition); }
-        .info-card:hover { border-color: rgba(0,242,254,0.4); transform: translateY(-3px); }
-        .info-card h3 { margin-bottom: 1.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.6rem; color: var(--primary); letter-spacing: -0.3px; }
-        .info-row { display: flex; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .info-row:last-child { border-bottom: none; }
-        .info-label { color: var(--text-muted); font-size: 0.85rem; }
-        .info-value { font-weight: 500; font-size: 0.9rem; }
-        .timeline-section { background: rgba(255,255,255,0.02); border-radius: var(--radius); padding: 1.8rem; border: 1px solid var(--border); margin-bottom: 2rem; }
-        .timeline-section h3 { margin-bottom: 1.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.6rem; color: var(--primary); }
-        .timeline { position: relative; padding-left: 2rem; }
-        .timeline-item { position: relative; padding-bottom: 2rem; padding-left: 1.5rem; border-left: 2px solid rgba(255,255,255,0.1); transition: all 0.3s; }
-        .timeline-item::before { content: ''; position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid var(--primary); transition: all 0.3s; }
-        .timeline-item.completed::before { background: var(--primary); box-shadow: 0 0 12px var(--primary); }
-        .timeline-item.active::before { background: var(--primary); box-shadow: 0 0 20px var(--primary); animation: pulseGlow 1.2s infinite; }
-        @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 5px var(--primary); transform: scale(1); } 50% { box-shadow: 0 0 20px var(--primary); transform: scale(1.1); } }
-        .timeline-date { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.3rem; font-family: monospace; }
-        .timeline-title { font-weight: 600; margin-bottom: 0.3rem; font-size: 0.95rem; }
-        .timeline-desc { font-size: 0.8rem; color: var(--text-muted); }
-        .map-container { background: rgba(255,255,255,0.02); border-radius: var(--radius); overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--border); }
-        #map { height: 380px; width: 100%; background: #0f0f1a; }
-        .map-caption { padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.4); }
-        .action-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .action-buttons .btn-primary { flex: 1; min-width: 200px; }
-        .not-found { text-align: center; padding: 5rem 2rem; background: rgba(255,255,255,0.02); border-radius: var(--radius); border: 1px solid rgba(255,68,68,0.3); }
-        .not-found i { font-size: 4rem; color: #ff4444; margin-bottom: 1.5rem; }
-        .not-found h2 { font-size: 1.8rem; margin-bottom: 1rem; }
-        .not-found p { color: var(--text-muted); margin-bottom: 2rem; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: rgba(108, 27, 140, 0.15);
+            top: -200px;
+            right: -200px;
+        }
+        
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 242, 254, 0.08);
+            bottom: -150px;
+            left: -150px;
+            animation-delay: -5s;
+        }
+        
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 102, 0, 0.06);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -10s;
+        }
+        
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 40px) scale(0.9); }
+            75% { transform: translate(30px, -20px) scale(1.05); }
+        }
+        
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 5%;
+            background: rgba(10, 14, 26, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(108, 27, 140, 0.2);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        .logo img:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6C1B8C, #00f2fe);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        .nav-links a:hover {
+            color: #fff;
+        }
+        
+        .nav-links a.active {
+            color: #00f2fe;
+        }
+        
+        .track-btn {
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            color: #fff !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+        }
+        
+        .track-btn::after {
+            display: none !important;
+        }
+        
+        .track-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 27, 140, 0.4);
+        }
+        
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .result-page {
+            padding: 6rem 5% 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .result-page .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .result-page .back-link:hover {
+            color: #00f2fe;
+            gap: 1rem;
+            border-color: rgba(0, 242, 254, 0.2);
+            background: rgba(0, 242, 254, 0.05);
+        }
+        
+        .result-header {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.08), rgba(108, 27, 140, 0.05));
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(108, 27, 140, 0.2);
+            animation: fadeUp 0.6s ease forwards;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-header .tracking-number-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .result-header .tracking-number {
+            font-size: 1.8rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            font-weight: 700;
+            background: rgba(0, 242, 254, 0.1);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+        
+        .result-header .verified-badge {
+            background: rgba(0, 255, 0, 0.12);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            color: #0f0;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .result-header .status-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .result-header .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-order_confirmed {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(0, 242, 254, 0.05));
+            color: #00f2fe;
+            border: 1px solid rgba(0, 242, 254, 0.5);
+        }
+        
+        .status-picked {
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.2), rgba(255, 165, 0, 0.05));
+            color: #ffa500;
+            border: 1px solid rgba(255, 165, 0, 0.5);
+        }
+        
+        .status-onway {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 255, 255, 0.05));
+            color: #0ff;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+        }
+        
+        .status-customs {
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.2), rgba(255, 68, 68, 0.05));
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.5);
+        }
+        
+        .status-delivered {
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 255, 0, 0.05));
+            color: #0f0;
+            border: 1px solid rgba(0, 255, 0, 0.5);
+        }
+        
+        .result-header .last-updated {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            animation: fadeUp 0.6s ease forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+        
+        .info-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .info-card:hover {
+            border-color: rgba(0, 242, 254, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-card h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #00f2fe;
+            letter-spacing: -0.3px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .timeline-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
+            animation: fadeUp 0.6s ease forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+        }
+        
+        .timeline-section h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #00f2fe;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 1.5rem;
+            border-left: 2px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 242, 254, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .timeline-item.completed::before {
+            background: #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+        
+        .timeline-item.active::before {
+            background: #00f2fe;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5);
+            animation: pulseGlow 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
+                transform: scale(1.15);
+            }
+        }
+        
+        .timeline-date {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 0.3rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+        
+        .timeline-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .map-container {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeUp 0.6s ease forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+        
+        #map {
+            height: 380px;
+            width: 100%;
+            background: #0f0f1a;
+        }
+        
+        .map-caption {
+            padding: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeUp 0.6s ease forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #6C1B8C, #FF6600);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(108, 27, 140, 0.3);
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 60px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .not-found {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 68, 68, 0.2);
+        }
+        
+        .not-found i {
+            font-size: 4rem;
+            color: #ff4444;
+            margin-bottom: 1.5rem;
+        }
+        
+        .not-found h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .not-found p {
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 2rem;
+        }
+        
+        .not-found .btn-primary {
+            display: inline-flex;
+            min-width: auto;
+            padding: 0.8rem 2.5rem;
+        }
+        
+        .footer {
+            background: rgba(6, 10, 22, 0.95);
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(108, 27, 140, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer p {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+        }
+        
+        /* PDF Loading Overlay */
+        .pdf-loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 26, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .pdf-loading.active {
+            display: flex;
+        }
+        
+        .pdf-loading .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 242, 254, 0.1);
+            border-top: 3px solid #00f2fe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pdf-loading p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+        }
+        
+        .pdf-loading .progress-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .pdf-loading .progress-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6C1B8C, #00f2fe);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        /* PDF Content (hidden) */
+        #pdfContent {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
-            .result-grid { grid-template-columns: 1fr; }
-            .result-header .tracking-number-box { flex-direction: column; align-items: flex-start; }
-            .action-buttons { flex-direction: column; }
-            .action-buttons .btn-primary { width: 100%; }
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                background: rgba(10, 14, 26, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                transition: left 0.3s;
+                gap: 1.5rem;
+                border-bottom: 1px solid rgba(108, 27, 140, 0.2);
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .result-header .tracking-number-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .result-header .tracking-number {
+                font-size: 1.4rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-primary,
+            .btn-secondary {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .result-page {
+                padding: 4rem 4% 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .result-header {
+                padding: 1.5rem;
+            }
+            
+            .info-card {
+                padding: 1.2rem;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                gap: 2px;
+                padding: 0.6rem 0;
+            }
+            
+            .info-value {
+                text-align: left;
+                max-width: 100%;
+                font-size: 0.85rem;
+            }
+            
+            .result-header .tracking-number {
+                font-size: 1.1rem;
+                word-break: break-all;
+            }
+            
+            .logo img {
+                height: 35px;
+            }
+            
+            .result-page {
+                padding: 3rem 3% 2rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOADER -->
-    <div class="loader-wrapper" id="loader">
-        <div class="loader-cube">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-        </div>
-        <div class="loader-text">SWIFTLOGIX</div>
-        <div class="loader-sub">Loading tracking details...</div>
-        <div class="loader-progress"><div class="fill"></div></div>
-        <div class="loader-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+    <!-- PDF Loading Overlay -->
+    <div class="pdf-loading" id="pdfLoading">
+        <div class="spinner"></div>
+        <p>📄 Generating your professional invoice...</p>
+        <div class="progress-bar">
+            <div class="fill" id="pdfProgress"></div>
         </div>
     </div>
 
-    <!-- BACKGROUND -->
     <div class="bg-glow">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-    <img src="/images/logo.png" alt="SwiftLogix">
-</a>
-            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
-            <div class="nav-links">
+                <img src="/images/logo.png" alt="SwiftLogix">
+            </a>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="nav-links" id="navLinks">
                 <a href="index.html">Home</a>
                 <a href="tracking.html" class="active">Track</a>
                 <a href="services.html">Services</a>
@@ -108,73 +762,35 @@
         </div>
     </nav>
 
-    <!-- RESULT PAGE -->
     <div class="result-page" id="resultPage">
         <a href="tracking.html" class="back-link"><i class="fas fa-arrow-left"></i> New Tracking</a>
         <div id="resultContent">
             <div style="text-align:center;padding:4rem;">
-                <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:var(--primary);"></i>
-                <p style="margin-top:1rem;color:var(--text-muted);">Loading package data...</p>
+                <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:#00f2fe;"></i>
+                <p style="margin-top:1rem;color:rgba(255,255,255,0.4);">Loading package data...</p>
             </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- Hidden PDF Content -->
+    <div id="pdfContent"></div>
+
     <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>SwiftLogix</h4>
-                    <p>Global logistics intelligence for the modern enterprise.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <a href="about.html">About Us</a>
-                    <a href="services.html">Services</a>
-                    <a href="blog.html">Blog</a>
-                    <a href="careers.html">Careers</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Support</h4>
-                    <a href="contact.html">Contact</a>
-                    <a href="tracking.html">Track Shipment</a>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Contact</h4>
-                    <a href="#"><i class="fas fa-phone"></i> +1 (888) 123-ELITE</a>
-                    <a href="#"><i class="fas fa-envelope"></i> info@swiftlogix.com</a>
-                    <a href="#"><i class="fas fa-map-marker-alt"></i> Dubai, UAE</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                    <a href="gdpr.html">GDPR</a>
-                </div>
-            </div>
-        </div>
+        <p>&copy; 2026 SwiftLogix Logistics. All rights reserved.</p>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
         const API_URL = window.location.origin;
         let shipmentData = null;
         let trackingNumber = localStorage.getItem('trackingNumber');
@@ -193,6 +809,381 @@
                 'delivered': 'status-delivered'
             };
             return map[status] || 'status-order_confirmed';
+        }
+
+        function getStatusIcon(status) {
+            const map = {
+                'order_confirmed': 'fa-clock',
+                'picked': 'fa-box',
+                'onway': 'fa-truck',
+                'customs': 'fa-passport',
+                'delivered': 'fa-check-circle'
+            };
+            return map[status] || 'fa-truck';
+        }
+
+        function generatePDFHTML(shipment) {
+            const inv = shipment.invoice || {};
+            const dutyDisplay = shipment.parcel?.dutyFeesAmount !== 'N/A' ? shipment.parcel.dutyFeesAmount : shipment.parcel?.dutyFeesStatus || 'N/A';
+            
+            let timelineHTML = shipment.timeline.map(item => `
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div>
+                        <div style="font-weight:600;font-size:13px;color:#fff;">${item.title}</div>
+                        <div style="color:rgba(255,255,255,0.4);font-size:11px;">${item.desc}</div>
+                    </div>
+                    <div style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;">${item.date}</div>
+                </div>
+            `).join('');
+
+            return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Invoice - SwiftLogix</title>
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { 
+                        font-family: 'Inter', -apple-system, sans-serif; 
+                        background: #0a0e1a; 
+                        color: #fff; 
+                        padding: 40px; 
+                        max-width: 900px; 
+                        margin: 0 auto;
+                    }
+                    .invoice-wrapper {
+                        background: #12121f;
+                        border-radius: 24px;
+                        padding: 40px;
+                        border: 1px solid rgba(0, 242, 254, 0.15);
+                        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .invoice-wrapper::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 4px;
+                        background: linear-gradient(90deg, #6C1B8C, #00f2fe, #FF6600);
+                        background-size: 200% 100%;
+                    }
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 30px;
+                        padding-bottom: 20px;
+                        border-bottom: 1px solid rgba(255,255,255,0.05);
+                    }
+                    .logo {
+                        font-size: 32px;
+                        font-weight: 800;
+                        background: linear-gradient(135deg, #fff, #00f2fe);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    }
+                    .logo span { -webkit-text-fill-color: #00f2fe; }
+                    .invoice-badge {
+                        background: rgba(0, 242, 254, 0.12);
+                        padding: 6px 20px;
+                        border-radius: 50px;
+                        font-size: 11px;
+                        color: #00f2fe;
+                        letter-spacing: 2px;
+                        text-transform: uppercase;
+                        font-weight: 600;
+                        border: 1px solid rgba(0, 242, 254, 0.2);
+                    }
+                    .seal {
+                        text-align: center;
+                        margin: 20px 0 30px;
+                        padding: 20px;
+                        background: rgba(255, 215, 0, 0.05);
+                        border: 2px solid rgba(255, 215, 0, 0.2);
+                        border-radius: 16px;
+                        position: relative;
+                    }
+                    .seal .stamp {
+                        font-size: 22px;
+                        font-weight: 800;
+                        color: #ffd700;
+                        letter-spacing: 4px;
+                        text-transform: uppercase;
+                    }
+                    .seal .stamp i {
+                        margin: 0 8px;
+                    }
+                    .seal .sub {
+                        color: rgba(255, 255, 255, 0.4);
+                        font-size: 12px;
+                        margin-top: 4px;
+                    }
+                    .seal .cert-number {
+                        position: absolute;
+                        right: 20px;
+                        bottom: 10px;
+                        font-size: 10px;
+                        color: rgba(255, 255, 255, 0.2);
+                        font-family: monospace;
+                    }
+                    .status-badge {
+                        display: inline-block;
+                        padding: 8px 24px;
+                        border-radius: 50px;
+                        font-weight: 600;
+                        font-size: 14px;
+                        background: rgba(0, 242, 254, 0.15);
+                        color: #00f2fe;
+                        border: 1px solid rgba(0, 242, 254, 0.3);
+                        margin-bottom: 20px;
+                    }
+                    .tracking-info {
+                        background: rgba(0, 242, 254, 0.05);
+                        border-radius: 16px;
+                        padding: 16px 20px;
+                        margin-bottom: 25px;
+                        border: 1px solid rgba(0, 242, 254, 0.08);
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        flex-wrap: wrap;
+                    }
+                    .tracking-info .code {
+                        font-family: 'Courier New', monospace;
+                        font-size: 20px;
+                        font-weight: 700;
+                        letter-spacing: 2px;
+                    }
+                    .tracking-info .date {
+                        color: rgba(255, 255, 255, 0.4);
+                        font-size: 12px;
+                    }
+                    .section {
+                        margin: 25px 0;
+                    }
+                    .section-title {
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: #00f2fe;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 15px;
+                        padding-bottom: 8px;
+                        border-bottom: 1px solid rgba(0, 242, 254, 0.1);
+                    }
+                    .grid-2 {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+                    }
+                    .info-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 6px 0;
+                        border-bottom: 1px solid rgba(255,255,255,0.03);
+                    }
+                    .info-row .label {
+                        color: rgba(255, 255, 255, 0.4);
+                        font-size: 12px;
+                    }
+                    .info-row .value {
+                        color: #fff;
+                        font-weight: 500;
+                        font-size: 13px;
+                    }
+                    .info-row .value.gold {
+                        color: #ffd700;
+                    }
+                    .total-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 16px 0;
+                        border-top: 2px solid rgba(255, 215, 0, 0.2);
+                        margin-top: 8px;
+                    }
+                    .total-row .label {
+                        font-weight: 700;
+                        color: #ffd700;
+                        font-size: 16px;
+                    }
+                    .total-row .value {
+                        font-weight: 700;
+                        font-size: 22px;
+                        color: #ffd700;
+                    }
+                    .timeline-pdf {
+                        margin: 10px 0;
+                    }
+                    .footer-pdf {
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid rgba(255,255,255,0.05);
+                        text-align: center;
+                    }
+                    .footer-pdf p {
+                        color: rgba(255, 255, 255, 0.2);
+                        font-size: 11px;
+                        margin: 2px 0;
+                    }
+                    .footer-pdf .brand {
+                        color: #00f2fe;
+                        font-weight: 600;
+                        font-size: 13px;
+                    }
+                    .watermark {
+                        position: absolute;
+                        bottom: 20px;
+                        right: 20px;
+                        font-size: 60px;
+                        font-weight: 900;
+                        color: rgba(255, 215, 0, 0.03);
+                        font-family: 'Courier New', monospace;
+                        transform: rotate(-15deg);
+                        pointer-events: none;
+                    }
+                    @media (max-width: 600px) {
+                        body { padding: 20px; }
+                        .invoice-wrapper { padding: 24px; }
+                        .grid-2 { grid-template-columns: 1fr; gap: 10px; }
+                        .header { flex-direction: column; gap: 10px; text-align: center; }
+                        .tracking-info { flex-direction: column; gap: 8px; text-align: center; }
+                        .seal .cert-number { position: static; margin-top: 8px; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="invoice-wrapper">
+                    <div class="watermark">★ INVOICE ★</div>
+                    
+                    <div class="header">
+                        <div class="logo">Swift<span>Logix</span></div>
+                        <div class="invoice-badge">✦ OFFICIAL INVOICE ✦</div>
+                    </div>
+
+                    <div class="seal">
+                        <div class="stamp">
+                            <i class="fas fa-certificate"></i> 
+                            ★ VERIFIED ★ 
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="sub">Digitally Signed &amp; Authenticated</div>
+                        <div class="cert-number">CERT: SL-${Date.now().toString(36).toUpperCase()}</div>
+                    </div>
+
+                    <div style="text-align:center;">
+                        <span class="status-badge">
+                            <i class="fas ${getStatusIcon(shipment.status)}"></i>
+                            ${shipment.statusText || shipment.status}
+                        </span>
+                    </div>
+
+                    <div class="tracking-info">
+                        <div>
+                            <span style="color:rgba(255,255,255,0.4);font-size:12px;">TRACKING NUMBER</span>
+                            <div class="code"><i class="fas fa-barcode"></i> ${shipment.trackingCode}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="color:rgba(255,255,255,0.4);font-size:12px;">LAST UPDATED</span>
+                            <div class="date">${shipment.lastUpdated}</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">📋 Tracking Information</div>
+                        <div class="grid-2">
+                            <div>
+                                <div class="info-row"><span class="label">Origin</span><span class="value">${shipment.origin || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Destination</span><span class="value">${shipment.destination || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Status Description</span><span class="value">${shipment.statusDesc || 'N/A'}</span></div>
+                            </div>
+                            <div>
+                                <div class="info-row"><span class="label">Pickup Date</span><span class="value">${shipment.parcel?.pickupDate || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Expected Delivery</span><span class="value" style="color:#00f2fe;">${shipment.parcel?.expectedDelivery || 'Pending'}</span></div>
+                                <div class="info-row"><span class="label">Duty Fees</span><span class="value" style="color:${shipment.parcel?.dutyFeesStatus === 'Paid' ? '#4CAF50' : '#ffa500'};">${dutyDisplay}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">👤 Sender &amp; Receiver</div>
+                        <div class="grid-2">
+                            <div>
+                                <div style="color:#00f2fe;font-size:12px;font-weight:600;margin-bottom:8px;">SENDER</div>
+                                <div class="info-row"><span class="label">Name</span><span class="value">${shipment.sender?.name || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Country</span><span class="value">${shipment.sender?.country || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Address</span><span class="value">${shipment.sender?.address || shipment.sender?.country || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Phone</span><span class="value">${shipment.sender?.phone || 'N/A'}</span></div>
+                            </div>
+                            <div>
+                                <div style="color:#00f2fe;font-size:12px;font-weight:600;margin-bottom:8px;">RECEIVER</div>
+                                <div class="info-row"><span class="label">Name</span><span class="value">${shipment.receiver?.name || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Country</span><span class="value">${shipment.receiver?.country || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Address</span><span class="value">${shipment.receiver?.address || shipment.receiver?.country || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Phone</span><span class="value">${shipment.receiver?.phone || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Email</span><span class="value" style="color:#00f2fe;">${shipment.receiver?.email || 'N/A'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">📦 Parcel Details</div>
+                        <div class="grid-2">
+                            <div>
+                                <div class="info-row"><span class="label">Weight</span><span class="value">${shipment.parcel?.weight || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Type</span><span class="value">${shipment.parcel?.type || 'N/A'}</span></div>
+                            </div>
+                            <div>
+                                <div class="info-row"><span class="label">Booking Mode</span><span class="value">${inv.bookingMode || 'N/A'}</span></div>
+                                <div class="info-row"><span class="label">Order ID</span><span class="value">${inv.orderId || 'N/A'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">💰 Invoice Summary</div>
+                        <div class="info-row"><span class="label">Shipping Cost</span><span class="value">${inv.shipmentCost || 'N/A'}</span></div>
+                        <div class="info-row"><span class="label">Clearance Cost</span><span class="value">${inv.clearanceCost || 'N/A'}</span></div>
+                        <div class="total-row">
+                            <span class="label">TOTAL AMOUNT</span>
+                            <span class="value">${inv.totalAmount || 'N/A'}</span>
+                        </div>
+                        <div class="info-row" style="border-bottom:none;padding-top:8px;">
+                            <span class="label">Payment Status</span>
+                            <span class="value" style="color:${inv.paymentStatus === 'Paid' ? '#4CAF50' : '#ffa500'};">${inv.paymentStatus || 'Pending'}</span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">📊 Shipment Timeline</div>
+                        <div class="timeline-pdf">${timelineHTML}</div>
+                    </div>
+
+                    <div style="background:rgba(0,242,254,0.03);border-radius:12px;padding:16px;text-align:center;margin:20px 0;">
+                        <p style="color:rgba(255,255,255,0.3);font-size:11px;">
+                            <i class="fas fa-shield-alt"></i> This is a digitally generated invoice. 
+                            <i class="fas fa-lock"></i> Verified by SwiftLogix Security
+                        </p>
+                        <p style="color:rgba(255,255,255,0.15);font-size:10px;margin-top:4px;">
+                            Payment Methods: 💳 Credit Card • 🏦 Bank Transfer • ₿ Bitcoin • 🎁 Gift Cards
+                        </p>
+                    </div>
+
+                    <div class="footer-pdf">
+                        <p class="brand">✦ SwiftLogix Logistics ✦</p>
+                        <p>Global Logistics Intelligence</p>
+                        <p>© 2026 SwiftLogix. All rights reserved.</p>
+                        <p style="font-size:9px;margin-top:4px;color:rgba(255,255,255,0.1);">
+                            Invoice generated on ${new Date().toLocaleString()}
+                        </p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
         }
 
         function renderTracking(shipment) {
@@ -241,17 +1232,17 @@
                             <div class="info-row"><span class="info-label">Country:</span><span class="info-value">${shipment.receiver?.country || 'N/A'}</span></div>
                             <div class="info-row"><span class="info-label">Address:</span><span class="info-value">${shipment.receiver?.address || shipment.receiver?.country || 'N/A'}</span></div>
                             <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${shipment.receiver?.phone || 'N/A'}</span></div>
-                            <div class="info-row"><span class="info-label">Email:</span><span class="info-value">${shipment.receiver?.email || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Email:</span><span class="info-value" style="color:#00f2fe;">${shipment.receiver?.email || 'N/A'}</span></div>
                         </div>
                     </div>
                     <div>
                         <div class="info-card">
                             <h3><i class="fas fa-cube"></i> Package Details</h3>
-                            <div class="info-row"><span class="info-label">Duty Fees:</span><span class="info-value" style="color:${dutyStatus === 'Paid' ? '#4CAF50' : '#ffa500'}"><i class="fas ${dutyStatus === 'Paid' ? 'fa-check-circle' : 'fa-clock'}"></i> ${dutyDisplay}</span></div>
+                            <div class="info-row"><span class="info-label">Duty Fees:</span><span class="info-value" style="color:${dutyStatus === 'Paid' ? '#4CAF50' : '#ffa500'};"><i class="fas ${dutyStatus === 'Paid' ? 'fa-check-circle' : 'fa-clock'}"></i> ${dutyDisplay}</span></div>
                             <div class="info-row"><span class="info-label">Weight:</span><span class="info-value">${shipment.parcel?.weight || 'N/A'}</span></div>
                             <div class="info-row"><span class="info-label">Type:</span><span class="info-value">${shipment.parcel?.type || 'N/A'}</span></div>
                             <div class="info-row"><span class="info-label">Pickup:</span><span class="info-value">${shipment.parcel?.pickupDate || 'N/A'}</span></div>
-                            <div class="info-row"><span class="info-label">ETA:</span><span class="info-value" style="color:var(--primary);">${shipment.parcel?.expectedDelivery || 'Pending'}</span></div>
+                            <div class="info-row"><span class="info-label">ETA:</span><span class="info-value" style="color:#00f2fe;">${shipment.parcel?.expectedDelivery || 'Pending'}</span></div>
                         </div>
                         <div class="info-card" style="margin-top:1.5rem;">
                             <h3><i class="fas fa-file-invoice"></i> Invoice Details</h3>
@@ -263,7 +1254,7 @@
                                 <span class="info-label" style="font-weight:700;color:#ffd700;">Total Amount:</span>
                                 <span class="info-value" style="font-weight:700;color:#ffd700;font-size:1.1rem;">${inv.totalAmount || 'N/A'}</span>
                             </div>
-                            <div class="info-row"><span class="info-label">Payment Status:</span><span class="info-value" style="color:${inv.paymentStatus === 'Paid' ? '#4CAF50' : '#ffa500'};">${inv.paymentStatus || 'N/A'}</span></div>
+                            <div class="info-row"><span class="info-label">Payment Status:</span><span class="info-value" style="color:${inv.paymentStatus === 'Paid' ? '#4CAF50' : '#ffa500'};"><i class="fas ${inv.paymentStatus === 'Paid' ? 'fa-check-circle' : 'fa-clock'}"></i> ${inv.paymentStatus || 'N/A'}</span></div>
                         </div>
                     </div>
                 </div>
@@ -282,9 +1273,12 @@
 
                 <div class="action-buttons">
                     <button class="btn-primary" onclick="downloadPDF()"><i class="fas fa-download"></i> Download Invoice (PDF)</button>
-                    <button class="btn-primary" onclick="copyLink()" style="background:rgba(255,255,255,0.05);color:#fff;"><i class="fas fa-share-alt"></i> Share Tracking</button>
+                    <button class="btn-secondary" onclick="copyLink()"><i class="fas fa-share-alt"></i> Share Tracking</button>
                 </div>
             `;
+
+            // Store data for PDF
+            window.currentShipment = shipment;
 
             // Initialize map
             setTimeout(() => {
@@ -294,17 +1288,31 @@
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                         attribution: '&copy; OpenStreetMap'
                     }).addTo(map);
-                    L.marker(coords).addTo(map)
+                    L.marker(coords, {
+                        icon: L.divIcon({
+                            className: 'custom-marker',
+                            html: '<i class="fas fa-map-pin" style="color:#00f2fe;font-size:30px;"></i>',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 30]
+                        })
+                    }).addTo(map)
                         .bindPopup(`<b>${shipment.origin}</b><br>${shipment.sender?.name || 'Sender'}`)
                         .openPopup();
-                    // Add destination marker
+                    
                     if (shipment.destination) {
                         const destCoords = [shipment.coordinates[0] + 10, shipment.coordinates[1] + 10];
-                        L.marker(destCoords).addTo(map)
+                        L.marker(destCoords, {
+                            icon: L.divIcon({
+                                className: 'custom-marker',
+                                html: '<i class="fas fa-flag-checkered" style="color:#FF6600;font-size:30px;"></i>',
+                                iconSize: [30, 30],
+                                iconAnchor: [15, 30]
+                            })
+                        }).addTo(map)
                             .bindPopup(`<b>${shipment.destination}</b><br>${shipment.receiver?.name || 'Receiver'}`);
                     }
                 }
-            }, 200);
+            }, 300);
         }
 
         async function loadTracking() {
@@ -322,7 +1330,7 @@
                         <i class="fas fa-search"></i>
                         <h2>Tracking Number Not Found</h2>
                         <p>${trackingNumber} does not exist in our system</p>
-                        <a href="tracking.html" class="btn-primary">Try Again</a>
+                        <a href="tracking.html" class="btn-primary"><i class="fas fa-arrow-left"></i> Try Again</a>
                     </div>
                 `;
             }
@@ -334,7 +1342,68 @@
         }
 
         function downloadPDF() {
-            alert('📄 PDF download feature coming soon!');
+            const shipment = window.currentShipment;
+            if (!shipment) {
+                alert('No shipment data available');
+                return;
+            }
+
+            const loading = document.getElementById('pdfLoading');
+            const progress = document.getElementById('pdfProgress');
+            loading.classList.add('active');
+
+            // Generate PDF HTML
+            const pdfHTML = generatePDFHTML(shipment);
+            
+            // Create a temporary container for PDF generation
+            const container = document.createElement('div');
+            container.innerHTML = pdfHTML;
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '0';
+            container.style.width = '900px';
+            container.style.background = '#0a0e1a';
+            container.style.padding = '40px';
+            document.body.appendChild(container);
+
+            // Update progress
+            progress.style.width = '30%';
+
+            // Generate PDF
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `SwiftLogix_Invoice_${shipment.trackingCode}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#0a0e1a',
+                    logging: false
+                },
+                jsPDF: { 
+                    unit: 'in', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            progress.style.width = '60%';
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                progress.style.width = '100%';
+                setTimeout(() => {
+                    loading.classList.remove('active');
+                    progress.style.width = '0%';
+                    document.body.removeChild(container);
+                }, 500);
+            }).catch((error) => {
+                console.error('PDF generation error:', error);
+                loading.classList.remove('active');
+                progress.style.width = '0%';
+                document.body.removeChild(container);
+                alert('Failed to generate PDF. Please try again.');
+            });
         }
 
         loadTracking();
