@@ -174,7 +174,7 @@ const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = ''
             return { success: false, error: 'API key missing' };
         }
 
-        log.email(`📧 Sending to ${to}...`);
+        log.email(`📧 Sending ${type} email to ${to}...`);
         
         const { data, error } = await resend.emails.send({
             from: EMAIL_FROM,
@@ -189,7 +189,7 @@ const sendEmail = async (to, subject, html, type = 'tracking', trackingCode = ''
             return { success: false, error: error.message };
         }
 
-        log.success(`✅ Sent! ID: ${data?.id}`);
+        log.success(`✅ ${type} email sent! ID: ${data?.id}`);
         await logEmailToDB(trackingCode, type, to, subject, 'sent', null, data?.id);
         return { success: true, resendId: data?.id };
     } catch (error) {
@@ -346,11 +346,13 @@ const getTrackingEmailHTML = (shipment, userEmail, trackingLink) => {
                     </tr>
                     <tr>
                         <td style="padding:24px 30px 20px;text-align:center;">
+                            <a href="${trackingLink}" style="display:inline-block;padding:12px 32px;background:#0f172a;color:#ffffff;font-size:14px;font-weight:600;border-radius:50px;text-decoration:none;">Track Package →</a>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding:16px 30px;text-align:center;border-top:1px solid #e2e8f0;">
                             <div style="font-size:12px;color:#94a3b8;">© 2026 SwiftLogix Logistics</div>
+                            <div style="font-size:11px;color:#cbd5e1;margin-top:2px;">Sent to ${userEmail}</div>
                         </td>
                     </tr>
                 </table>
@@ -718,20 +720,29 @@ app.post('/api/track', async (req, res) => {
     }
 });
 
-// ✅ SEND EMAILS - Clean subject lines, no spammy words
+// ✅ SEND EMAILS - Uses receiver email from database
 app.post('/api/send-email', async (req, res) => {
     try {
-        const { trackingCode, userEmail } = req.body;
-        if (!trackingCode || !userEmail) {
-            return res.status(400).json({ error: 'Tracking code and email are required' });
-        }
-
+        const { trackingCode } = req.body;
+        
+        // ✅ Get userEmail from request or use receiver.email from database
+        let userEmail = req.body.userEmail;
+        
         const shipment = await Shipment.findOne({ trackingCode: trackingCode.toUpperCase() });
         if (!shipment) {
             return res.status(404).json({ error: 'Tracking number not found' });
         }
 
-        // ✅ Clean subject - no emojis, no "URGENT", no spam words
+        // ✅ If no email provided in request, use receiver.email from database
+        if (!userEmail) {
+            userEmail = shipment.receiver?.email;
+            if (!userEmail) {
+                return res.status(400).json({ error: 'No email found for this shipment' });
+            }
+            log.info(`📧 Using receiver email from database: ${userEmail}`);
+        }
+
+        // ✅ Clean subject - no emojis, no spam words
         const trackingLink = `${BASE_URL}/tracking-result.html?code=${shipment.trackingCode}`;
         
         // Email 1: Tracking Update
