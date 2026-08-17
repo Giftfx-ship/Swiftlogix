@@ -105,7 +105,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <img src="/images/logo.png" alt="SwiftLogix">
             </a>
             <div class="admin-info">
@@ -124,7 +124,7 @@
                     <span class="dot online"></span>
                     <span style="color:#4CAF50;font-size:0.85rem;font-weight:600;">Online</span>
                 </div>
-                <a href="admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+                <a href="/admin" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
             </div>
         </div>
 
@@ -186,7 +186,7 @@
 
         function checkAuth() {
             const token = localStorage.getItem('adminToken');
-            if (!token) { window.location.href = 'admin-login.html'; return false; }
+            if (!token) { window.location.href = '/admin-login'; return false; }
             const username = localStorage.getItem('adminUsername') || 'Admin';
             document.getElementById('adminName').textContent = username;
             return true;
@@ -195,7 +195,7 @@
         function logout() {
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminUsername');
-            window.location.href = 'admin-login.html';
+            window.location.href = '/admin-login';
         }
 
         async function loadConversations() {
