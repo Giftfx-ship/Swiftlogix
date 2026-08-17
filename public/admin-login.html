@@ -66,16 +66,16 @@
 
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <img src="/images/logo.png" alt="SwiftLogix">
             </a>
             <div class="menu-toggle"><i class="fas fa-bars"></i></div>
             <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="tracking.html">Track</a>
-                <a href="services.html">Services</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
+                <a href="/">Home</a>
+                <a href="/tracking">Track</a>
+                <a href="/services">Services</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
             </div>
         </div>
     </nav>
@@ -116,7 +116,7 @@
                 Default: <strong>igwe</strong> / <strong>dev</strong>
             </div>
 
-            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
         </div>
     </section>
 
@@ -163,7 +163,7 @@
                 }
                 localStorage.setItem('adminToken', data.token);
                 localStorage.setItem('adminUsername', data.admin.username);
-                window.location.href = 'admin.html';
+                window.location.href = '/admin';
             } catch (error) {
                 errorMsg.style.display = 'block';
                 errorMsg.textContent = '❌ Network error. Please try again.';
