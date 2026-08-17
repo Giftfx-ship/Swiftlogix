@@ -153,26 +153,26 @@
 
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <img src="/images/logo.png" alt="SwiftLogix">
             </a>
             <div class="menu-toggle" onclick="toggleMenu()">
                 <i class="fas fa-bars"></i>
             </div>
             <div class="nav-links" id="navLinks">
-                <a href="index.html">Home</a>
-                <a href="tracking.html" class="active">Track</a>
-                <a href="services.html">Services</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
-                <a href="blog.html">Blog</a>
-                <a href="tracking.html" class="track-btn-nav"><i class="fas fa-search"></i> Track</a>
+                <a href="/">Home</a>
+                <a href="/tracking" class="active">Track</a>
+                <a href="/services">Services</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/blog">Blog</a>
+                <a href="/tracking" class="track-btn-nav"><i class="fas fa-search"></i> Track</a>
             </div>
         </div>
     </nav>
 
     <div class="result-page" id="resultPage">
-        <a href="tracking.html" class="back-link"><i class="fas fa-arrow-left"></i> New Tracking</a>
+        <a href="/tracking" class="back-link"><i class="fas fa-arrow-left"></i> New Tracking</a>
         <div id="resultContent">
             <div style="text-align:center;padding:4rem;">
                 <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:#00f2fe;"></i>
@@ -759,7 +759,7 @@
                         <i class="fas fa-search"></i>
                         <h2>Tracking Number Not Found</h2>
                         <p>${trackingNumber} does not exist in our system</p>
-                        <a href="tracking.html" class="btn-primary"><i class="fas fa-arrow-left"></i> Try Again</a>
+                        <a href="/tracking" class="btn-primary"><i class="fas fa-arrow-left"></i> Try Again</a>
                     </div>
                 `;
             }
