@@ -111,7 +111,7 @@
     <!-- ==================== NAVBAR ==================== -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <img src="/images/logo.png" alt="SwiftLogix">
             </a>
             <div class="admin-info">
@@ -131,7 +131,7 @@
             <div class="right">
                 <div class="stats-badge"><i class="fas fa-box"></i> <span id="shipmentCount">0</span> Total Shipments</div>
                 <div class="admin-actions">
-                    <a href="admin-chat.html" class="chat-link"><i class="fas fa-comment-dots"></i> Chat Support</a>
+                    <a href="/admin-chat" class="chat-link"><i class="fas fa-comment-dots"></i> Chat Support</a>
                     <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             </div>
@@ -273,14 +273,14 @@
         // ==================== AUTH CHECK ====================
         function checkAuth() {
             const token = localStorage.getItem('adminToken');
-            if (!token) { window.location.href = 'admin-login.html'; return false; }
+            if (!token) { window.location.href = '/admin-login'; return false; }
             return true;
         }
 
         function logout() {
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminUsername');
-            window.location.href = 'admin-login.html';
+            window.location.href = '/admin-login';
         }
 
         // ==================== LOAD SHIPMENTS ====================
